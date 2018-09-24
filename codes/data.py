@@ -15,6 +15,15 @@ Omega0      = 0.3
 OmegaBaryon = 0.05
 OmegaLambda = 0.7
 
+#KEYS
+KEYS={   
+	"LF_model": "Fiducial",
+	"Extinction": "Fiducial",
+	"Fit_method": "Chisq"
+}
+Z_NORM_SET
+FIT_LOG_Z
+
 #LUMINOSITY GRID
 L_bol_grid = np.linspace(8.,18.,101)+0.008935
 d_log_l_bol = L_bol[1]-L_bol[0]
