@@ -3,11 +3,11 @@ import os, errno
 import __main__
 import sys
 
-homepath=""
-sys.path.append()
-sys.path.append()
-sys.path.append()
-sys.path.append()
+homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
+sys.path.append(homepath+"codes/bolometric_correction/")
+sys.path.append(homepath+"codes/convolution/")
+sys.path.append(homepath+"codes/lf_fit/")
+sys.path.append(homepath+"codes/possessing_obdata")
 
 #COSMOLOGY
 hubble      = 0.7
@@ -19,14 +19,15 @@ OmegaLambda = 0.7
 KEYS={   
 	"LF_model": "Fiducial",
 	"Extinction": "Fiducial",
-	"Fit_method": "Chisq"
+	"Fit_method": "Chisq",
+	"FIT_KEY": 0
 }
-Z_NORM_SET
-FIT_LOG_Z
+#Z_NORM_SET
+#FIT_LOG_Z
 
 #LUMINOSITY GRID
-L_bol_grid = np.linspace(8.,18.,101)+0.008935
-d_log_l_bol = L_bol[1]-L_bol[0]
+L_bol_grid = np.linspace(8.,18.,11)+0.008935
+d_log_l_bol = L_bol_grid[1]-L_bol_grid[0]
 
 #
 def mkdir_p(path):

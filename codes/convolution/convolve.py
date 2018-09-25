@@ -89,7 +89,7 @@ def uncertainty_correction(Phi_bol,nu):
 
 	Phi_band = 0.0*L_band
 	for i in range(len(L_bol_grid)):
-		Phi_band[i] += np.sum( prefac*np.exp(expfac*(L_obs-L_obs_corrected[i])**2) )
+		Phi_band[i] += np.sum( prefac*np.exp(expfac*(L_band-L_band[i])**2) )
 	return Phi_band
 
 def extinction_correction(Phi_band, nu):
@@ -105,7 +105,7 @@ def extinction_correction(Phi_band, nu):
 	L_band = bolometric_correction(L_bol_grid,nu)
 	Phi_obs_corrected = 0.0 * Phi_band
 	for i in range(len(NHs)):
-		L_obs = L_band - taus[i]
+		L_obs = L_band - taus[i]/np.log(10.)
 		Phi_obs = Phi_band
 		for j in range(len(L_band)):
 			if L_band[j] <= L_obs[-1]: p0 = inter.interp1d(L_obs, Phi_obs)(L_band[j])
@@ -130,8 +130,13 @@ def extinction_correction(Phi_band, nu):
 			elif NHs[i] > 24.0: f_NH = f_compton
 			dN_NH = f_NH * dNH
 			Phi_obs_corrected[j] += np.power(10., p0) * dN_NH ;
-	return Phi_obs_corrected
+	return L_obs, Phi_obs_corrected
 
 def convolve(Phi_bol,nu):
-	return bolometric_correction(L_bol_grid,nu), extinction_correction(uncertainty_correction(Phi_bol,nu),nu)
+	l_band=bolometric_correction(L_bol_grid,nu)
+	l_obs, phi_obs= extinction_correction(uncertainty_correction(Phi_bol,nu),nu)
+	return l_band, phi_obs
 
+x,y=convolve(bolometricLF(L_bol_grid,2),-1)
+print x+ np.log10(3.9)+33.
+print y
