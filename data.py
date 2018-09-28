@@ -7,7 +7,8 @@ homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
 sys.path.append(homepath+"codes/bolometric_correction/")
 sys.path.append(homepath+"codes/convolution/")
 sys.path.append(homepath+"codes/lf_fit/")
-sys.path.append(homepath+"codes/possessing_obdata")
+sys.path.append(homepath+"codes/possessing_obdata/")
+sys.path.append(homepath+"codes/")
 
 #COSMOLOGY
 hubble      = 0.7
@@ -29,7 +30,7 @@ KEYS={
 L_bol_grid = np.linspace(8.,18.,11)+0.008935
 d_log_l_bol = L_bol_grid[1]-L_bol_grid[0]
 
-#
+#functions
 def mkdir_p(path):
     try:
         os.makedirs(path)

@@ -37,7 +37,7 @@ def LF_at_z(L_bol,P,z,model):
 		xsi_log	= np.log10((1.+z)/(1.+Z_NORM_SET))
 		xsi_lin	= z - Z_NORM_SET
 		xsi = xsi_lin
-		if (FIT_LOG_Z) then xsi = xsi_log
+		#if (FIT_LOG_Z) then xsi = xsi_log
 	
 		alpha	= P[0]	#faint-end slope
 		beta	= P[1] 	#bright-end slope
@@ -57,4 +57,4 @@ def LF_at_z(L_bol,P,z,model):
 	
 		x = np.power(10.,(log_L-L0))
 		P_temp = LF( np.log10(x),[alpha,beta,P0,0.0])
-		return, P_temp
+		return P_temp

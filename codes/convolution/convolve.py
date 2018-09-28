@@ -8,7 +8,7 @@ import astropy.constants as con
 #all the NHs are in log10
 #all Phis are "not" in log10
 
-def bolometric_correction(L_bol,nu):  #L_bol is in log10
+def bolometric_correction(L_bol,nu):  #L_bol is in log10   
 	x = L_bol - 10.
 	if nu==0.: return L_bol
 	elif nu < 0:
@@ -103,16 +103,18 @@ def extinction_correction(Phi_band, nu):
 	psi_max = (1.+eps)/(3.+eps)
 
 	L_band = bolometric_correction(L_bol_grid,nu)
-	Phi_obs_corrected = 0.0 * Phi_band
+	Phi_obs_corrected = Phi_band * 0.
+
 	for i in range(len(NHs)):
 		L_obs = L_band - taus[i]/np.log(10.)
 		Phi_obs = Phi_band
 		for j in range(len(L_band)):
-			if L_band[j] <= L_obs[-1]: p0 = inter.interp1d(L_obs, Phi_obs)(L_band[j])
+			if L_band[j] <= L_obs[-1]: 
+				p0 = inter.interp1d(L_obs, np.log10(Phi_obs))(L_band[j])
 			else:
 				k = (np.log10(Phi_obs[-1])-np.log10(Phi_obs[-2]))/(L_obs[-1]-L_obs[-2])
-				p0 = np.log10(Phi_obs[-1]) + k*(L_band[j]-L_obs[-1])
-			L_HX = np.log10( bolometric_correction(L_bol_grid[j],-4) )
+				p0 = np.log10(Phi_obs[-2]) + k*(L_band[j]-L_obs[-2])
+			L_HX = bolometric_correction(L_bol_grid[j],-4)
 			psi = psi_44 - beta_L * (L_HX + np.log10(3.9) + 33.0 - 44.0)
 			if psi < 0: psi = 0
 			if psi > psi_max: psi = psi_max
@@ -129,14 +131,20 @@ def extinction_correction(Phi_band, nu):
 			elif (NHs[i] > 23.0) and (NHs[i] <= 24.0): f_NH = f_hig
 			elif NHs[i] > 24.0: f_NH = f_compton
 			dN_NH = f_NH * dNH
-			Phi_obs_corrected[j] += np.power(10., p0) * dN_NH ;
-	return L_obs, Phi_obs_corrected
+			Phi_obs_corrected[j] += np.power(10., p0) * dN_NH
+	return Phi_obs_corrected
 
 def convolve(Phi_bol,nu):
 	l_band=bolometric_correction(L_bol_grid,nu)
-	l_obs, phi_obs= extinction_correction(uncertainty_correction(Phi_bol,nu),nu)
+	phi_obs= extinction_correction(uncertainty_correction(Phi_bol,nu),nu)
+	l_band=l_band + np.log10(con.L_sun.value*1e7)
 	return l_band, phi_obs
 
-x,y=convolve(bolometricLF(L_bol_grid,2),-1)
-print x+ np.log10(3.9)+33.
-print y
+redshift=2
+nu=-1
+phi_bol= bolometricLF(L_bol_grid,redshift) * bolometric_correction_jacobian(L_bol_grid,nu)
+l_band, phi_obs=convolve(phi_bol,nu)
+
+print l_band
+print phi_obs
+

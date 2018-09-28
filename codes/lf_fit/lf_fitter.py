@@ -2,52 +2,89 @@ from data import *
 import numpy as np 
 from lf_shape import *
 import scipy.interpolate as inter
-
-def load_sdss_dr3_LF_data(z):
-	if (z >= 0.40) and (z <= 0.68): filename = 'z.0.49'
-	if (z >= 0.68) and (z <= 1.06): filename = 'z.0.87'
-	if (z >= 1.06) and (z <= 1.44): filename = 'z.1.25'
-	if (z >= 1.44) and (z <= 1.82): filename = 'z.1.63'
-	if (z >= 1.82) and (z <= 2.21): filename = 'z.2.01'
-	if (z >= 2.21) and (z <= 2.60): filename = 'z.2.40'
-	if (z >= 2.60) and (z <= 3.03): filename = 'z.2.80'
-	if (z >= 3.03) and (z <= 3.50): filename = 'z.3.25'
-	if (z >= 3.50) and (z <= 4.00): filename = 'z.3.75'
-	if (z >= 4.00) and (z <= 4.50): filename = 'z.4.25'
-	if (z >= 4.50) and (z <= 5.00): filename = 'z.4.75'
+from convolve import *
+from scipy.optimize import curve_fit
 
 # fit the luminosity function based on datasets at a given redshift
+#L_BB_tmp = bolometric_correction(L_bol_grid,-1)
 
+dset_ids={
+	"DR3":0,
+	"2SLAQ":0,
+	"HUNT":0
+}
+
+zmins={
+	"DR3":0,
+	"2SLAQ":0,
+	"HUNT":0
+}
+zmaxs={
+	"DR3":0,
+	"2SLAQ":0,
+	"HUNT":0
+}
+load_LF_data={
+	"DR3":0,
+	"2SLAQ":0,
+	"HUNT":0
+}
+return_LF={
+	"DR3":0,
+	"2SLAQ":0
+}
+
+def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 # SDSS DR3 (Richards et al. 2006)
-	z_min = [0.40, 0.68, 1.06, 1.44, 1.82, 2.21, 2.60, 3.03, 3.50, 4.00, 4.50]
-	z_max = [0.68, 1.06, 1.44, 1.82, 2.21, 2.60, 3.03, 3.50, 4.00, 4.50, 5.00]
+	#z_min = np.array([0.40, 0.68, 1.06, 1.44, 1.82, 2.21, 2.60, 3.03, 3.50, 4.00, 4.50])
+	#z_max = np.array([0.68, 1.06, 1.44, 1.82, 2.21, 2.60, 3.03, 3.50, 4.00, 4.50, 5.00])
 	z_lis = 0.5*(z_min + z_max)
 	for iz in range(len(z_lis)):
 		redshift = z_lis[iz]
-		L_bol_tmp, phi_fit_tmp = load_sdss_dr3_LF_data(redshift)
-			
-		phi_fit_pts = inter.interp1d(L_bol_tmp, phi_fit_tmp, L_bol)
+		L_BB, PHI_BB, DPHI_BB = load_LF_data[dset_name](redshift)
+		#phi_fit_tmp = np.log10( return_LF[dset_name](L_BB_tmp, redshift))
+		#phi_fit_pts = inter.interp1d(L_BB_tmp, phi_fit_tmp)(L_BB)
 
-			if (RENORM_KEY) then PHI_BB = PHI_BB + (MEAN((phi_fit_pts))-MEAN((PHI_BB)))	
-		if (n_elements(L_BB) GT 1) then begin
-		convolved_LF, LF_PARAMS, LB, phi, /BB, $
-			UEDA_OBSC=UEDA_KEY, SIMPSON_OBSC=SIMP_KEY, LAFRANCA_OBSC=LAFR_KEY
-		phi_i = INTERPOL(phi,(LB),alog10(L_BB))
-		ALL_P_PRED = [ALL_P_PRED , phi_i]
-			ALL_L_OBS  = [ALL_L_OBS  , alog10(L_BB)]
-			ALL_P_OBS  = [ALL_P_OBS  , PHI_BB]
-			ALL_D_OBS  = [ALL_D_OBS  , DPHI_BB]
-			ALL_Z_TOT  = [ALL_Z_TOT  , 0.0*phi_i + REDSHIFT]
-			ALL_B      = [ALL_B      , 0*phi_i   + 0]
-			ALL_ID     = [ALL_ID     , 0*phi_i   + 12]
-		if (keyword_set(DUMP_SPEC_SURVEYS)) then begin
-			if (iz EQ 0) then chi2tott = 0.
-			if (iz EQ 0) then doftott  = 0
-			
-			chi2tott = chi2tott + TOTAL(((phi_i-PHI_BB)/DPHI_BB)^2)
-			doftott  = doftott  + n_elements(PHI_BB)
-			if (iz EQ (n_elements(z_lis)-1)) then print, 'DR3 ->',chi2tott,doftott
-		endif
-		endif
-	endfor 
+		#if (KEYS["RENORM_IN_FITTING"]==True):
+		#	PHI_BB = PHI_BB + (MEAN((phi_fit_pts))-MEAN((PHI_BB)))	
+		if (len(L_BB) > 1):
+			L_B, PHI_B = convolve(LF_at_z(L_bol_grid,parameters,redshift,"Fiducial"), -1) 
+
+			phi_i = np.power(10.,interp1d(LB, np.log10(PHI_B))(L_BB))
+
+			alldata["P_PRED"] = np.append(alldata["P_PRED"] , phi_i)
+			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_BB)
+			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_BB)
+			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_BB)
+			alldata["Z_TOT"]  = np.append(alldata["Z_TOT"]  , np.ones(len(phi_i)) * redshift)
+			alldata["B"]      = np.append(alldata["B"]      , 0*phi_i)
+			alldata["ID"]     = np.append(alldata["ID"]     , np.ones(len(phi_i)) * dset_id)
+
+			if KEYS["VERBOSE"]==True:
+				if (iz == 0): chi2tott, doftott  = 0., 0.			
+				chi2tott += np.sum(((phi_i-PHI_BB)/DPHI_BB)**2)
+				doftott  += len(PHI_BB)
+				if (iz == (len(z_lis)-1)):  print dset_name+' ->',chi2tott,doftott
+
+def get_lf_pred(parameters): 
+	alldata_tem={"P_PRED":0,"L_OBS":0,"P_OBS":0,"D_OBS":0,"Z_TOT":0,"B":0,"ID":0}
+	for key in dset_ids.keys():
+		get_fit_data(alldata_tem,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+	bad = np.invert(np.isfinite(alldata_tem["P_PRED"]))
+	if (np.count_nonzero(bad) > 0): alldata_tem["P_PRED"][bad] = -40.0
+
+	print np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)
+	print len(alldata_tem["L_OBS"])
+
+	return alldata_tem["P_PRED"]
+
+paremeters_init=np.array([   ])
+
+alldata={"P_PRED":0,"L_OBS":0,"P_OBS":0,"D_OBS":0,"Z_TOT":0,"B":0,"ID":0}
+for key in dset_ids.keys():
+	get_fit_data(alldata,parameters_init,zmins[key],zmaxs[key],key,dset_ids[key])
+
+paremeters_fit,_ = curve_fit(get_lf_pred,alldata["L_OBS"],alldata["P_OBS"],p0=parameters_init,sigma=alldata["D_OBS"])
+
+print parameters
 
