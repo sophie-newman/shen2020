@@ -15,12 +15,12 @@ dset_ids={
 }
 
 zmins={
-	"DR3":0,
+	"DR3": np.array([0.40, 0.68, 1.06, 1.44, 1.82, 2.21, 2.60, 3.03, 3.50, 4.00, 4.50]),
 	"2SLAQ":0,
 	"HUNT":0
 }
 zmaxs={
-	"DR3":0,
+	"DR3": np.array([0.68, 1.06, 1.44, 1.82, 2.21, 2.60, 3.03, 3.50, 4.00, 4.50, 5.00]),
 	"2SLAQ":0,
 	"HUNT":0
 }
@@ -35,9 +35,6 @@ return_LF={
 }
 
 def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
-# SDSS DR3 (Richards et al. 2006)
-	#z_min = np.array([0.40, 0.68, 1.06, 1.44, 1.82, 2.21, 2.60, 3.03, 3.50, 4.00, 4.50])
-	#z_max = np.array([0.68, 1.06, 1.44, 1.82, 2.21, 2.60, 3.03, 3.50, 4.00, 4.50, 5.00])
 	z_lis = 0.5*(z_min + z_max)
 	for iz in range(len(z_lis)):
 		redshift = z_lis[iz]
