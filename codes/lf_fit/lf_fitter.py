@@ -35,7 +35,7 @@ return_LF={
 }
 
 def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
-	z_lis = 0.5*(z_min + z_max)
+	z_lis = 0.5*(zmin + zmax)
 	for iz in range(len(z_lis)):
 		redshift = z_lis[iz]
 		L_BB, PHI_BB, DPHI_BB = load_LF_data[dset_name](redshift)
@@ -75,13 +75,13 @@ def get_lf_pred(parameters):
 
 	return alldata_tem["P_PRED"]
 
-paremeters_init=np.array([   ])
+parameters_init=np.array([   ])
 
 alldata={"P_PRED":0,"L_OBS":0,"P_OBS":0,"D_OBS":0,"Z_TOT":0,"B":0,"ID":0}
 for key in dset_ids.keys():
 	get_fit_data(alldata,parameters_init,zmins[key],zmaxs[key],key,dset_ids[key])
 
-paremeters_fit,_ = curve_fit(get_lf_pred,alldata["L_OBS"],alldata["P_OBS"],p0=parameters_init,sigma=alldata["D_OBS"])
+paremeters_fit, pcov = curve_fit(get_lf_pred,alldata["L_OBS"],alldata["P_OBS"],p0=parameters_init,sigma=alldata["D_OBS"])
 
 print parameters
 
