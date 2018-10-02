@@ -4,10 +4,8 @@
 #
 from data import *
 import numpy as np 
-import astropy.constants as con
 
 def load_matute_lf_data(z): # L_IR, PHI_IR, DPHI_IR, z
-	L_solar = np.log10(con.L_sun.value*1e7)
 	if (((z > 0.2) and (z < 0.5)) or (z >= 2.0)): return False
 	else:
 		if (z <= 0.2):

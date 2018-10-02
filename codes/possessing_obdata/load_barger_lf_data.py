@@ -3,7 +3,6 @@
 #
 from data import *
 import numpy as np
-import astropy.constants as con
 
 def load_barger_lf_data(z):  # L_HX, PHI_HX, DPHI_HX, z
 	# determine which redshift interval its in
@@ -45,8 +44,7 @@ def load_barger_lf_data(z):  # L_HX, PHI_HX, DPHI_HX, z
 			L_HX = np.array([43.5])
 			P_HX = np.array([-5.95])
 			D_HX = np.array([ 0.60])
-			
-		L_solar = np.log10(con.L_sun.value*1e7)
+		
 		L_HX = (L_HX - L_solar) + np.log10(1.25) # convert the Barger 2-8kev to 2-10kev (gamma=1.4)
 			# (note if instead were to use a gamma=1.8 photon index would get 1.19, so very small difference
 		PHI_HX  = P_HX

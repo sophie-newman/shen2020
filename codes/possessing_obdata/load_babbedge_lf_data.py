@@ -1,6 +1,5 @@
 from data import *
 import numpy as np
-import astropy.constants as con
 
 def load_babbedge_lf_data(z): # L_IR, PHI_IR, DPHI_IR, z
 	DLOGL = np.log10(8.)/5.
@@ -27,24 +26,22 @@ def load_babbedge_lf_data(z): # L_IR, PHI_IR, DPHI_IR, z
 	L = 9.55506 + 3.*DLOGL + DLOGL*findgen(10)
 	P = [9.0d-6, 7.8d-6, 9.0d-6, 7.8d-6, 7.8d-6, 7.8d-6, 6.5d-6,  5.5d-6, 4.0d-6, 2.9d-6]
 	dp= [0.46,     0.24,   0.35,   0.40,   0.38,   0.18,   0.33,    0.43,   0.43,   0.55]
-		L = L - 2.*alog10(h) + alog10(f_norm/richards_return_spectrum(alog10(c/(5.8*mm)),/BLUE))
-		P = alog10(P) + 3.*alog10(h)
-		!P.COLOR=150
-			oploterror,L,P,dp,PSYM=8		
+	L = L - 2.*alog10(h) + alog10(f_norm/richards_return_spectrum(alog10(c/(5.8*mm)),/BLUE))
+	P = alog10(P) + 3.*alog10(h)
+			
 	# 8.0 micron
 	L = 9.55506 + 6.*DLOGL + DLOGL*findgen(5)
 	P = [1.0d-5, 9.0d-6, 8.0d-6, 6.8d-6, 3.9d-6]
 	dp= [0.30,     0.30,   0.60,   0.30,   0.62]
-		L = L - 2.*alog10(h) + alog10(f_norm/richards_return_spectrum(alog10(c/(8.0*mm)),/BLUE))
-		P = alog10(P) + 3.*alog10(h)
-		!P.COLOR=210
-			oploterror,L,P,dp,PSYM=8		
+	L = L - 2.*alog10(h) + alog10(f_norm/richards_return_spectrum(alog10(c/(8.0*mm)),/BLUE))
+	P = alog10(P) + 3.*alog10(h)
+
 	# 24.0 micron
 	L = 9.55506 + 4.*DLOGL + DLOGL*findgen(6)
 	P = [8.0d-6, 8.5d-6, 8.0d-6, 6.5d-6, 5.5d-6, 4.0d-6]
 	dp= [0.60,     0.42,   0.30,   0.40,   0.40,   0.65]
-		L = L - 2.*alog10(h) + alog10(f_norm/richards_return_spectrum(alog10(c/(24.*mm)),/BLUE))
-		P = alog10(P) + 3.*alog10(h)
+	L = L - 2.*alog10(h) + alog10(f_norm/richards_return_spectrum(alog10(c/(24.*mm)),/BLUE))
+	P = alog10(P) + 3.*alog10(h)
 
 #
 # end story -- their photo-z's are *way* too inaccurate ( & their accuracy changes as a function 
@@ -54,7 +51,6 @@ def load_babbedge_lf_data(z): # L_IR, PHI_IR, DPHI_IR, z
 #   calculated 3.6 micron and 4.5 micron LFs are seriously discrepant from the longer wavelength LFs
 #
 
-		!P.COLOR=0
 	
 	L_IR   = (DOUBLE(L_15-L_solar)) - 5.*alog10(7./7.5)
 	PHI_IR = P_15 + alog10(2.5) + 3.*alog10(7./7.5)

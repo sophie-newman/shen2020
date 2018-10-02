@@ -3,7 +3,6 @@
 #
 from data import *
 import numpy as np
-import astropy.constants as con
 
 def load_sazrev_lf_data(z): # L_HX, PHI_HX, DPHI_HX, z
 	# determine which redshift interval its in
@@ -13,7 +12,6 @@ def load_sazrev_lf_data(z): # L_HX, PHI_HX, DPHI_HX, z
 		P_HX = np.array([1.0e-3, 2.9e-4, 1.0e-4, 3.5e-5, 7.3e-6, 1.5e-6, 1.7e-7, 2.2e-8, 4.8e-10,1.4e-10])
 		D_HX = np.array([ 0.4,    0.35,   0.30,   0.20,   0.20,   0.15,   0.20,   0.25,   0.35,   0.4])
 
-	L_solar = np.log10(con.L_sun.value*1e7)
 	L_HX = (L_HX - L_solar) + np.log10( 0.66676 * (0.75/0.7)**2 )
 	#L_HX = (L_HX - L_solar) + np.log10( (0.75/0.7)**2 ) ;+ np.log10(1./1.25)
 	# convert the 2-30kev to 2-10kev (using our spectrum model in the X-rays)

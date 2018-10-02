@@ -3,7 +3,6 @@
 #
 from data import *
 import numpy as np
-import astropy.constants as con
 
 def load_lafranca_lf_data(z): # L_HX, PHI_HX, DPHI_HX, z
 	# determine which redshift interval its in
@@ -36,7 +35,6 @@ def load_lafranca_lf_data(z): # L_HX, PHI_HX, DPHI_HX, z
 			L_HX = np.array([44.25, 45.0])
 			P_HX = np.log10(np.array([2.0 * 8.0e-6, 1.0 * 2.0e-6]))
 			D_HX = np.array([ 0.2, 0.25])
-		L_solar = np.log10(con.L_sun.value*1e7)
 		L_HX = (L_HX - L_solar)
 		PHI_HX  = P_HX
 		DPHI_HX = D_HX

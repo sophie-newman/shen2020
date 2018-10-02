@@ -8,10 +8,8 @@
 #
 from data import *
 import numpy as np
-import astropy.constants as con
 
 def load_brown_lf_data(z): # L_IR, PHI_IR, DPHI_IR, z
-	L_solar = con.L_sun.value*1e7
 	if (z < 1.5) or (z > 2.5): return False
 	else:
 		M_8  = np.array([-27.2, -27.6, -28.0, -28.4, -28.8, -29.2, -29.6, -30.0, -30.4, -31.2])

@@ -3,7 +3,6 @@
 #
 from data import *
 import numpy as np
-import astropy.constants as con
 
 def load_hasinger_lf_data(z): # L_SX, PHI_SX, DPHI_SX, z
 	# determine which redshift interval its in
@@ -61,5 +60,5 @@ def load_hasinger_lf_data(z): # L_SX, PHI_SX, DPHI_SX, z
 		PHI_SX = PHI_SX + np.log10(1./f1) 
 
 		DPHI_SX = 0.5 * (DPHIp_SX + np.abs(DPHIm_SX))
-		L_SX = L_SX-np.log10(con.L_sun.value*1e7)
+		L_SX = L_SX-L_solar
 		return L_SX, PHI_SX, DPHI_SX

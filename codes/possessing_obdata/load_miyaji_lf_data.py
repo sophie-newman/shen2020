@@ -1,6 +1,5 @@
 from data import *
 import numpy as np 
-import astropy.constants as con
 
 def load_miyaji_lf_data(z): # L_SX, PHI_SX, DPHI_SX, z
 	# determine which redshift interval its in
@@ -41,7 +40,7 @@ def load_miyaji_lf_data(z): # L_SX, PHI_SX, DPHI_SX, z
 				i+=1
 
 		L_SX = 0.5 * (L_SX_min + L_SX_max)
-		L_SX = 10**(L_SX - np.log10(con.L_sun.value*1e7)) * (0.7/0.5)**(-2.)
+		L_SX = 10**(L_SX - L_solar) * (0.7/0.5)**(-2.)
 		DPHI_SX = 0.5 * (np.abs(DPHIp_SX) + np.abs(DPHIm_SX))
 		ok = ( DPHI_SX > 0.)
 		L_SX = L_SX[ok]

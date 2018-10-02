@@ -3,6 +3,7 @@ import os, errno
 import __main__
 import sys
 from astropy.cosmology import FlatLambdaCDM
+import astropy.constants as con
 
 homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
 sys.path.append(homepath+"codes/bolometric_correction/")
@@ -22,6 +23,7 @@ cosmo        = FlatLambdaCDM(H0=hubble*100, Om0=Omega0)
 
 #CONSTANTS
 M_sun_Bband_AB = 4.77  #4.72
+L_solar=np.log10(con.L_sun.value*1e7) #log10 of solar luminosity in erg/s
 
 #KEYS
 KEYS={   

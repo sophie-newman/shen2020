@@ -3,7 +3,6 @@
 #
 from data import *
 import numpy as np
-import astropy.constants as con
 
 def load_beckmann_lf_data(z): # L_HX, PHI_HX, DPHI_HX, z
 	# determine which redshift interval its in
@@ -15,7 +14,6 @@ def load_beckmann_lf_data(z): # L_HX, PHI_HX, DPHI_HX, z
 		p = np.array([-3.4,  -3.7,  -4.35, -4.7,   -5.25, -6.0,  -7.0, -8.2, -9.1])
 		d = np.array([0.3,    0.18, 0.17, 0.14,     0.1,   0.11,  0.15, 0.25, 0.26])
 		
-		L_solar = np.log10(con.L_sun.value*1e7)
 		L_HX = (l - L_solar) 
 		PHI_HX  = p
 		DPHI_HX = d
