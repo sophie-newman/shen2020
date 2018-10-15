@@ -4,18 +4,23 @@ from lf_shape import *
 import scipy.interpolate as inter
 from convolve import *
 from scipy.optimize import curve_fit
-
+from scipy.optimize import minimize
+from scipy.optimize import least_squares
 # fit the luminosity function based on datasets at a given redshift
 #L_BB_tmp = bolometric_correction(L_bol_grid,-1)
 
 from lf_fitter_data import *
 
-parameters_init = np.array([0.10 , 	0.608, 	-6.58, 	8.427,  1.02, 
-					    -10.23, -3.00,	0.000, 	1.403,  -1.07,  
-					    0.0, 	0.00,   0.0, 	1.5, 	-3.19])		
-parameters_info = np.array(["nocon", "nocon", "nocon", "nocon", "nocon", 
-		           "nocon", "nocon", "fix"	, "nocon", "nocon", 
-				   "fix",  	"fix",	 "fix",   "nocon", "nocon"])
+#parameters_init = np.array([0.10 , 	0.608, 	-6.58, 	8.427,  1.02, 
+#					    -10.23, -3.00,	0.000, 	1.403,  -1.07,  
+#					    0.0, 	0.00,   0.0, 	1.5, 	-3.19])		
+#parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis_0", "logLs_0", "k1", 
+#		           "k2", "k_gamma1", "k_gamma1_2(0)" , "k_gamma2_1", "k_gamma2_2", 
+#				   "nothing",  	"k3",	 "k4(0)",   "z_phis(0)", "k_phis(0)"])
+parameters_init = np.array([0.417, 2.174, -4.825, 13.036, 0.632, -11.76, -14.25, -0.623, 1.460, -0.793])
+parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis", "logLs_0", "k1", "k2", "k3" ,"k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
+parameters_bound= (np.array([0,0,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf]),np.array([np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf]))
+
 
 def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 	z_lis = 0.5*(zmin + zmax)
@@ -28,43 +33,64 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 		#if (KEYS["RENORM_IN_FITTING"]==True):
 		#	PHI_BB = PHI_BB + (MEAN((phi_fit_pts))-MEAN((PHI_BB)))	
 		if (len(L_BB) > 1):
-			L_B, PHI_B = convolve(LF_at_z(L_bol_grid,parameters,redshift,"Fiducial"), -1) 
-
-			phi_i = np.power(10.,interp1d(LB, np.log10(PHI_B))(L_BB))
+			L_B, PHI_B = convolve(np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")), dset_id) 
+			#L_B, PHI_B = convolve( 1e-3*L_bol_grid, dset_id)
+			phi_i = np.interp(L_BB, L_B, np.log10(PHI_B))
 
 			alldata["P_PRED"] = np.append(alldata["P_PRED"] , phi_i)
 			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_BB)
 			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_BB)
 			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_BB)
-			alldata["Z_TOT"]  = np.append(alldata["Z_TOT"]  , np.ones(len(phi_i)) * redshift)
-			alldata["B"]      = np.append(alldata["B"]      , 0*phi_i)
-			alldata["ID"]     = np.append(alldata["ID"]     , np.ones(len(phi_i)) * dset_id)
+			alldata["Z_TOT"]  = np.append(alldata["Z_TOT"]  , np.ones(len(L_BB)) * redshift)
+			#alldata["B"]      = np.append(alldata["B"]      , 0*L_BB)
+			alldata["ID"]     = np.append(alldata["ID"]     , np.ones(len(L_BB)) * dset_id)
 
-			if KEYS["VERBOSE"]==True:
-				if (iz == 0): chi2tott, doftott  = 0., 0.			
-				chi2tott += np.sum(((phi_i-PHI_BB)/DPHI_BB)**2)
-				doftott  += len(PHI_BB)
-				if (iz == (len(z_lis)-1)):  print dset_name+' ->',chi2tott,doftott
-
-def get_lf_pred(parameters): 
-	alldata_tem={"P_PRED":0,"L_OBS":0,"P_OBS":0,"D_OBS":0,"Z_TOT":0,"B":0,"ID":0}
+def chisq(parameters):
+	alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
 	for key in dset_ids.keys():
-		get_fit_data(alldata_tem,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
-	bad = np.invert(np.isfinite(alldata_tem["P_PRED"]))
-	if (np.count_nonzero(bad) > 0): alldata_tem["P_PRED"][bad] = -40.0
+		get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
 
-	print np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)
-	print len(alldata_tem["L_OBS"])
+	bad = np.invert(np.isfinite(alldata["P_PRED"]))
+	if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
-	return alldata_tem["P_PRED"]
+	id= (alldata["Z_TOT"]>=2.7) & (alldata["Z_TOT"]<=3.3) & (alldata["ID"]==-1)
+	return alldata["L_OBS"][id],alldata["P_OBS"][id],alldata["D_OBS"][id],alldata["P_PRED"][id]
+	#return np.sum(((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)/len(alldata["L_OBS"])
 
-parameters_init=np.array([   ])
+#print chisq(parameters_init)
+#exit()
 
-alldata={"P_PRED":0,"L_OBS":0,"P_OBS":0,"D_OBS":0,"Z_TOT":0,"B":0,"ID":0}
-for key in dset_ids.keys():
-	get_fit_data(alldata,parameters_init,zmins[key],zmaxs[key],key,dset_ids[key])
+import matplotlib.pyplot as plt 
+import matplotlib
 
-paremeters_fit, pcov = curve_fit(get_lf_pred,alldata["L_OBS"],alldata["P_OBS"],p0=parameters_init,sigma=alldata["D_OBS"],maxfev=100000)
+matplotlib.style.use('classic')
+matplotlib.rc('xtick.major', size=15, width=3)
+matplotlib.rc('xtick.minor', size=7.5, width=3)
+matplotlib.rc('ytick.major', size=15, width=3)
+matplotlib.rc('ytick.minor', size=7.5, width=3)
+matplotlib.rc('lines',linewidth=4)
+matplotlib.rc('axes', linewidth=4)
+fig=plt.figure(figsize = (15,10))
+ax = fig.add_axes([0.13,0.12,0.79,0.83])
+x,y,dy,yfit=chisq(parameters_init)
+print dy
+ax.errorbar(x,y,yerr=dy,capsize=10,linestyle='',c='crimson',marker='o',markeredgewidth=0, ms=12,alpha=1,label=r'$\rm{Observations}$')
+ax.plot(x,yfit,'.',c='royalblue',marker='s',ms=12,label='Fit')
+prop = matplotlib.font_manager.FontProperties(size=25.0)
+ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
+ax.set_xlabel(r'$\log{(L_{\rm B}/{\rm L}_{\odot})}$',fontsize=40,labelpad=2.5)
+ax.set_ylabel(r'$\log{(\Phi[{\rm dex}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
+#ax.set_xlim(1.5,10.5)
+#ax.set_ylim(-2.9,-1.3)
+ax.tick_params(labelsize=30)
+ax.tick_params(axis='x', pad=7.5)
+ax.tick_params(axis='y', pad=2.5)
+ax.minorticks_on()
+plt.show()
 
-print parameters
+#out = minimize(chisq,x0=parameters_init)#bounds=parameters_bound)
+#out = least_squares(chisq,x0=parameters_init,bounds=parameters_bound)
+#print out
+
+
 

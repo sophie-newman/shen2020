@@ -22,7 +22,7 @@ def load_brown_lf_data(z): # L_IR, PHI_IR, DPHI_IR, z
 		#L_HX   = alog10(L_B) + alog10(10.0)		
 
 		L_8 = 10**(0.4*(-28.5 - M_8)) * 4.11e45	# conversion given therein
-		L_8 = L_8 / L_solar
+		L_8 = L_8 / np.power(10.,L_solar)
 		L_15_over_L_8 = 10**(+0.060001373)	# from Hatziminaoglou model spectrum
 		#L_15_over_L_8 = 10**(+0.0263996)	# from Hatziminaoglou model spectrum
 		L_15 = L_15_over_L_8 * L_8

@@ -26,9 +26,32 @@ from load_ssg_lf_data import *
 from load_ueda_lf_data import *
 
 dset_ids={
-	"DR3":0,
-	"2SLAQ":0,
-	"HUNT":0
+	#Bband
+	"DR3": -1,
+	"2SLAQ": -1,
+	"HUNT": -1,
+	"SIANA": -1,
+	"CRISTIANI": -1,
+	"KDC": -1,
+	"FAN": -1,
+	"SSG": -1,
+	"COMBO17": -1,
+	#soft xray
+	#"HASINGER": -3,
+	#"MIYAJI": -3,
+	#"SILVERMAN_SX": -3,
+	#hard xray
+	#"UEDA": -4,
+	#"LAFRANCA": -4,
+	#"SILVERMAN_HX": -4,
+	#"BARGER": -4,
+	#"NANDRA": -4,
+	#"SAZREV": -4,
+	#INFRARED
+	#"BROWN": -2,
+	#"MATUTE": -2,
+	#narrow lines
+	#"HAO": -4
 }
 
 zmins={
@@ -42,7 +65,7 @@ zmins={
 	"SSG":np.array([2.75]),
 	"COMBO17":np.array([1.2, 1.8, 2.4, 3.0, 3.6, 4.2]),
 	#soft xray
-	"HMS":np.array([0.0, 0.2, 0.4, 0.8, 1.6, 3.2]),
+	"HASINGER":np.array([0.0, 0.2, 0.4, 0.8, 1.6, 3.2]),
 	"MIYAJI":np.array([0.0, 0.2, 0.4, 0.8, 1.6, 2.3]),
 	#hard xray
 	"UEDA":np.array([0.0, 0.2, 0.4, 0.8, 1.6]),
@@ -68,7 +91,7 @@ zmaxs={
 	"FAN":np.array([3.9, 4.4, 5.0, 6.2]),
 	"SSG":np.array([4.75]),
 	"COMBO17":np.array([1.8, 2.4, 3.0, 3.6, 4.2, 4.8]),
-	"HMS":np.array([0.2, 0.4, 0.8, 1.6, 3.2, 4.8]),
+	"HASINGER":np.array([0.2, 0.4, 0.8, 1.6, 3.2, 4.8]),
 	"MIYAJI":np.array([0.2, 0.4, 0.8, 1.6, 2.3, 4.6]),
 	"UEDA":np.array([0.2, 0.4, 0.8, 1.6, 3.0]),
 	"LAFRANCA":np.array([0.5, 1.0, 1.5, 2.5, 3.5]),
@@ -91,7 +114,7 @@ load_LF_data={
 	"FAN":load_sdss_fan_lf_data,
 	"SSG":load_ssg_lf_data,
 	"COMBO17":load_combo17_lf_data,
-	"HMS":load_hms_lf_data,
+	"HASINGER":load_hasinger_lf_data,
 	"MIYAJI":load_miyaji_lf_data,
 	"UEDA":load_ueda_lf_data,
 	"LAFRANCA":load_lafranca_lf_data,

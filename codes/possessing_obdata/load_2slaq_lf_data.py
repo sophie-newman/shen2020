@@ -47,3 +47,4 @@ def load_2slaq_lf_data(z):
 		PHI_BB = np.log10(phi[ok]) + np.log10(2.5)
 		DPHI_BB = np.log10(1.+dphi[ok]/phi[ok])
 		return L_BB, PHI_BB, DPHI_BB
+

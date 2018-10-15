@@ -32,3 +32,31 @@ def load_sdss_dr3_lf_data(z):
 		PHI_BB = logphi + np.log10(2.5)
 		DPHI_BB = dphi
 		return L_BB, PHI_BB, DPHI_BB
+
+# Function to return the analytical Richards et al. (2006) luminosity function 
+#   for a list of B-band luminosities L0_list (in SOLAR luminosities) at redshift z
+#   (for an Omega_M = 0.3, Omega_Lambd = 0.7 cosmology)
+#
+def return_sdss_dr3_lf_fitted(L0_list,z):	
+	z_ref  = 2.45
+	M_star = -26.0
+	xsi    = np.log10((1.+z)/(1.+z_ref))
+	A1     = 0.84
+	A2     = -0.12
+	B1     = 1.40
+	B2     = 36.28
+	B3     = 33.77
+	log_phi= -5.72
+
+	M_B    = M_sun_Bband_AB - 2.5*(L0_list)
+	#M_i    = M_B - 0.66		# converts to their Mi(z=2) convention
+	M_i    = M_B - 0.71 	# converts to their Mi(z=2) convention
+
+	A      = A1 + A2*(z-z_ref)
+	if (z > z_ref):
+		A 	= A1 + A2*(z-z_ref)
+	else: A = A1
+	mu     = M_i - (M_star + B1*xsi + B2*xsi*xsi + B3*xsi*xsi*xsi)
+
+	PHI    = 2.5 * (10**(log_phi)) * (10**(A*mu))
+	return np.log10(PHI)

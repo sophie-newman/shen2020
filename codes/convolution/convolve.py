@@ -3,7 +3,7 @@ from data import *
 from utils import *
 import scipy.interpolate as inter
 import astropy.constants as con
-
+import time
 #all the luminosities are in log10
 #all the NHs are in log10
 #all Phis are "not" in log10
@@ -83,7 +83,10 @@ def bolometric_correction_jacobian(L_bol,nu):
 
 def uncertainty_correction(Phi_bol,nu):
 	L_band = bolometric_correction(L_bol_grid,nu)
-	sig = band_dispersion(L_bol_grid,nu)
+	sig=0.0*L_bol_grid
+	for i in range(len(L_bol_grid)):
+		sig[i] = band_dispersion(L_bol_grid[i],nu)
+	
 	expfac = -0.5/sig**2
 	prefac = 1./(sig*np.sqrt(2*np.pi))*Phi_bol*d_log_l_bol
 
@@ -95,7 +98,10 @@ def uncertainty_correction(Phi_bol,nu):
 def extinction_correction(Phi_band, nu):
 	NHs = np.linspace(20, 25, 501)
 	dNH = NHs[1]-NHs[0]
-	taus = return_tau(NHs, nu)
+	
+	taus=0.0*NHs
+	for i in range(len(NHs)):
+		taus[i] = return_tau(NHs[i], nu)
 
 	eps = 1.7
 	psi_44 = 0.47
@@ -108,6 +114,7 @@ def extinction_correction(Phi_band, nu):
 	for i in range(len(NHs)):
 		L_obs = L_band - taus[i]/np.log(10.)
 		Phi_obs = Phi_band
+
 		for j in range(len(L_band)):
 			if L_band[j] <= L_obs[-1]: 
 				p0 = inter.interp1d(L_obs, np.log10(Phi_obs))(L_band[j])
@@ -118,6 +125,7 @@ def extinction_correction(Phi_band, nu):
 			psi = psi_44 - beta_L * (L_HX + np.log10(3.9) + 33.0 - 44.0)
 			if psi < 0: psi = 0
 			if psi > psi_max: psi = psi_max
+
 			f_low = 2.0 - ((5.+2.*eps)/(1.+eps))*psi
 			f_med = (1./(1.+eps))*psi
 			f_hig = (eps/(1.+eps))*psi
@@ -132,19 +140,37 @@ def extinction_correction(Phi_band, nu):
 			elif NHs[i] > 24.0: f_NH = f_compton
 			dN_NH = f_NH * dNH
 			Phi_obs_corrected[j] += np.power(10., p0) * dN_NH
+
 	return Phi_obs_corrected
 
 def convolve(Phi_bol,nu):
 	l_band=bolometric_correction(L_bol_grid,nu)
-	phi_obs= extinction_correction(uncertainty_correction(Phi_bol,nu),nu)
-	l_band=l_band + np.log10(con.L_sun.value*1e7)
+	p_1=uncertainty_correction(Phi_bol,nu)
+	phi_obs= extinction_correction(p_1,nu)
 	return l_band, phi_obs
 
-redshift=2
-nu=-1
-phi_bol= bolometricLF(L_bol_grid,redshift) * bolometric_correction_jacobian(L_bol_grid,nu)
-l_band, phi_obs=convolve(phi_bol,nu)
+def printall(redshift,nu):
+	nu_eff=nu
+	if nu ==  0.: nu_eff = 1.1992000e15 # 2500 angstrom
+	if nu == -1.: nu_eff = 6.8136364e14 # 4400 angstrom
+	if nu == -2.: nu_eff = 1.9986667e13 # 15 micron
+	if nu == -3.: nu_eff = 2.4180000e17 # 'effective' 1 keV
+	if nu == -4.: nu_eff = 1.2090000e18 # 'effective' 5 keV
 
-print l_band
-print phi_obs
+	phi_bol= bolometricLF(L_bol_grid,redshift) * bolometric_correction_jacobian(L_bol_grid,nu)
+	l_band, phi_obs=convolve(phi_bol,nu)
 
+	m_AB_band=-2.5*l_band+2.5*np.log10(nu_eff)-32.38265724887536
+	m_AB_obs = m_AB_band - distance_modulus(redshift)
+	S_nu = -0.4*(m_AB_obs-16.40) # returns log_{10}(S_nu/mJy)
+	if (nu == 0.) or (nu == -3.) or (nu == -4.): 
+		S_nu = l_band + 0.4*distance_modulus(redshift) - 6.486937100449856 
+		# last factor for CGS conversion, 
+		#  given that l_band is in L_sun
+	S_nu = np.power(10.,S_nu)
+
+	print "L band:",l_band + L_solar
+	print "M_AB:  ",m_AB_band
+	print "S_nu:  ",S_nu
+	print "L_bol: ",L_bol_grid + L_solar
+	print "Phiobs:",phi_obs
