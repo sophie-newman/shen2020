@@ -27,11 +27,12 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 	for iz in range(len(z_lis)):
 		redshift = z_lis[iz]
 		L_BB, PHI_BB, DPHI_BB = load_LF_data[dset_name](redshift)
-		#phi_fit_tmp = np.log10( return_LF[dset_name](L_BB_tmp, redshift))
-		#phi_fit_pts = inter.interp1d(L_BB_tmp, phi_fit_tmp)(L_BB)
-
-		#if (KEYS["RENORM_IN_FITTING"]==True):
-		#	PHI_BB = PHI_BB + (MEAN((phi_fit_pts))-MEAN((PHI_BB)))	
+		
+		#L_BB_tmp=bolometric_correction(L_bol_grid,dset_id)
+		#if return_LF[dset_name]!=None:
+		#	phi_fit_tmp = return_LF[dset_name](L_BB_tmp, redshift)
+		#	phi_fit_pts = np.interp(L_BB ,L_BB_tmp, phi_fit_tmp)
+		#	PHI_BB = PHI_BB + (np.mean((phi_fit_pts))-np.mean((PHI_BB)))	
 		if (len(L_BB) > 1):
 			L_B, PHI_B = convolve(np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")), dset_id) 
 			#L_B, PHI_B = convolve( 1e-3*L_bol_grid, dset_id)
@@ -53,12 +54,9 @@ def chisq(parameters):
 	bad = np.invert(np.isfinite(alldata["P_PRED"]))
 	if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
-	id= (alldata["Z_TOT"]>=2.7) & (alldata["Z_TOT"]<=3.3) & (alldata["ID"]==-1)
+	id= (alldata["Z_TOT"]>=2.7) & (alldata["Z_TOT"]<=3.3) & (alldata["ID"]==-4)
 	return alldata["L_OBS"][id],alldata["P_OBS"][id],alldata["D_OBS"][id],alldata["P_PRED"][id]
-	#return np.sum(((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)/len(alldata["L_OBS"])
-
-#print chisq(parameters_init)
-#exit()
+	#return np.sum(((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2),len(alldata["L_OBS"])
 
 import matplotlib.pyplot as plt 
 import matplotlib
@@ -73,13 +71,14 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 x,y,dy,yfit=chisq(parameters_init)
-print dy
 ax.errorbar(x,y,yerr=dy,capsize=10,linestyle='',c='crimson',marker='o',markeredgewidth=0, ms=12,alpha=1,label=r'$\rm{Observations}$')
-ax.plot(x,yfit,'.',c='royalblue',marker='s',ms=12,label='Fit')
-prop = matplotlib.font_manager.FontProperties(size=25.0)
+ax.plot(x,yfit,'.',c='royalblue',marker='o',ms=12,label=r'$\rm Best-fit$')
+prop = matplotlib.font_manager.FontProperties(size=30.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
-ax.set_xlabel(r'$\log{(L_{\rm B}/{\rm L}_{\odot})}$',fontsize=40,labelpad=2.5)
+ax.set_xlabel(r'$\log{(L_{\rm HX}/{\rm L}_{\odot})}$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\Phi[{\rm dex}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
+ax.text(0.85, 0.92, r'${z=2.7-3.3}$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
+
 #ax.set_xlim(1.5,10.5)
 #ax.set_ylim(-2.9,-1.3)
 ax.tick_params(labelsize=30)

@@ -33,3 +33,25 @@ def load_brown_lf_data(z): # L_IR, PHI_IR, DPHI_IR, z
 		#   no redshift data in this limited sample
 		DPHI_IR= D_8
 		return L_IR, PHI_IR, DPHI_IR
+
+def return_brown_lf_fitted(L0_list,z):	
+	# given L in L_solar at 15 microns, convert it 
+	L_15_over_L_8 = 10**(+0.060001373)	# from Hatziminaoglou model spectrum
+		#L_15_over_L_8 = 10^(+0.0263996)	# from Hatziminaoglou model spectrum
+	L_8 = (10.**L0_list * 10.**L_solar )/L_15_over_L_8
+	M_8 = -28.5 - 2.5*np.log10(L_8/4.11e45)
+
+	phi_29_2 = 4.46e-7 * 2.5
+	alpha = -2.75
+	k1    =  1.15
+	k2    = -0.34
+	k3    =  0.03
+	zpeak =  2.56
+
+	M_z   = -29.0 - 2.5*(k1*z + k2*z**2 + k3*z**3) + 2.5*(2.*k1 + 4.*k2 + 8.*k3)
+	phi   = phi_29_2 * 10**(0.4*(alpha+1.)*(M_z-M_8))
+	
+	return np.log10(phi) #+ np.log10(1./(1.-0.55))	
+		# correction for mean Type-2 fraction (NOTE: not 
+		#   obscured in the IR, but not optical qso so 
+		#   no redshift data in this limited sample

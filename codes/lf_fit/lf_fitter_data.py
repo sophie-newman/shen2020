@@ -37,21 +37,21 @@ dset_ids={
 	"SSG": -1,
 	"COMBO17": -1,
 	#soft xray
-	#"HASINGER": -3,
-	#"MIYAJI": -3,
-	#"SILVERMAN_SX": -3,
+	"HASINGER": -3,
+	"MIYAJI": -3,
+	"SILVERMAN_SX": -3,
 	#hard xray
-	#"UEDA": -4,
-	#"LAFRANCA": -4,
-	#"SILVERMAN_HX": -4,
-	#"BARGER": -4,
-	#"NANDRA": -4,
-	#"SAZREV": -4,
+	"UEDA": -4,
+	"LAFRANCA": -4,
+	"SILVERMAN_HX": -4,
+	"BARGER": -4,
+	"NANDRA": -4,
+	"SAZREV": -4,
 	#INFRARED
-	#"BROWN": -2,
-	#"MATUTE": -2,
+	"BROWN": -2,
+	"MATUTE": -2,
 	#narrow lines
-	#"HAO": -4
+	"HAO": -4
 }
 
 zmins={
@@ -126,4 +126,27 @@ load_LF_data={
 	"BROWN":load_brown_lf_data,
 	"MATUTE":load_matute_lf_data,
 	"HAO":load_hao_lf_data
+}
+return_LF={
+	"DR3":return_sdss_dr3_lf_fitted,
+	"2SLAQ":return_2slaq_lf_fitted,
+	"HUNT":return_combo17_lf_fitted,
+	"SIANA":return_combo17_lf_fitted,
+	"CRISTIANI":return_combo17_lf_fitted,
+	"KDC":return_sdss_dr3_lf_fitted,
+	"FAN":return_sdss_fan_lf_fitted,
+	"SSG":return_sdss_dr3_lf_fitted,
+	"COMBO17":return_combo17_lf_fitted,
+	"HASINGER":return_hasinger_lf_fitted,
+	"MIYAJI":return_miyaji_lf_fitted,
+	"UEDA":return_ueda_lf_fitted,
+	"LAFRANCA":return_lafranca_lf_fitted,
+	"SILVERMAN_SX":return_hasinger_lf_fitted,
+	"SILVERMAN_HX":return_ueda_lf_fitted,
+	"BARGER":return_ueda_lf_fitted,
+	"NANDRA":None,
+	"SAZREV":return_ueda_lf_fitted,
+	"BROWN":return_brown_lf_fitted,
+	"MATUTE":return_matute_lf_fitted,
+	"HAO":return_ueda_lf_fitted
 }

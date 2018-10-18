@@ -51,5 +51,37 @@ def load_combo17_lf_data(z): # L_BB, PHI_BB, DPHI_BB, z
 		PHI_BB = P0[ok] + np.log10(2.5) +3.*np.log10(7./6.5) # converts to per magnitude
 		M_BB   = M_B[ok] + 5.*np.log10(7./6.5)
 		DPHI_BB= D0[ok]
-		L_BB   = 0.4*(M_sun_Bband_AB-M_BB)
+		L_BB   = 0.4*(M_sun_Bband_AB - M_BB)
 		return L_BB, PHI_BB, DPHI_BB
+
+# Function to return the analytical Wolf et al. (2003) luminosity function 
+#   for a list of B-band luminosities L0_list (in SOLAR luminosities) at redshift z
+#   (for an Omega_M = 0.3, Omega_Lambd = 0.7 cosmology)
+#
+def return_combo17_lf_fitted(L0_list,z):
+	A0 = -5.620
+	A1 = 0.1845
+	A2 = -0.02652
+	M0_145 = -25.0
+	# convert to a B-band M0
+	M0_B = M0_145 + 1.75 +5.*np.log10(7./6.5)
+	B1 = 1.3455
+	B2 = -80.845
+	B3 = 127.32
+	C1 = 0.3599
+	C2 = -15.574
+	
+	zeta = np.log10((1.+z)/(1.+2.))
+	Mz_145 = M0_145 + B1*zeta + B2*zeta**2 + B3*zeta**3
+
+	Mz_B   = M0_B   + B1*zeta + B2*zeta**2 + B3*zeta**3
+	M_B_t  = M_sun_Bband_AB - 2.5*(L0_list)
+	mu     = M_B_t - Mz_B
+	logphi = A0 + A1*mu + A2*mu*mu		# PLE
+
+
+	mu     = M_B_t - Mz_B
+	logphi = A0 + A1*mu + A2*mu*mu + C1*zeta + C2*zeta*zeta	# PDE
+
+	PHI    = logphi + np.log10(2.5) + 3.*np.log10(7./6.5) 
+	return PHI
