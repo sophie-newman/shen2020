@@ -35,8 +35,6 @@ def bolometricLF(L_bol,z):
 		#cap the bright-end evolution to prevent unphysical divergence
 		x = L_bol - l_star
 
-		print gamma_2
-
 	if (KEYS["FIT_KEY"]==5): 
 		return np.power(10.,(phi_star - gamma_1*x - np.power(10.,x*gamma_2)/np.log(10.)))
 	return np.power(10.,phi_star - np.log10(np.power(10.,x*gamma_1) + np.power(10.,x*gamma_2)))

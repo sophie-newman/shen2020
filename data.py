@@ -17,23 +17,23 @@ datapath=homepath+"data/"
 #COSMOLOGY
 hubble      = 0.7
 Omega0      = 0.3
-OmegaBaryon = 0.04
+#OmegaBaryon = 0.04
 OmegaLambda = 0.7
 cosmo        = FlatLambdaCDM(H0=hubble*100, Om0=Omega0)
 
 #CONSTANTS
 M_sun_Bband_AB = 4.77  #4.72
-L_solar=np.log10(3.9e33)
+L_solar=np.log10(3.9e33)  #3.9e33
 #L_solar=np.log10(con.L_sun.value*1e7) #log10 of solar luminosity in erg/s
 
 #KEYS
 KEYS={   
-	"LF_model": "Fiducial",
-	"Extinction_model": "Fiducial",
-	"Fit_method": "Chisq",
-	"FIT_KEY": 0
+	"LF_model": "Fiducial",  #LDDE  PLE   Modified_Schechter
+	"Extinction_model": "Fiducial",  #Fixed   Redshift_Evolved
+	"Fit_method": "Chisq", #Modified_Chisq
+	"FIT_KEY": 0  
 }
-FIT_LOG_Z = 1
+FIT_LOG_Z = True
 Z_NORM_SET = 2.0
 
 #LUMINOSITY GRID

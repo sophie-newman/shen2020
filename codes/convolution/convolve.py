@@ -122,7 +122,7 @@ def extinction_correction(Phi_band, nu):
 				k = (np.log10(Phi_obs[-1])-np.log10(Phi_obs[-2]))/(L_obs[-1]-L_obs[-2])
 				p0 = np.log10(Phi_obs[-2]) + k*(L_band[j]-L_obs[-2])
 			L_HX = bolometric_correction(L_bol_grid[j],-4)
-			psi = psi_44 - beta_L * (L_HX + np.log10(3.9) + 33.0 - 44.0)
+			psi = psi_44 - beta_L * (L_HX + L_solar - 44.0)
 			if psi < 0: psi = 0
 			if psi > psi_max: psi = psi_max
 
@@ -145,8 +145,9 @@ def extinction_correction(Phi_band, nu):
 
 def convolve(Phi_bol,nu):
 	l_band=bolometric_correction(L_bol_grid,nu)
-	p_1=uncertainty_correction(Phi_bol,nu)
-	phi_obs= extinction_correction(p_1,nu)
+	P_1=Phi_bol * bolometric_correction_jacobian(L_bol_grid,nu)
+	P_2=uncertainty_correction(P_1,nu)
+	phi_obs= extinction_correction(P_2,nu)
 	return l_band, phi_obs
 
 def printall(redshift,nu):
@@ -157,7 +158,7 @@ def printall(redshift,nu):
 	if nu == -3.: nu_eff = 2.4180000e17 # 'effective' 1 keV
 	if nu == -4.: nu_eff = 1.2090000e18 # 'effective' 5 keV
 
-	phi_bol= bolometricLF(L_bol_grid,redshift) * bolometric_correction_jacobian(L_bol_grid,nu)
+	phi_bol= bolometricLF(L_bol_grid,redshift)
 	l_band, phi_obs=convolve(phi_bol,nu)
 
 	m_AB_band=-2.5*l_band+2.5*np.log10(nu_eff)-32.38265724887536
