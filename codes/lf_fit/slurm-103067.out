@@ -1,0 +1,4 @@
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)

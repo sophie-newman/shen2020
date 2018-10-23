@@ -5,11 +5,13 @@ import sys
 from astropy.cosmology import FlatLambdaCDM
 import astropy.constants as con
 
-homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
+#homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
+homepath="/home/xuejian/works/quasarLF/git/"
 sys.path.append(homepath+"codes/bolometric_correction/")
 sys.path.append(homepath+"codes/convolution/")
 sys.path.append(homepath+"codes/lf_fit/")
 sys.path.append(homepath+"codes/possessing_obdata/")
+sys.path.append(homepath+"codes/c_lib/")
 sys.path.append(homepath+"codes/")
 
 datapath=homepath+"data/"
@@ -38,6 +40,7 @@ Z_NORM_SET = 2.0
 
 #LUMINOSITY GRID
 L_bol_grid = np.linspace(8.,18.,101)[:-1]+0.008935
+N_bol_grid = len(L_bol_grid)
 d_log_l_bol = L_bol_grid[1]-L_bol_grid[0]
 
 #functions

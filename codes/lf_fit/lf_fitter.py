@@ -7,20 +7,18 @@ from scipy.optimize import curve_fit
 from scipy.optimize import minimize
 from scipy.optimize import least_squares
 # fit the luminosity function based on datasets at a given redshift
-#L_BB_tmp = bolometric_correction(L_bol_grid,-1)
-
 from lf_fitter_data import *
+from ctypes import *
+import ctypes
 
-#parameters_init = np.array([0.10 , 	0.608, 	-6.58, 	8.427,  1.02, 
-#					    -10.23, -3.00,	0.000, 	1.403,  -1.07,  
-#					    0.0, 	0.00,   0.0, 	1.5, 	-3.19])		
-#parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis_0", "logLs_0", "k1", 
-#		           "k2", "k_gamma1", "k_gamma1_2(0)" , "k_gamma2_1", "k_gamma2_2", 
-#				   "nothing",  	"k3",	 "k4(0)",   "z_phis(0)", "k_phis(0)"])
 parameters_init = np.array([0.41698725,2.1744386,-4.8250643,13.035753,0.63150872,-11.763560,-14.249833,-0.62298947,1.4599393,-0.79280099])
 parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis", "logLs_0", "k1", "k2", "k3" ,"k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
 parameters_bound= (np.array([0,0,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf]),np.array([np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf]))
 
+#load the shared object file
+c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
+convolve_c = c_extenstion.convolve
+convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
 def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 	z_lis = 0.5*(zmin + zmax)
@@ -37,7 +35,14 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 			phi_fit_pts = np.interp(L_BB ,L_BB_tmp, phi_fit_tmp)
 			PHI_BB = PHI_BB + (np.mean((phi_fit_pts))-np.mean((PHI_BB)))	
 		if (len(L_BB) > 0):
-			L_B, PHI_B = convolve(np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")), dset_id) 
+			L_B = bolometric_correction(L_bol_grid,dset_id)
+			nu_c = c_double(dset_id)
+			input_c= np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+			res = convolve_c(input_c,nu_c)
+			res = [i for i in res.contents]
+			PHI_B = np.array(res,dtype=np.float64)
+			#L_B, PHI_B = convolve(np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")), dset_id) 
+			
 			phi_i = np.interp(L_BB, L_B, np.log10(PHI_B))
 
 			alldata["P_PRED"] = np.append(alldata["P_PRED"] , phi_i)
@@ -55,7 +60,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 
 			#print "NAME:",dset_name,"; redshift",redshift,";  chisq:", np.sum(((phi_i-PHI_BB)/DPHI_BB)**2)," / ",len(L_BB)
 
-	print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
+	#print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
 
 def chisq(parameters):
 	alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
@@ -65,16 +70,16 @@ def chisq(parameters):
 	bad = np.invert(np.isfinite(alldata["P_PRED"]))
 	if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
+	print "call once"
 	#id= (alldata["Z_TOT"]>=2.7) & (alldata["Z_TOT"]<=3.3) & (alldata["ID"]==-4)
 	#return alldata["L_OBS"][id],alldata["P_OBS"][id],alldata["D_OBS"][id],alldata["P_PRED"][id]
-	return np.sum(((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2),len(alldata["L_OBS"])-10
+	return np.sum(((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)#,len(alldata["L_OBS"])-10
 
-t0=time.time()
+#t0=time.time()
 print chisq(parameters_init)
-print time.time()-t0
-exit()
-
-
+#print time.time()-t0
+#exit()
+'''
 import matplotlib.pyplot as plt 
 import matplotlib
 
@@ -103,10 +108,11 @@ ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
 plt.show()
-
-#out = minimize(chisq,x0=parameters_init)#bounds=parameters_bound)
-#out = least_squares(chisq,x0=parameters_init,bounds=parameters_bound)
-#print out
+'''
+out = minimize(chisq,x0=parameters_init,method='Nelder-Mead')#bounds=parameters_bound)
+print out
+out = least_squares(chisq,x0=parameters_init,bounds=parameters_bound)
+print out
 
 
 
