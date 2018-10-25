@@ -11,6 +11,7 @@ from lf_fitter_data import *
 from ctypes import *
 import ctypes
 
+bestfit=np.array([0.38181256,2.16955741,-4.70557406,12.94851374,0.43771614,-11.42561263,-11.34952214,-0.7552896,1.32130027,-0.77768681])
 parameters_init = np.array([0.41698725,2.1744386,-4.8250643,13.035753,0.63150872,-11.763560,-14.249833,-0.62298947,1.4599393,-0.79280099])
 parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis", "logLs_0", "k1", "k2", "k3" ,"k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
 parameters_bound= (np.array([0,0,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf]),np.array([np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf]))
@@ -79,6 +80,8 @@ def chisq(parameters):
 print chisq(parameters_init)
 #print time.time()-t0
 #exit()
+
+print chisq(bestfit)
 '''
 import matplotlib.pyplot as plt 
 import matplotlib
@@ -109,10 +112,10 @@ ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
 plt.show()
 '''
-out = minimize(chisq,x0=parameters_init,method='Nelder-Mead')#bounds=parameters_bound)
-print out
-out = least_squares(chisq,x0=parameters_init,bounds=parameters_bound)
-print out
+#out = minimize(chisq,x0=parameters_init,method='Nelder-Mead')#bounds=parameters_bound)
+#print out
+#out = least_squares(chisq,x0=parameters_init,bounds=parameters_bound)
+#print out
 
 
 
