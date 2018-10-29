@@ -10,7 +10,7 @@ homepath="/home/xuejian/works/quasarLF/git/"
 sys.path.append(homepath+"codes/bolometric_correction/")
 sys.path.append(homepath+"codes/convolution/")
 sys.path.append(homepath+"codes/lf_fit/")
-sys.path.append(homepath+"codes/possessing_obdata/")
+sys.path.append(homepath+"codes/obdata/")
 sys.path.append(homepath+"codes/c_lib/")
 sys.path.append(homepath+"codes/")
 
