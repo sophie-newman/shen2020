@@ -11,6 +11,7 @@ from lf_fitter_data import *
 from ctypes import *
 import ctypes
 
+bestfit2=np.array([0.39856372,2.19426155,-4.73290265,12.97241616,0.4371788,-11.63470663,-11.7235743,-0.72820353,1.36234503,-0.79697647])
 bestfit=np.array([0.38181256,2.16955741,-4.70557406,12.94851374,0.43771614,-11.42561263,-11.34952214,-0.7552896,1.32130027,-0.77768681])
 parameters_init = np.array([0.41698725,2.1744386,-4.8250643,13.035753,0.63150872,-11.763560,-14.249833,-0.62298947,1.4599393,-0.79280099])
 parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis", "logLs_0", "k1", "k2", "k3" ,"k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
@@ -49,7 +50,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 			alldata["P_PRED"] = np.append(alldata["P_PRED"] , phi_i)
 			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_BB)
 			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_BB)
-			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_BB + 0.01)
+			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_BB)# + 0.01)
 			alldata["Z_TOT"]  = np.append(alldata["Z_TOT"]  , np.ones(len(L_BB)) * redshift)
 			#alldata["B"]      = np.append(alldata["B"]      , 0*L_BB)
 			alldata["ID"]     = np.append(alldata["ID"]     , np.ones(len(L_BB)) * dset_id)
@@ -57,11 +58,10 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 			alldata_tem["P_PRED"] = np.append(alldata_tem["P_PRED"] , phi_i)
 			alldata_tem["L_OBS"]  = np.append(alldata_tem["L_OBS"]  , L_BB)
 			alldata_tem["P_OBS"]  = np.append(alldata_tem["P_OBS"]  , PHI_BB)
-			alldata_tem["D_OBS"]  = np.append(alldata_tem["D_OBS"]  , DPHI_BB + 0.01)
+			alldata_tem["D_OBS"]  = np.append(alldata_tem["D_OBS"]  , DPHI_BB)# + 0.01)
 
 			#print "NAME:",dset_name,"; redshift",redshift,";  chisq:", np.sum(((phi_i-PHI_BB)/DPHI_BB)**2)," / ",len(L_BB)
-
-	#print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
+	print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
 
 def chisq(parameters):
 	alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
@@ -71,17 +71,18 @@ def chisq(parameters):
 	bad = np.invert(np.isfinite(alldata["P_PRED"]))
 	if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
-	print "call once"
+	#print "call once"
 	#id= (alldata["Z_TOT"]>=2.7) & (alldata["Z_TOT"]<=3.3) & (alldata["ID"]==-4)
 	#return alldata["L_OBS"][id],alldata["P_OBS"][id],alldata["D_OBS"][id],alldata["P_PRED"][id]
 	return np.sum(((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)#,len(alldata["L_OBS"])-10
 
-#t0=time.time()
+t0=time.time()
 print chisq(parameters_init)
-#print time.time()-t0
+print time.time()-t0
 #exit()
 
 print chisq(bestfit)
+print chisq(bestfit2)
 '''
 import matplotlib.pyplot as plt 
 import matplotlib
@@ -113,8 +114,6 @@ ax.minorticks_on()
 plt.show()
 '''
 #out = minimize(chisq,x0=parameters_init,method='Nelder-Mead')#bounds=parameters_bound)
-#print out
-#out = least_squares(chisq,x0=parameters_init,bounds=parameters_bound)
 #print out
 
 

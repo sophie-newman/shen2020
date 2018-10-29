@@ -25,7 +25,7 @@ cosmo        = FlatLambdaCDM(H0=hubble*100, Om0=Omega0)
 
 #CONSTANTS
 M_sun_Bband_AB = 4.77  #4.72
-L_solar=np.log10(3.9e33)  #3.9e33
+L_solar=np.log10(3.9e33)  #4e33
 #L_solar=np.log10(con.L_sun.value*1e7) #log10 of solar luminosity in erg/s
 
 #KEYS
@@ -39,7 +39,7 @@ FIT_LOG_Z = True
 Z_NORM_SET = 2.0
 
 #LUMINOSITY GRID
-L_bol_grid = np.linspace(8.,18.,101)[:-1]+0.008935
+L_bol_grid = np.linspace(8.,18.,101)[:-1]#+0.008935
 N_bol_grid = len(L_bol_grid)
 d_log_l_bol = L_bol_grid[1]-L_bol_grid[0]
 
