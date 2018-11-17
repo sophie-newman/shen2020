@@ -5,8 +5,8 @@ import sys
 from astropy.cosmology import FlatLambdaCDM
 import astropy.constants as con
 
-#homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
-homepath="/home/xuejian/works/quasarLF/git/"
+homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
+#homepath="/home/xuejian/works/quasarLF/git/"
 sys.path.append(homepath+"codes/bolometric_correction/")
 sys.path.append(homepath+"codes/convolution/")
 sys.path.append(homepath+"codes/lf_fit/")
@@ -19,7 +19,7 @@ datapath=homepath+"data/"
 #COSMOLOGY
 hubble      = 0.7
 Omega0      = 0.3
-#OmegaBaryon = 0.04
+OmegaBaryon = 0.04
 OmegaLambda = 0.7
 cosmo        = FlatLambdaCDM(H0=hubble*100, Om0=Omega0)
 
@@ -77,11 +77,25 @@ def lum_correct_cosmology(redshift):
     distance_corr_factor = (dlum_new/dlum_old)**2
     return distance_corr_factor
 
+def lum_correct_cosmo_flexible(redshift,h_old,Om0_old):
+    cosmo_to_correct = FlatLambdaCDM(H0=h_old*100, Om0=Om0_old)
+    dlum_old = cosmo_to_correct.luminosity_distance(redshift).value
+    dlum_new = cosmo.luminosity_distance(redshift).value
+    distance_corr_factor = (dlum_new/dlum_old)**2
+    return distance_corr_factor
+
 # function to correct QSO number densities from the old-school 
 #    Omega_M = 1, q=0.5 cosmology to the modern 0.7/0.3 cosmology
 #
 def phi_correct_cosmology(redshift):
     vol_old = cosmo_old.differential_comoving_volume(redshift).value
+    vol_new = cosmo.differential_comoving_volume(redshift).value
+    volume_corr_factor = vol_old/vol_new
+    return volume_corr_factor
+
+def phi_correct_cosmo_flexible(redshift,h_old,Om0_old):
+    cosmo_to_correct = FlatLambdaCDM(H0=h_old*100, Om0=Om0_old)
+    vol_old = cosmo_to_correct.differential_comoving_volume(redshift).value
     vol_new = cosmo.differential_comoving_volume(redshift).value
     volume_corr_factor = vol_old/vol_new
     return volume_corr_factor

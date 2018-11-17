@@ -9,7 +9,7 @@ matplotlib.rc('xtick.major', size=15, width=3)
 matplotlib.rc('xtick.minor', size=7.5, width=3)
 matplotlib.rc('ytick.major', size=15, width=3)
 matplotlib.rc('ytick.minor', size=7.5, width=3)
-matplotlib.rc('lines',linewidth=4,markersize=15)
+matplotlib.rc('lines',linewidth=4,markersize=12)
 matplotlib.rc('axes', linewidth=4)
 
 ###### Brightman2012
@@ -20,6 +20,14 @@ br12={
 	"ferr" :np.array([7.5,5.2,12.4]),
 }
 ##########################################################################
+# Lanzuisi 2018
+la18={
+	"zmin":np.array([0.04,1.0,2.0]),
+	"zmax":np.array([1.0,2.0,3.5]),
+	"f":np.array([19.,30.0,48.0]),
+	"ferr" : np.array([[0.06,0.08,0.11],[0.07,0.10,0.12]])
+}
+
 ####### Ueda2014
 phi_4375_0=0.43
 phi_min=0.2
@@ -67,32 +75,48 @@ ydown=interp1d(data["x"][id],data["y"][id])(x_fit)
 ax.fill_between( 10**x_fit-1 ,yup,ydown,color='royalblue', edgecolor='white' ,alpha=0.3)
 ax.plot( 10**x_fit-1, ymid, c='royalblue', label=r'$\rm Aird+$ $\rm 2015$ ($\log{L_{\rm X}}=43.5$)')
 
+
+data=np.genfromtxt("aird2015_44_5.dat",names=True)
+ax.plot( 10**data["x"]-1, data["y"], '--', dashes=(15,9) ,c='royalblue', label=r'$\rm Aird+$ $\rm 2015$ ($\log{L_{\rm X}}=44.5$)')
+
+
 x_fit=np.linspace(0,5,1000)
 f_fit=0.0*x_fit
 for i in range(len(x_fit)):
 	f_fit[i]= fraction(43.5, x_fit[i])
 ax.plot(x_fit, f_fit, c='crimson', label=r'$\rm Ueda+$ $\rm 2014$ ($\log{L_{\rm X}}=43.5$)')
 
+for i in range(len(x_fit)):
+	f_fit[i]= fraction(44.5, x_fit[i])
+ax.plot(x_fit, f_fit, '--', dashes=(15,9),c='crimson', label=r'$\rm Ueda+$ $\rm 2014$ ($\log{L_{\rm X}}=44.5$)')
+
+
 ax.errorbar( (br12["zmin"]+br12["zmax"])/2., br12["f"]/100., yerr=br12["ferr"]/100., xerr=(br12["zmax"]-br12["zmin"])/2.,
-			color='seagreen', mec='seagreen', linestyle='', marker='o', capsize=8, capthick=4, lw=4,
+			color='seagreen', mec='seagreen', linestyle='', marker='o', capsize=8, capthick=3, lw=4,
 			label=r'$\rm Brightman+$ $\rm 2012$ ($\log{L_{\rm X}}=43.5$)' )
 
+ax.errorbar( 0.03, 0.20, yerr= ([0.06],[0.09]), marker='o', c='gray', mec='gray',
+			 linestyle='', capsize=8, capthick=3, lw=4, label=r'$\rm Burlon+$ $\rm 2011$ ($\log{L_{\rm X}}=43.6$)')
 
-ax.errorbar( 0.1, 0.20, yerr= ([0.06],[0.09]), marker='o', c='gray', mec='gray',
-			 linestyle='', capsize=8, capthick=4, lw=4, label=r'$\rm Burlon+$ $\rm 2011$ ($\log{L_{\rm X}}=43.6$)')
+ax.errorbar( 2, 0.36, yerr= 0.12, xerr=1, marker='o', c='purple', mec='purple',
+			 linestyle='', capsize=8, capthick=3, lw=4, label=r'$\rm Del$ $\rm Moro+$ $\rm 2015$ ($\log{L_{\rm X}}\sim44$)')
 
-ax.errorbar( 2, 0.36, yerr= 0.12, marker='o', c='purple', mec='purple',
-			 linestyle='', capsize=8, capthick=4, lw=4, label=r'$\rm Del$ $\rm Moro+$ $\rm 2015$ ($\log{L_{\rm X}}\sim44$)')
-
-ax.errorbar( 0.1, 0.27, yerr= 0.27*0.2, lolims=True, marker='o', c='magenta',
+ax.errorbar( 0.055, 0.27, yerr= 0.06, lolims=True, marker='o', c='magenta',
 			 linestyle='', capsize=10, mew=0, lw=4, label=r'$\rm Ricci+$ $\rm 2015$')
 
+ax.errorbar( 1.1, 0.115, yerr= 0.06, lolims=True, marker='o', c='cyan',
+			 linestyle='', capsize=10, mew=0, lw=4, label=r'$\rm Masini+$ $\rm 2018$')
 
-prop = matplotlib.font_manager.FontProperties(size=20.0)
-ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1)
+ax.errorbar( (la18["zmin"]+la18["zmax"])/2., la18["f"]/100., yerr=la18["ferr"], xerr=(la18["zmax"]-la18["zmin"])/2.,
+			color='navy', mec='navy', linestyle='', marker='o', capsize=8, capthick=3, lw=4,
+			label=r'$\rm Lanzuisi+$ $\rm 2018$ ($\log{L_{\rm X}}=44.5$)' )
+
+
+prop = matplotlib.font_manager.FontProperties(size=18.8)
+ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=2)
 ax.set_xlabel(r'$\rm Redshift$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$f_{\rm CTK}$',fontsize=40,labelpad=5)
-ax.set_xlim(0,5)
+ax.set_xlim(-0.05,5)
 ax.set_ylim(0,0.9)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
