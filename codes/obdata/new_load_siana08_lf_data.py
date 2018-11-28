@@ -4,14 +4,13 @@ from data import *
 import numpy as np
 
 def load_siana08_lf_data(z): 
-	if (z <= 0.68) or (z > 2.6): return False
-	elif (z > 0.68) and (z <= 2.2): return False
-	elif (z > 2.2) and (z <= 2.6):	
+	if (z < 2.8) or (z > 3.5): return False
+	elif (z >= 2.8) and (z <= 3.5):	
 		filename = datapath+'kk18_compilation.dat'
 		data = np.genfromtxt(filename,names=['counter','sample', 'z_bin', 'z_min', 'z_max', 'z_mean', 'M1450', 
 			'left', 'right', 'log_phi', 'uperr', 'lowerr', 'nqso', 'Veff', 'P'])
 
-		id = (data["sample"]==3) & (data["z_min"]< z) & (data["z_max"]>=z)
+		id = (data["sample"]==4) & (data["z_min"]< z) & (data["z_max"]>=z)
 
 		M_1450  = data['M1450'][id]
 		logphi  = data['log_phi'][id]
@@ -20,7 +19,3 @@ def load_siana08_lf_data(z):
 		PHI_1450 = logphi
 		DPHI_1450 = dphi
 		return M_1450, PHI_1450, DPHI_1450
-
-
-#print np.max(data["M1450"][data["sample"]==3])
-#print np.min(data["M1450"][data["sample"]==3])
