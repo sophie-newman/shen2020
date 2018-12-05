@@ -19,3 +19,5 @@ def load_willott10_lf_data(z):
 		PHI_1450 = logphi
 		DPHI_1450 = dphi
 		return M_1450, PHI_1450, DPHI_1450
+
+print load_willott10_lf_data(6)
