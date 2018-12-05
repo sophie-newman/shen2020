@@ -69,6 +69,25 @@ dset_ids={
 	"HAO": -4
 }
 
+new_dset_ids={
+	#1450
+	"BONGIORNO07":-1,
+	"GIALLONGO15":-1,
+	"GILKMAN11":  -1,
+	"JIANG09":    -1,
+	"KASHIKAWA15":-1,
+	"MASTER12":   -1,
+	"MCGREER13":  -1,
+	"MCGREER18":  -1,
+	"PALANQUE13": -1,
+	"ROSS13":     -1,
+	"ROSS13_S82": -1,
+	"SIANA08":    -1,
+	"WANG18":     -1,
+	"WILLOTT10":  -1,
+	"YANG18":     -1
+}
+
 zmins={
 	"DR3": np.array([0.40, 0.68, 1.06, 1.44, 1.82, 2.21, 2.60, 3.03, 3.50, 4.00, 4.50]),
 	"2SLAQ":np.array([0.40, 0.68, 0.97, 1.25, 1.53, 1.81]),
@@ -119,6 +138,44 @@ zmaxs={
 	"MATUTE":np.array([0.2, 2.0]),
 	"HAO":np.array([0.10])
 }
+
+new_zmins={
+        #1450
+        "BONGIORNO07":np.array([2.0,2.5,3.0]),
+        "GIALLONGO15":np.array([4.0,4.5,5.0]),
+        "GILKMAN11":  np.array([3.8]),
+        "JIANG09":    np.array([5.7]),
+        "KASHIKAWA15":np.array([5.85]),
+        "MASTER12":   np.array([3.1,3.5]),
+        "MCGREER13":  np.array([4.7]),
+        "MCGREER18":  np.array([4.7]),
+        "PALANQUE13": np.array([2.2]),
+        "ROSS13":     np.array([2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 3.0, 3.25]),
+	"ROSS13_S82": np.array([2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 3.0, 3.25]),
+        "SIANA08":    np.array([2.8]),
+        "WANG18":     np.array([6.45]),
+        "WILLOTT10":  np.array([5.75]),
+        "YANG18":     np.array([0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0])
+}
+new_zmaxs={
+        #1450
+        "BONGIORNO07":np.array([2.5,3.0,4.0]),
+        "GIALLONGO15":np.array([4.5,5.0,6.5]),
+        "GILKMAN11":  np.array([5.2]),
+        "JIANG09":    np.array([6.6]),
+        "KASHIKAWA15":np.array([6.45]),
+        "MASTER12":   np.array([3.5,5.0]),
+        "MCGREER13":  np.array([5.1]),
+        "MCGREER18":  np.array([5.4]),
+        "PALANQUE13": np.array([2.6]),
+        "ROSS13":     np.array([2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 3.0, 3.25, 3.5]),
+	"ROSS13_S82": np.array([2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 3.0, 3.25, 3.5]),
+        "SIANA08":    np.array([3.5]),
+        "WANG18":     np.array([7.05]),
+        "WILLOTT10":  np.array([6.45]),
+        "YANG18":     np.array([1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5])
+}
+
 load_LF_data={
 	"DR3":load_sdss_dr3_lf_data,
 	"2SLAQ":load_2slaq_lf_data,
@@ -164,4 +221,23 @@ return_LF={
 	"BROWN":return_brown_lf_fitted,
 	"MATUTE":return_matute_lf_fitted,
 	"HAO":return_ueda_lf_fitted
+}
+
+new_load_LF_data={
+        #1450
+        "BONGIORNO07":load_bongiorno07_lf_data,
+        "GIALLONGO15":load_giallongo15_lf_data,
+        "GILKMAN11":  load_gilkman11_lf_data,
+        "JIANG09":    load_jiang09_lf_data,
+        "KASHIKAWA15":load_kashikawa15_lf_data,
+        "MASTER12":   load_master12_lf_data,
+        "MCGREER13":  load_mcgreer13_lf_data,
+        "MCGREER18":  load_mcgreer18_lf_data,
+        "PALANQUE13": load_palanque13_lf_data,
+        "ROSS13":     load_ross13_lf_data,
+	"ROSS13_S82": load_ross13_s82_lf_data,
+        "SIANA08":    load_siana08_lf_data,
+        "WANG18":     load_wang18_lf_data,
+        "WILLOTT10":  load_willott10_lf_data,
+        "YANG18":     load_yang18_lf_data
 }
