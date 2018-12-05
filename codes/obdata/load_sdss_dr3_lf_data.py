@@ -33,8 +33,6 @@ def load_sdss_dr3_lf_data(z):
 		DPHI_BB = dphi
 		return L_BB, PHI_BB, DPHI_BB
 
-print load_sdss_dr3_lf_data(3.25)
-
 # Function to return the analytical Richards et al. (2006) luminosity function 
 #   for a list of B-band luminosities L0_list (in SOLAR luminosities) at redshift z
 #   (for an Omega_M = 0.3, Omega_Lambd = 0.7 cosmology)

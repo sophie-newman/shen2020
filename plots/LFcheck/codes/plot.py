@@ -10,6 +10,10 @@ from scipy.optimize import least_squares
 from lf_data_compilation import *
 from ctypes import *
 import ctypes
+import sys
+
+redmin=float(sys.argv[1])
+redmax=float(sys.argv[2])
 
 bestfit        = np.array([0.39856372, 2.19426155, -4.73290265, 12.97241616, 0.43717880, -11.63470663, -11.72357430, -0.72820353, 1.36234503, -0.79697647])
 #bestfit         = np.array([0.38181256, 2.16955741, -4.70557406, 12.94851374, 0.43771614, -11.42561263, -11.34952214, -0.75528960, 1.32130027, -0.77768681])
@@ -110,8 +114,6 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
-redmin, redmax= 6.99, 8.01
-
 L_B = bolometric_correction(L_bol_grid,-1)
 nu_c = c_double(-1)
 input_c= np.power(10.,LF_at_z(L_bol_grid,parameters_init,(redmax+redmin)/2.,"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
@@ -145,7 +147,7 @@ prop = matplotlib.font_manager.FontProperties(size=30.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 #ax.set_xlabel(r'$\log{(L_{\rm B}/{\rm L}_{\odot})}$',fontsize=40,labelpad=2.5)
 ax.set_xlabel(r'$M_{\rm 1450}$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\log{(\Phi[{\rm mag}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$\log{(\phi[{\rm mag}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
 ax.text(0.85, 0.92, r'${z='+str(redmin)+'-'+str(redmax)+'}$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
 
 ax.set_xlim(-19.5,-32)
@@ -154,5 +156,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-plt.show()
+plt.savefig("../figs/fig"+str(redmin)+"-"+str(redmax)+".pdf",fmt='pdf')
+#plt.show()
 
