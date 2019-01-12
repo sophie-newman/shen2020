@@ -25,20 +25,30 @@ from load_silverman_hx_lf_data import *
 from load_ssg_lf_data import *
 from load_ueda_lf_data import *
 
+from new_load_akiyama18_lf_data import *
 from new_load_bongiorno07_lf_data import *
+from new_load_croom09_lf_data import *
+from new_load_fontanot07_lf_data import *
 from new_load_giallongo15_lf_data import *
 from new_load_gilkman11_lf_data import *
+from new_load_ikeda12_lf_data import *
 from new_load_jiang09_lf_data import *
+from new_load_jiang16_lf_data import *
 from new_load_kashikawa15_lf_data import *
 from new_load_master12_lf_data import *
+from new_load_matsuoka18_lf_data import *
 from new_load_mcgreer13_lf_data import *
 from new_load_mcgreer18_lf_data import *
 from new_load_palanque13_lf_data import *
+from new_load_palanque16_lf_data import *
 from new_load_ross13_lf_data import *
+from new_load_shen12_lf_data import *
 from new_load_siana08_lf_data import *
 from new_load_wang18_lf_data import *
 from new_load_willott10_lf_data import *
+from new_load_yang16_lf_data import *
 from new_load_yang18_lf_data import *
+
 
 dset_ids={
 	#Bband
@@ -71,20 +81,29 @@ dset_ids={
 
 new_dset_ids={
 	#1450
+	"AKIYAMA18":  -1,
 	"BONGIORNO07":-1,
+	"CROOM09":    -1,
+	"FONTANOT07": -1,
 	"GIALLONGO15":-1,
 	"GILKMAN11":  -1,
+	"IKEDA12":    -1,
 	"JIANG09":    -1,
+	"JIANG16":    -1,
 	"KASHIKAWA15":-1,
 	"MASTER12":   -1,
+	"MATSUOKA18": -1,
 	"MCGREER13":  -1,
 	"MCGREER18":  -1,
 	"PALANQUE13": -1,
+	"PALANQUE16": -1,
 	"ROSS13":     -1,
 	"ROSS13_S82": -1,
+	"SHEN12":     -1,
 	"SIANA08":    -1,
 	"WANG18":     -1,
 	"WILLOTT10":  -1,
+	"YANG16":     -1,
 	"YANG18":     -1
 }
 
@@ -140,40 +159,58 @@ zmaxs={
 }
 
 new_zmins={
-        #1450
-        "BONGIORNO07":np.array([2.0,2.5,3.0]),
-        "GIALLONGO15":np.array([4.0,4.5,5.0]),
-        "GILKMAN11":  np.array([3.8]),
-        "JIANG09":    np.array([5.7]),
-        "KASHIKAWA15":np.array([5.85]),
-        "MASTER12":   np.array([3.1,3.5]),
-        "MCGREER13":  np.array([4.7]),
-        "MCGREER18":  np.array([4.7]),
-        "PALANQUE13": np.array([2.2]),
-        "ROSS13":     np.array([2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 3.0, 3.25]),
+	#1450
+	"AKIYAMA18":  np.array([3.6]),
+	"BONGIORNO07":np.array([2.0,2.5,3.0]),
+	"CROOM09":    np.array([0.4,0.68,1.06,1.44,1.82,2.20]),
+	"FONTANOT07": np.array([3.5,4.0]),
+	"GIALLONGO15":np.array([4.0,4.5,5.0]),
+	"GILKMAN11":  np.array([3.8]),
+	"IKEDA12":    np.array([4.57]),
+	"JIANG09":    np.array([5.7]),
+	"JIANG16":    np.array([5.7]),
+	"KASHIKAWA15":np.array([5.85]),
+	"MASTER12":   np.array([3.1,3.5]),
+	"MATSUOKA18": np.array([5.7]),
+	"MCGREER13":  np.array([4.7]),
+	"MCGREER18":  np.array([4.7]),
+	"PALANQUE13": np.array([2.2]),
+	"PALANQUE16": np.array([0.68,1.06,1.44,1.82,2.20,2.60,3.00,3.50]),
+	"ROSS13":     np.array([2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 3.0, 3.25]),
 	"ROSS13_S82": np.array([2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 3.0, 3.25]),
-        "SIANA08":    np.array([2.8]),
-        "WANG18":     np.array([6.45]),
-        "WILLOTT10":  np.array([5.75]),
-        "YANG18":     np.array([0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0])
+	"SHEN12":     np.array([0.3,0.5,0.7,0.9,1.1,1.3,1.5,1.7,1.9,2.4,2.9,3.5,4.0,4.5]),
+	"SIANA08":    np.array([2.8]),
+	"WANG18":     np.array([6.45]),
+	"WILLOTT10":  np.array([5.75]),
+	"YANG16":     np.array([4.7]),
+	"YANG18":     np.array([0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0])
 }
 new_zmaxs={
-        #1450
-        "BONGIORNO07":np.array([2.5,3.0,4.0]),
-        "GIALLONGO15":np.array([4.5,5.0,6.5]),
-        "GILKMAN11":  np.array([5.2]),
-        "JIANG09":    np.array([6.6]),
-        "KASHIKAWA15":np.array([6.45]),
-        "MASTER12":   np.array([3.5,5.0]),
-        "MCGREER13":  np.array([5.1]),
-        "MCGREER18":  np.array([5.4]),
-        "PALANQUE13": np.array([2.6]),
-        "ROSS13":     np.array([2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 3.0, 3.25, 3.5]),
+	#1450
+	"AKIYAMA18":  np.array([4.3]),
+	"BONGIORNO07":np.array([2.5,3.0,4.0]),
+	"CROOM09":    np.array([0.68,1.06,1.44,1.82,2.20,2.60]),
+	"FONTANOT07": np.array([4.0,5.2]),
+	"GIALLONGO15":np.array([4.5,5.0,6.5]),
+	"GILKMAN11":  np.array([5.2]),
+	"IKEDA12":    np.array([5.57]),
+	"JIANG09":    np.array([6.6]),
+	"JIANG16":    np.array([6.4]),
+	"KASHIKAWA15":np.array([6.45]),
+	"MASTER12":   np.array([3.5,5.0]),
+	"MATSUOKA18": np.array([6.5]),
+	"MCGREER13":  np.array([5.1]),
+	"MCGREER18":  np.array([5.4]),
+	"PALANQUE13": np.array([2.6]),
+	"PALANQUE16": np.array([1.06,1.44,1.82,2.20,2.60,3.00,3.50,4.00]),
+	"ROSS13":     np.array([2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 3.0, 3.25, 3.5]),
 	"ROSS13_S82": np.array([2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 3.0, 3.25, 3.5]),
-        "SIANA08":    np.array([3.5]),
-        "WANG18":     np.array([7.05]),
-        "WILLOTT10":  np.array([6.45]),
-        "YANG18":     np.array([1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5])
+	"SHEN12":     np.array([0.5,0.7,0.9,1.1,1.3,1.5,1.7,1.9,2.4,2.9,3.5,4.0,4.5,5.0]),
+	"SIANA08":    np.array([3.5]),
+	"WANG18":     np.array([7.05]),
+	"WILLOTT10":  np.array([6.45]),
+	"YANG16":     np.array([5.4]),
+	"YANG18":     np.array([1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5])
 }
 
 load_LF_data={
@@ -224,20 +261,29 @@ return_LF={
 }
 
 new_load_LF_data={
-        #1450
-        "BONGIORNO07":load_bongiorno07_lf_data,
-        "GIALLONGO15":load_giallongo15_lf_data,
-        "GILKMAN11":  load_gilkman11_lf_data,
-        "JIANG09":    load_jiang09_lf_data,
-        "KASHIKAWA15":load_kashikawa15_lf_data,
-        "MASTER12":   load_master12_lf_data,
-        "MCGREER13":  load_mcgreer13_lf_data,
-        "MCGREER18":  load_mcgreer18_lf_data,
-        "PALANQUE13": load_palanque13_lf_data,
-        "ROSS13":     load_ross13_lf_data,
+	#1450
+	"AKIYAMA18":  load_akiyama18_lf_data,
+	"BONGIORNO07":load_bongiorno07_lf_data,
+	"CROOM09":    load_croom09_lf_data,
+	"FONTANOT07": load_fontanot07_lf_data,
+	"GIALLONGO15":load_giallongo15_lf_data,
+	"GILKMAN11":  load_gilkman11_lf_data,
+	"IKEDA12":    load_ikeda12_lf_data,
+	"JIANG09":    load_jiang09_lf_data,
+	"JIANG16":    load_jiang16_lf_data,
+	"KASHIKAWA15":load_kashikawa15_lf_data,
+	"MASTER12":   load_master12_lf_data,
+	"MATSUOKA18": load_matsuoka18_lf_data,
+	"MCGREER13":  load_mcgreer13_lf_data,
+	"MCGREER18":  load_mcgreer18_lf_data,
+	"PALANQUE13": load_palanque13_lf_data,
+	"PALANQUE16": load_palanque16_lf_data,
+	"ROSS13":     load_ross13_lf_data,
 	"ROSS13_S82": load_ross13_s82_lf_data,
-        "SIANA08":    load_siana08_lf_data,
-        "WANG18":     load_wang18_lf_data,
-        "WILLOTT10":  load_willott10_lf_data,
-        "YANG18":     load_yang18_lf_data
+	"SHEN12":     load_shen12_lf_data,
+	"SIANA08":    load_siana08_lf_data,
+	"WANG18":     load_wang18_lf_data,
+	"WILLOTT10":  load_willott10_lf_data,
+	"YANG16":     load_yang16_lf_data,
+	"YANG18":     load_yang18_lf_data
 }

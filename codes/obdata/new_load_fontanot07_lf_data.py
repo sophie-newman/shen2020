@@ -3,7 +3,7 @@
 from data import *
 import numpy as np
 
-def load_fontanot_lf_data(z): 
+def load_fontanot07_lf_data(z): 
 	if (z <= 3.5) or (z > 5.2): return False
 	elif (z > 3.5) and (z<=4.0):	
 		z_mean = (3.5+4.0)/2.
@@ -24,6 +24,3 @@ def load_fontanot_lf_data(z):
 		DPHI_1450= (PHI_1450_up - PHI_1450_down)/2.
 
 	return M_1450, PHI_1450, DPHI_1450
-
-
-print load_fontanot_lf_data(4.5)
