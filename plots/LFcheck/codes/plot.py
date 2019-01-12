@@ -42,7 +42,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id,newdata=False):
 				phi_fit_tmp = return_LF[dset_name](L_BB_tmp, redshift)
 				phi_fit_pts = np.interp(L_BB ,L_BB_tmp, phi_fit_tmp)
 				PHI_BB = PHI_BB + (np.mean((phi_fit_pts))-np.mean((PHI_BB)))	
-		if (len(L_BB) > 0):
+		if len(L_BB)>0:
 			L_B = bolometric_correction(L_bol_grid,dset_id)
 			nu_c = c_double(dset_id)
 			input_c= np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
