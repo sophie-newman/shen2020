@@ -49,7 +49,6 @@ from new_load_willott10_lf_data import *
 from new_load_yang16_lf_data import *
 from new_load_yang18_lf_data import *
 
-
 dset_ids={
 	#Bband
 	"DR3": -1,
@@ -105,6 +104,22 @@ new_dset_ids={
 	"WILLOTT10":  -1,
 	"YANG16":     -1,
 	"YANG18":     -1
+}
+
+kk_dset_ids={
+	#1450
+	"BONGIORNO07":-1,
+	"GIALLONGO15":-1,
+	"GILKMAN11":  -1,
+	"JIANG09":    -1,
+	"KASHIKAWA15":-1,
+	"MASTER12":   -1,
+	"MCGREER13":  -1,
+	"PALANQUE13": -1,
+	"ROSS13":     -1,
+	"ROSS13_S82": -1,
+	"SIANA08":    -1,
+	"WILLOTT10":  -1
 }
 
 zmins={
@@ -183,7 +198,7 @@ new_zmins={
 	"WANG18":     np.array([6.45]),
 	"WILLOTT10":  np.array([5.75]),
 	"YANG16":     np.array([4.7]),
-	"YANG18":     np.array([0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0])
+	"YANG18":     np.array([0.5,1.0,1.5,2.0,2.5,3.0])#,3.5,4.0])
 }
 new_zmaxs={
 	#1450
@@ -210,7 +225,7 @@ new_zmaxs={
 	"WANG18":     np.array([7.05]),
 	"WILLOTT10":  np.array([6.45]),
 	"YANG16":     np.array([5.4]),
-	"YANG18":     np.array([1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5])
+	"YANG18":     np.array([1.0,1.5,2.0,2.5,3.0,3.5])#,4.0,4.5])
 }
 
 load_LF_data={

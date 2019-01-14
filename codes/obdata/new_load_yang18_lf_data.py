@@ -41,18 +41,18 @@ def load_yang18_lf_data(z):
 		M_mean=np.array([-26.483, -24.457, -23.607])
 		PHI_1450=np.array([-6.478, -6.156, -5.98])
 		sigma=np.array([0.235, 0.349, 0.667])*1e-6
-	elif (z>=3.5) and (z<4.0):	
-		z_c = 3.75
-		M_1450=np.array([-26.998, -24.835])
-		M_mean=np.array([-26.998, -24.835])
-		PHI_1450=np.array([-6.771, -6.739])
-		sigma=np.array([0.170, 0.183])*1e-6	
-	elif (z>=4.0) and (z<=4.5):	
-		z_c = 4.25
-		M_1450=np.array([-26.342, -25.050])
-		M_mean=np.array([-26.342, -25.050])
-		PHI_1450=np.array([-6.738, -6.532])
-		sigma=np.array([0.183, 0.294])*1e-6	
+	#elif (z>=3.5) and (z<4.0):	
+	#	z_c = 3.75
+	#	M_1450=np.array([-26.998, -24.835])
+	#	M_mean=np.array([-26.998, -24.835])
+	#	PHI_1450=np.array([-6.771, -6.739])
+	#	sigma=np.array([0.170, 0.183])*1e-6	
+	#elif (z>=4.0) and (z<=4.5):	
+	#	z_c = 4.25
+	#	M_1450=np.array([-26.342, -25.050])
+	#	M_mean=np.array([-26.342, -25.050])
+	#	PHI_1450=np.array([-6.738, -6.532])
+	#	sigma=np.array([0.183, 0.294])*1e-6	
 
 	M_1450 = M_1450 - 2.5*np.log10(lum_correct_cosmo_flexible(z_c, 0.7, 0.272))
 	PHI_1450 = PHI_1450 + np.log10(phi_correct_cosmo_flexible(z_c, 0.7, 0.272))
