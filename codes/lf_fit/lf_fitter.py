@@ -49,18 +49,24 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 			PHI_model = np.array(res,dtype=np.float64)
 			#L_model, PHI_model = convolve(np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")), dset_id) 
 			
-			phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+			if dset_id==-1:
+				L_Bband = (M_sun_Bband_AB-(L_data - 0.706))/2.5
+				phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+				phi_i = phi_i - np.log10(2.5)
+			else:
+				phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+
 			alldata["P_PRED"] = np.append(alldata["P_PRED"] , phi_i)
-			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_BB)
-			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_BB)
-			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_BB)# + 0.01)
-			alldata["Z_TOT"]  = np.append(alldata["Z_TOT"]  , np.ones(len(L_BB)) * redshift)
-			alldata["ID"]     = np.append(alldata["ID"]     , np.ones(len(L_BB)) * dset_id)
+			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_data)
+			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_data)
+			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_data)
+			alldata["Z_TOT"]  = np.append(alldata["Z_TOT"]  , np.ones(len(L_data)) * redshift)
+			alldata["ID"]     = np.append(alldata["ID"]     , np.ones(len(L_data)) * dset_id)
 			
 			alldata_tem["P_PRED"] = np.append(alldata_tem["P_PRED"] , phi_i)
-			alldata_tem["L_OBS"]  = np.append(alldata_tem["L_OBS"]  , L_BB)
-			alldata_tem["P_OBS"]  = np.append(alldata_tem["P_OBS"]  , PHI_BB)
-			alldata_tem["D_OBS"]  = np.append(alldata_tem["D_OBS"]  , DPHI_BB)# + 0.01)
+			alldata_tem["L_OBS"]  = np.append(alldata_tem["L_OBS"]  , L_data)
+			alldata_tem["P_OBS"]  = np.append(alldata_tem["P_OBS"]  , PHI_data)
+			alldata_tem["D_OBS"]  = np.append(alldata_tem["D_OBS"]  , DPHI_data)
 
 			#print "NAME:",dset_name,"; redshift",redshift,";  chisq:", np.sum(((phi_i-PHI_BB)/DPHI_BB)**2)," / ",len(L_BB)
 	print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
