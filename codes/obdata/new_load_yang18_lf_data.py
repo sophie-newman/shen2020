@@ -4,7 +4,7 @@ from data import *
 import numpy as np
 
 def load_yang18_lf_data(z): 
-	if (z < 0.5) or (z > 4.5): return False
+	if (z < 0.5) or (z > 3.5): return False
 	elif (z>=0.5) and (z<1.0):
 		z_c = 0.75
 		M_1450=np.array([-23.5, -22.5, -21.5, -20.5])
