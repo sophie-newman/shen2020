@@ -59,17 +59,18 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 			alldata["P_PRED"] = np.append(alldata["P_PRED"] , phi_i)
 			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_data)
 			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_data)
-			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_data)
+			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_data + 0.01)
 			alldata["Z_TOT"]  = np.append(alldata["Z_TOT"]  , np.ones(len(L_data)) * redshift)
 			alldata["ID"]     = np.append(alldata["ID"]     , np.ones(len(L_data)) * dset_id)
 			
 			alldata_tem["P_PRED"] = np.append(alldata_tem["P_PRED"] , phi_i)
 			alldata_tem["L_OBS"]  = np.append(alldata_tem["L_OBS"]  , L_data)
 			alldata_tem["P_OBS"]  = np.append(alldata_tem["P_OBS"]  , PHI_data)
-			alldata_tem["D_OBS"]  = np.append(alldata_tem["D_OBS"]  , DPHI_data)
+			alldata_tem["D_OBS"]  = np.append(alldata_tem["D_OBS"]  , DPHI_data + 0.01)
 
 			#print "NAME:",dset_name,"; redshift",redshift,";  chisq:", np.sum(((phi_i-PHI_BB)/DPHI_BB)**2)," / ",len(L_BB)
-	print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
+
+	#if dset_id==-1: print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
 
 def chisq(parameters):
 	alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
@@ -79,9 +80,12 @@ def chisq(parameters):
 	bad = np.invert(np.isfinite(alldata["P_PRED"]))
 	if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
-	return np.sum(((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)#,len(alldata["L_OBS"])-10
+	chitot = np.sum(((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
+	print chitot
+	print len(alldata["L_OBS"])
+	return chitot, len(alldata["L_OBS"])
 
-out = minimize(chisq,x0=parameters_init,method='Nelder-Mead')#bounds=parameters_bound)
+out = minimize(chisq,x0=parameters_init,method='Nelder-Mead',options={"maxiter":10000})#bounds=parameters_bound)
 print out
 
 

@@ -15,6 +15,8 @@ import sys
 redmin=float(sys.argv[1])
 redmax=float(sys.argv[2])
 
+bestfit_new=np.array([  0.52114134,   2.41546279,  -5.05151672,  13.15897877, 0.69946344, -11.09168419, -13.88233586,  -0.54190786, 1.66108554,  -0.74150547])
+
 bestfit        = np.array([0.39856372, 2.19426155, -4.73290265, 12.97241616, 0.43717880, -11.63470663, -11.72357430, -0.72820353, 1.36234503, -0.79697647])
 #bestfit         = np.array([0.38181256, 2.16955741, -4.70557406, 12.94851374, 0.43771614, -11.42561263, -11.34952214, -0.75528960, 1.32130027, -0.77768681])
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
@@ -122,17 +124,17 @@ res = [i for i in res.contents]
 PHI_B = np.array(res,dtype=np.float64)
 x = (M_sun_Bband_AB -2.5*L_B) + 0.706
 y = np.log10(PHI_B) - np.log10(2.5)
-ax.plot(x,y,'--',dashes=(25,15),c='black')
+ax.plot(x,y,'--',dashes=(25,15),c='gray')
 
 L_B = bolometric_correction(L_bol_grid,-1)
 nu_c = c_double(-1)
-input_c= np.power(10.,LF_at_z(L_bol_grid,bestfit,(redmax+redmin)/2.,"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+input_c= np.power(10.,LF_at_z(L_bol_grid,bestfit_new,(redmax+redmin)/2.,"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
 res = convolve_c(input_c,nu_c)
 res = [i for i in res.contents]
 PHI_B = np.array(res,dtype=np.float64)
 x = (M_sun_Bband_AB -2.5*L_B) + 0.706
 y = np.log10(PHI_B) - np.log10(2.5)
-ax.plot(x,y,'--',dashes=(25,15),c='gray')
+ax.plot(x,y,'--',dashes=(25,15),c='black')
 
 x,y,dy,yfit=get_data(redmin,redmax)
 x = (M_sun_Bband_AB -2.5*x) + 0.706
