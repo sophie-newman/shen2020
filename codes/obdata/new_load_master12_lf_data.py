@@ -19,3 +19,5 @@ def load_master12_lf_data(z):
 		PHI_1450 = logphi
 		DPHI_1450 = dphi
 		return M_1450, PHI_1450, DPHI_1450
+
+print load_master12_lf_data(3.9)
