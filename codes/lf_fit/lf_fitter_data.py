@@ -49,6 +49,8 @@ from new_load_willott10_lf_data import *
 from new_load_yang16_lf_data import *
 from new_load_yang18_lf_data import *
 
+from new_load_kk18_lf_shape import *
+
 dset_ids={
 	#Bband
 	"DR3": -1.1,
@@ -275,4 +277,29 @@ return_LF={
 	"BROWN":return_brown_lf_fitted,
 	"MATUTE":return_matute_lf_fitted,
 	"HAO":return_ueda_lf_fitted
+	#1450
+	"AKIYAMA18":  load_kk18_lf_fitted, 
+	"BONGIORNO07":load_kk18_lf_fitted,   
+	"CROOM09":    load_kk18_lf_fitted, 
+	"FONTANOT07": load_kk18_lf_fitted, 
+	"GIALLONGO15":load_kk18_lf_fitted, 
+	"GILKMAN11":  load_kk18_lf_fitted, 
+	"IKEDA12":    load_kk18_lf_fitted, 
+	"JIANG09":    load_kk18_lf_fitted, 
+	"JIANG16":    load_kk18_lf_fitted, 
+	"KASHIKAWA15":load_kk18_lf_fitted, 
+	"MASTER12":   load_kk18_lf_fitted, 
+	"MATSUOKA18": load_kk18_lf_fitted, 
+	"MCGREER13":  load_kk18_lf_fitted, 
+	"MCGREER18":  load_kk18_lf_fitted, 
+	"PALANQUE13": load_kk18_lf_fitted, 
+	"PALANQUE16": load_kk18_lf_fitted, 
+	"ROSS13":     load_kk18_lf_fitted, 
+	"ROSS13_S82": load_kk18_lf_fitted, 
+	"SHEN12":     load_kk18_lf_fitted, 
+	"SIANA08":    load_kk18_lf_fitted, 
+	"WANG18":     load_kk18_lf_fitted, 
+	"WILLOTT10":  load_kk18_lf_fitted, 
+	"YANG16":     load_kk18_lf_fitted, 
+	"YANG18":     load_kk18_lf_fitted  
 }

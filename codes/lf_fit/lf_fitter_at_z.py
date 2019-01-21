@@ -27,11 +27,11 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 		L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
 	else:
 		return False
-	#L_tmp=bolometric_correction(L_bol_grid,dset_id)
-	#if return_LF[dset_name]!=None:
-	#	phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
-	#	phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
-	#	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
+	L_tmp=bolometric_correction(L_bol_grid,dset_id)
+	if return_LF[dset_name]!=None:
+		phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
+		phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+		PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
 	if (len(L_data) > 0):
 			if dset_id==-1.1: 
 				L_model = bolometric_correction(L_bol_grid,-1)

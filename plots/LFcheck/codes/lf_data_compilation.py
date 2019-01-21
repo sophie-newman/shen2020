@@ -49,6 +49,8 @@ from new_load_willott10_lf_data import *
 from new_load_yang16_lf_data import *
 from new_load_yang18_lf_data import *
 
+from new_load_kk18_lf_shape import *
+
 dset_ids={
 	#Bband
 	"DR3": -1,

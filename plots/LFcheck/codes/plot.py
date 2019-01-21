@@ -50,6 +50,11 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id,newdata=False):
 			phi_fit_tmp = return_LF[dset_name](L_BB_tmp, redshift)
 			phi_fit_pts = np.interp(L_BB ,L_BB_tmp, phi_fit_tmp)
 			PHI_BB = PHI_BB + (np.mean((phi_fit_pts))-np.mean((PHI_BB)))	
+	else:
+		phi_fit_tmp = return_kk18_lf_fitted(L_BB_tmp, redshift)
+		phi_fit_pts = np.interp(L_BB ,L_BB_tmp, phi_fit_tmp)
+		PHI_BB = PHI_BB + (np.mean((phi_fit_pts))-np.mean((PHI_BB)))
+
 	if len(L_BB)>0:
 			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_BB)
 			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_BB)
