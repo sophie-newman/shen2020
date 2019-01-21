@@ -26,7 +26,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 	if load_LF_data[dset_name](redshift)!=False:
 		L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
 	else:
-		pass
+		return False
 	#L_tmp=bolometric_correction(L_bol_grid,dset_id)
 	#if return_LF[dset_name]!=None:
 	#	phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
@@ -79,9 +79,10 @@ def chisq(parameters):
 	chitot = np.sum(((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
 	print chitot
 	print len(alldata["L_OBS"])
-	return chitot, len(alldata["L_OBS"])
+	return chitot#, len(alldata["L_OBS"])
 
-out = minimize(chisq,x0=parameters_init,method='Nelder-Mead',options={"maxiter":10000})#bounds=parameters_bound)
+#out = minimize(chisq,x0=parameters_init,method='Nelder-Mead',options={"maxiter":10000})#bounds=parameters_bound)
+out = minimize(chisq,x0=parameters_init,method='L-BFGS-B')
 print out
 
 
