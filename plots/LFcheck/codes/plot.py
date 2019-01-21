@@ -20,11 +20,9 @@ parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.
 #parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"  , "k1"      , "k2"        , "k3"        , "k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
 #parameters_bound= (np.array([0,0,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf]),np.array([np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf]))
 
-parameters=np.array([ 0.38112846,  1.90701796, -4.98287816, 12.94168645]) #3.0
-parameters=np.array([ 0.26886216,  2.36520698, -4.77715966, 13.03129138]) #2.0
-parameters=np.array([ 0.30268227,  1.90971248, -5.48312866, 13.06234474]) #4.0
-parameters=np.array([ 1.1416426 ,  2.90975604, -7.04687277, 13.83642053]) #5.0
-parameters=np.array([1.37081249, 1.37081115, 3.25788642, 5.5415255 ]) #6.0
+fit_res=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
+id=fit_res["z"]==redshift
+parameters=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
 
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
@@ -37,28 +35,30 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id,newdata=False):
 	if dset_id!=-1: return False
 	if newdata==False: 
 		if load_LF_data[dset_name](redshift)!=False:
-			L_BB, PHI_BB, DPHI_BB = load_LF_data[dset_name](redshift)
+			L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
 		else: return False
 	else: 
 		if new_load_LF_data[dset_name](redshift)!=False:
-			L_BB, PHI_BB, DPHI_BB = new_load_LF_data[dset_name](redshift)
+			L_data, PHI_data, DPHI_data = new_load_LF_data[dset_name](redshift)
 		else: return False
 
-	L_BB_tmp=bolometric_correction(L_bol_grid,dset_id)
+	L_tmp=bolometric_correction(L_bol_grid,dset_id)
 	if newdata==False:
 		if (return_LF[dset_name]!=None):
-			phi_fit_tmp = return_LF[dset_name](L_BB_tmp, redshift)
-			phi_fit_pts = np.interp(L_BB ,L_BB_tmp, phi_fit_tmp)
-			PHI_BB = PHI_BB + (np.mean((phi_fit_pts))-np.mean((PHI_BB)))	
+			phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
+			phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+			PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
 	else:
-		phi_fit_tmp = return_kk18_lf_fitted(L_BB_tmp, redshift)
-		phi_fit_pts = np.interp(L_BB ,L_BB_tmp, phi_fit_tmp)
-		PHI_BB = PHI_BB + (np.mean((phi_fit_pts))-np.mean((PHI_BB)))
+		M_1450_tmp = (M_sun_Bband_AB -2.5*L_tmp) + 0.706
+		M_1450_tmp = np.sort(M_1450_tmp)
+		phi_fit_tmp = return_kk18_lf_fitted(M_1450_tmp, redshift)
+		phi_fit_pts = np.interp(L_data ,M_1450_tmp, phi_fit_tmp)
+		PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
 
-	if len(L_BB)>0:
-			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_BB)
-			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_BB)
-			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_BB)# + 0.01)
+	if len(L_data)>0:
+			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_data)
+			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_data)
+			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_data)# + 0.01)
 	print "NAME:",dset_name
 
 def get_data(parameters=parameters_init,newdata=False):

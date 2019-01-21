@@ -34,3 +34,4 @@ def return_kk18_lf_fitted(M_list,z):
 
 	PHI=phi_s/( 10**(0.4*(alpha+1)*(M_list-M_s)) + 10**(0.4*(beta+1)*(M_list-M_s)) )
 	return np.log10(PHI)
+

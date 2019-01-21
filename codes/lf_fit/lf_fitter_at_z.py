@@ -5,7 +5,7 @@ import scipy.interpolate as inter
 from convolve import *
 from scipy.optimize import curve_fit
 from scipy.optimize import minimize
-from scipy.optimize import least_squares
+from scipy.optimize import leastsq
 # fit the luminosity function based on datasets at a given redshift
 from lf_fitter_data import *
 from ctypes import *
@@ -15,6 +15,7 @@ redshift=float(sys.argv[1])
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300])
 parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"])
+parameters_bound=(np.array([-np.inf,-np.inf,-np.inf,-np.inf]),np.array([0,0,np.inf,np.inf]))
 
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
@@ -27,11 +28,18 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 		L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
 	else:
 		return False
-	L_tmp=bolometric_correction(L_bol_grid,dset_id)
+
+	if dset_id==-1.1: L_tmp=bolometric_correction(L_bol_grid,-1)
+	elif dset_id==-1: 
+		L_tmp=bolometric_correction(L_bol_grid,dset_id)
+		L_tmp = (M_sun_Bband_AB -2.5*L_tmp) + 0.706
+                L_tmp = np.sort(L_tmp)
+	else: L_tmp=bolometric_correction(L_bol_grid,dset_id)
 	if return_LF[dset_name]!=None:
 		phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
 		phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
 		PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
+
 	if (len(L_data) > 0):
 			if dset_id==-1.1: 
 				L_model = bolometric_correction(L_bol_grid,-1)
@@ -77,13 +85,18 @@ def chisq(parameters):
 	if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
 	chitot = np.sum(((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
-	print chitot
-	print len(alldata["L_OBS"])
+	print chitot, len(alldata["L_OBS"])
 	return chitot#, len(alldata["L_OBS"])
 
 #out = minimize(chisq,x0=parameters_init,method='Nelder-Mead',options={"maxiter":10000})#bounds=parameters_bound)
-out = minimize(chisq,x0=parameters_init,method='L-BFGS-B')
-print out
+res = minimize(chisq,x0=parameters_init,method='L-BFGS-B',options={"maxiter":10000})
+print res
 
-
+ftol = 2.220446049250313e-09
+tmp_i = np.zeros(len(res.x))
+for i in range(4):
+    tmp_i[i] = 1.0
+    uncertainty_i = np.sqrt(max(1, abs(res.fun))*ftol*res.hess_inv(tmp_i)[i])
+    tmp_i[i] = 0.0
+    print('{0:12.4e} +/- {1:.1e}'.format(res.x[i], uncertainty_i))
 
