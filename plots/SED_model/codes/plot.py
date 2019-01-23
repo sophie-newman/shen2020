@@ -20,13 +20,17 @@ ax.plot(lamb,data['logall'],c='royalblue',label=r'$\rm Krawczyk+$ $\rm 2013$')
 
 data=np.genfromtxt(datapath+"R06_SED.dat",names=["lognu","logall","sigall","blue"],)
 lamb=con.c.value/(10**data['lognu'])*1e10
-ax.plot(lamb,data['blue'],c='crimson',label=r'$\rm Richards+$ $\rm 2006$')
+ax.plot(lamb,data['blue'],c='crimson',label=r'$\rm Richards+$ $\rm 2006$ ($\rm blue$ $\rm quasars$)')
 lamb=con.c.value/(10**data['lognu'])*1e10
-ax.plot(lamb,data['logall'],c='chocolate')
+ax.plot(lamb,data['logall'],c='chocolate',label=r'$\rm Richards+$ $\rm 2006$ ($\rm all$ $\rm quasars$)')
 
+f2500 = np.power(10.,data['logall'][np.abs(lamb-2500)<=100])/np.power(10.,data['lognu'][np.abs(lamb-2500)<=100])
+alphaox = -0.137*np.log10(f2500)+2.638
+f2kev=10**(alphaox/0.384)*f2500
 data=np.genfromtxt(datapath+"XRAY_SED.dat",names=["lognu","logall"],)
 lamb=con.c.value/(10**data['lognu'])*1e10
-L_HX=45.1
+ratio = data['logall'][np.abs(10**data['lognu']*con.h.value/con.e.value/1000-2)<=0.05]-(-1.47406)
+L_HX =  np.log10( f2kev*(2.*1000.*con.e.value/con.h.value) / 10**ratio )
 ax.plot(lamb,(data['logall']-(-1.47406))+L_HX,c='seagreen',label=r'$\rm Xray$')
 
 x=np.logspace(2.7,4.,1000)
@@ -42,6 +46,8 @@ ax.axvline(912.,ymin=0.95)
 ax.axvline(con.c.value/(0.2*1000.*con.e.value/con.h.value)*1e10, ymin=0.95)
 ax.axvline(con.c.value/(0.5*1000.*con.e.value/con.h.value)*1e10, ymin=0.95)
 
+ax.axvspan(10000,1e6,color='tan',edgecolor='tan',alpha=0.1)
+ax.text(0.25, 0.6, r'$\rm Infrared$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
 ax.axvspan(912,2500,color='seagreen',edgecolor='seagreen',alpha=0.1)
 ax.text(0.45, 0.6, r'$\rm FUV$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
 ax.axvspan(912,con.c.value/(0.2*1000.*con.e.value/con.h.value)*1e10,
