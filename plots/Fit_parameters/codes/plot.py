@@ -11,6 +11,18 @@ matplotlib.rc('ytick.minor', size=7.5, width=3)
 matplotlib.rc('lines',linewidth=4)
 matplotlib.rc('axes', linewidth=4)
 
+T0 = np.polynomial.chebyshev.Chebyshev((1,0,0,0))
+T1 = np.polynomial.chebyshev.Chebyshev((0,1,0,0))
+T2 = np.polynomial.chebyshev.Chebyshev((0,0,1,0))
+T3 = np.polynomial.chebyshev.Chebyshev((0,0,0,1))
+def bestfit(z,field):
+	source=np.genfromtxt("zevolution_fit.dat",names=['gamma1','gamma2','phi_s','Lbreak'])
+	p=source[field]
+	xsi=1.+z
+	if (field=='gamma1') or (field=='gamma2'):
+		return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)+p[3]*T3(xsi)
+	else: return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)
+
 def Hopkins07(z):
 	parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 	xsi_log	= np.log10((1.+z)/(1.+2.))
@@ -34,7 +46,8 @@ ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
 ax.plot(data["z"]+1,data["gamma1"],'o',c='royalblue',mec='royalblue',ms=20,label=r'$\rm This$ $\rm work$')
-ax.plot(z_a+1,gamma1_a,'--',dashes=(25,15),c='crimson',mec='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
+ax.plot(z_a+1,gamma1_a,'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
+ax.plot(z_a+1,bestfit(z_a,'gamma1'),'-',c='seagreen',label=r'$\rm This$ $\rm work$')
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
@@ -54,7 +67,8 @@ ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
 ax.plot(data["z"]+1,data["gamma2"],'o',c='royalblue',mec='royalblue',ms=20)
-ax.plot(z_a+1,gamma2_a,'--',dashes=(25,15),c='crimson',mec='crimson')
+ax.plot(z_a+1,gamma2_a,'--',dashes=(25,15),c='crimson')
+ax.plot(z_a+1,bestfit(z_a,'gamma2'),'-',c='seagreen')
 
 #prop = matplotlib.font_manager.FontProperties(size=25.0)
 #ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -62,7 +76,7 @@ ax.set_xlabel(r'$\rm 1+z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\rm Bright-end$ $\rm Slope$ $\rm \gamma_{\rm 2}$',fontsize=40,labelpad=5)
 
 ax.set_xlim(1,8.)
-ax.set_ylim(0.9,2.8)
+ax.set_ylim(0.9,3.2)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
@@ -74,7 +88,8 @@ ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
 ax.plot(data["z"]+1,data["phi_s"],'o',c='royalblue',mec='royalblue',ms=20)
-ax.plot(z_a+1,phi_s_a,'--',dashes=(25,15),c='crimson',mec='crimson')
+ax.plot(z_a+1,phi_s_a,'--',dashes=(25,15),c='crimson')
+ax.plot(z_a+1,bestfit(z_a,'phi_s'),'-',c='seagreen')
 
 #prop = matplotlib.font_manager.FontProperties(size=25.0)
 #ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -82,7 +97,7 @@ ax.set_xlabel(r'$\rm 1+z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\phi_{\ast})}$ $[\rm Mpc]$',fontsize=40,labelpad=5)
 
 ax.set_xlim(1,8.)
-ax.set_ylim(-5.8,-4.2)
+ax.set_ylim(-6.3,-4.1)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
@@ -94,7 +109,8 @@ ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
 ax.plot(data["z"]+1,data["L_s"],'o',c='royalblue',mec='royalblue',ms=20)
-ax.plot(z_a+1,Lbreak_a,'--',dashes=(25,15),c='crimson',mec='crimson')
+ax.plot(z_a+1,Lbreak_a,'--',dashes=(25,15),c='crimson')
+ax.plot(z_a+1,bestfit(z_a,'Lbreak'),'-',c='seagreen')
 
 #prop = matplotlib.font_manager.FontProperties(size=25.0)
 #ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -102,7 +118,7 @@ ax.set_xlabel(r'$\rm 1+z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(L_{\ast})}$ $[{\rm L}_{\odot}]$',fontsize=40,labelpad=5)
 
 ax.set_xlim(1,8.)
-ax.set_ylim(11.3,13.7)
+ax.set_ylim(11.3,14.0)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
