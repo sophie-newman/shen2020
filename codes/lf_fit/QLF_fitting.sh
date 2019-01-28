@@ -9,4 +9,4 @@
 #SBATCH --mem-per-cpu=4000
 #SBATCH -t 1-00:00           # Runtime in D-HH:MM
 
-python lf_fitter.py
+python lf_fitter.py > log.log

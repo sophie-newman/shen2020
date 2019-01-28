@@ -77,6 +77,18 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 	#if dset_id==-1: print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
 
 def chisq(parameters):
+        alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
+        for key in dset_ids.keys():
+                get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+
+        bad = np.invert(np.isfinite(alldata["P_PRED"]))
+        if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
+
+        chitot = np.sum(((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
+        print chitot, len(alldata["L_OBS"])
+        return chitot#, len(alldata["L_OBS"])
+
+def chisq_mod(parameters):
 	alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
 	for key in dset_ids.keys():
 		get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
@@ -86,12 +98,19 @@ def chisq(parameters):
 
 	chitot = np.sum(((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
 	print chitot, len(alldata["L_OBS"])
-	return chitot#, len(alldata["L_OBS"])
+	#return chitot#, len(alldata["L_OBS"])
+	return np.ones(4)*np.sqrt(chitot)/2.
 
 #out = minimize(chisq,x0=parameters_init,method='Nelder-Mead',options={"maxiter":10000})#bounds=parameters_bound)
 res = minimize(chisq,x0=parameters_init,method='L-BFGS-B',options={"maxiter":10000})
 print res
-
+'''
+res2,cov,_,_,_ = leastsq(chisq_mod,x0=np.array([ 0.59810536,  1.9478799 , -5.41829787, 13.22704384]),full_output=1)
+print res2
+print cov
+for i in range(4):
+	print np.sqrt(cov[i,i])
+'''
 ftol = 2.220446049250313e-09
 tmp_i = np.zeros(len(res.x))
 for i in range(4):

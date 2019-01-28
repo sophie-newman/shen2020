@@ -11,6 +11,7 @@ def LF(L_bol,P):
 	P_temp = np.log10(P_temp)		    
 	return P_temp
 
+'''
 def LF_at_z(L_bol,P,z,model):
 	if model=='Fiducial':
 		xsi_log	= np.log10((1.+z)/(1.+Z_NORM_SET))
@@ -37,3 +38,19 @@ def LF_at_z(L_bol,P,z,model):
 
 		P_temp = LF( L_bol, [gamma1,gamma2,P0,Lbreak])
 		return P_temp
+'''	
+T0 = np.polynomial.chebyshev.Chebyshev((1,0,0,0))
+T1 = np.polynomial.chebyshev.Chebyshev((0,1,0,0))
+T2 = np.polynomial.chebyshev.Chebyshev((0,0,1,0))
+T3 = np.polynomial.chebyshev.Chebyshev((0,0,0,1))
+def LF_at_z(L_bol,P,z,model):
+        if model=='Fiducial':
+                xsi = 1.+z
+
+		gamma1=P[0]*T0(xsi)+P[1]*T1(xsi)+P[2]*T2(xsi)+P[3]*T3(xsi)
+		gamma2=P[4]*T0(xsi)+P[5]*T1(xsi)+P[6]*T2(xsi)+P[7]*T3(xsi)
+		Phis  =P[8]*T0(xsi)+P[9]*T1(xsi)+P[10]*T2(xsi)
+		Lbreak=P[11]*T0(xsi)+P[12]*T1(xsi)+P[13]*T2(xsi)
+
+                P_temp = LF( L_bol, [gamma1,gamma2,Phis,Lbreak])
+                return P_temp
