@@ -13,15 +13,15 @@ import ctypes
 
 #bestfit2        = np.array([0.39856372, 2.19426155, -4.73290265, 12.97241616, 0.43717880, -11.63470663, -11.72357430, -0.72820353, 1.36234503, -0.79697647])
 #bestfit         = np.array([0.38181256, 2.16955741, -4.70557406, 12.94851374, 0.43771614, -11.42561263, -11.34952214, -0.75528960, 1.32130027, -0.77768681])
-#parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
-#parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"  , "k1"      , "k2"        , "k3"        , "k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
+parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
+parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"  , "k1"      , "k2"        , "k3"        , "k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
 #parameters_bound= (np.array([0,0,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf]),np.array([np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf]))
-parameters_init = np.array([1.564174333302102982e+00 ,-1.016230168520535493e+00,1.399510921760982185e-01 ,-4.932916393679327716e-03,
--2.500309789400909644e-01, 2.091426101298458740e+00,-2.732752488142333736e-01, 9.881703606408831497e-03,
--3.022957608375724803e+00,-9.164626678864009612e-01,4.038586299972657390e-02,
-1.014747998730198830e+01,1.447344386368419666e+00,-8.503127084155459592e-02])
+#parameters_init = np.array([1.564174333302102982e+00 ,-1.016230168520535493e+00,1.399510921760982185e-01 ,-4.932916393679327716e-03,
+#-2.500309789400909644e-01, 2.091426101298458740e+00,-2.732752488142333736e-01, 9.881703606408831497e-03,
+#-3.022957608375724803e+00,-9.164626678864009612e-01,4.038586299972657390e-02,
+#1.014747998730198830e+01,1.447344386368419666e+00,-8.503127084155459592e-02])
 
-parameters_info = np.array(["gamma1", "gamma2", "logphis"  , "logLs"])
+#parameters_info = np.array(["gamma1", "gamma2", "logphis"  , "logLs"])
 
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
@@ -83,7 +83,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 
 			#print "NAME:",dset_name,"; redshift",redshift,";  chisq:", np.sum(((phi_i-PHI_BB)/DPHI_BB)**2)," / ",len(L_BB)
 
-	#if dset_id==-1: print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
+	#print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
 
 def chisq(parameters):
 	alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
