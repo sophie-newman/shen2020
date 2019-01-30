@@ -15,13 +15,21 @@ T0 = np.polynomial.chebyshev.Chebyshev((1,0,0,0))
 T1 = np.polynomial.chebyshev.Chebyshev((0,1,0,0))
 T2 = np.polynomial.chebyshev.Chebyshev((0,0,1,0))
 T3 = np.polynomial.chebyshev.Chebyshev((0,0,0,1))
+def polynomial(z,p):
+	xsi=1.+z
+	return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)+p[3]*T3(xsi)
+
+def doublepower(z,p):
+	xsi=1.+z
+	zref=p[1]
+	return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
+
 def bestfit(z,field):
 	source=np.genfromtxt("zevolution_fit.dat",names=['gamma1','gamma2','phi_s','Lbreak'])
 	p=source[field]
-	xsi=1.+z
-	if (field=='gamma1') or (field=='gamma2'):
-		return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)+p[3]*T3(xsi)
-	else: return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)
+	if (field=='gamma1') or (field=='phi_s'):
+		return polynomial(z,p)
+	else: return doublepower(z,p)
 
 def Hopkins07(z):
 	parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
@@ -56,7 +64,7 @@ ax.set_xlabel(r'$\rm 1+z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\rm Faint-end$ $\rm Slope$ $\rm \gamma_{\rm 1}$',fontsize=40,labelpad=5)
 
 ax.set_xlim(1,8.)
-#ax.set_ylim(0.1,1.5)
+ax.set_ylim(0.1,1.5)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
@@ -78,7 +86,7 @@ ax.set_xlabel(r'$\rm 1+z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\rm Bright-end$ $\rm Slope$ $\rm \gamma_{\rm 2}$',fontsize=40,labelpad=5)
 
 ax.set_xlim(1,8.)
-#ax.set_ylim(0.9,3.2)
+ax.set_ylim(0.9,3.2)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
@@ -100,7 +108,7 @@ ax.set_xlabel(r'$\rm 1+z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\phi_{\ast})}$ $[\rm Mpc]$',fontsize=40,labelpad=5)
 
 ax.set_xlim(1,8.)
-#ax.set_ylim(-6.3,-4.1)
+ax.set_ylim(-6.3,-4.1)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
@@ -122,7 +130,7 @@ ax.set_xlabel(r'$\rm 1+z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(L_{\ast})}$ $[{\rm L}_{\odot}]$',fontsize=40,labelpad=5)
 
 ax.set_xlim(1,8.)
-#ax.set_ylim(11.3,14.0)
+ax.set_ylim(11.3,14.0)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
