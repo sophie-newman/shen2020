@@ -11,7 +11,7 @@ def LF(L_bol,P):
 	P_temp = np.log10(P_temp)		    
 	return P_temp
 
-
+'''
 def LF_at_z(L_bol,P,z,model):
 	if model=='Fiducial':
 		xsi_log	= np.log10((1.+z)/(1.+Z_NORM_SET))
@@ -54,4 +54,4 @@ def LF_at_z(L_bol,P,z,model):
 
                 P_temp = LF( L_bol, [gamma1,gamma2,Phis,Lbreak])
                 return P_temp
-'''
+

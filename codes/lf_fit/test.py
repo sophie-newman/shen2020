@@ -7,6 +7,10 @@ from scipy.optimize import minimize
 from scipy.optimize import leastsq
 import lmfit
 import corner
+
+from collections import namedtuple
+from mpi4py import MPI
+import itertools
 # fit the luminosity function based on datasets at a given redshift
 from lf_fitter_data import *
 from ctypes import *
@@ -115,6 +119,39 @@ def residual(pars):
 	print chitot, len(alldata["L_OBS"])
 	return (alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"]
 
+
+#stuff for MPI
+#==============
+def mpi_map(function,sequence):
+    """
+    A map function parallelized with MPI. 
+    Assumes this program was called with mpiexec -n $NUM.
+    Partitions the sequence into $NUM blocks and each MPI process does the rank-th one.
+    """
+    comm = MPI.COMM_WORLD
+    (rank,size) = (comm.Get_rank(),comm.Get_size())
+    sequence = mpi_consistent(sequence)
+    return flatten(comm.allgather(map(function, partition(sequence,size)[rank])))
+
+def mpi_consistent(value):
+    """
+    Returns the value that the root process provided.
+    """
+    return MPI.COMM_WORLD.bcast(value)
+
+def flatten(l):
+    """Returns a list of lists joined into one"""
+    return list(itertools.chain(*l))
+
+def partition(list, n):
+    """Partition list into n nearly equal length sublists"""
+    division = len(list) / float(n)
+    return [list[int(round(division * i)): int(round(division * (i + 1)))] for i in range(n)]
+#==========
+
+#Our 'pool' is just an object with a 'map' method which points to mpi_map
+pool = namedtuple('pool',['map'])(mpi_map)
+
 params = lmfit.Parameters()
 # add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
 params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
@@ -123,22 +160,12 @@ params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                 ('Lbreak' , parameters_init[3], True, None, None, None, None))
 
 fitter = lmfit.Minimizer(residual, params, scale_covar=True,nan_policy='raise',calc_covar=True)
-#result=fitter.minimize(method='emcee',burn=300, steps=1000,nwalkers=100,workers=8)
-result=fitter.minimize(method='leastsq')
+result=fitter.minimize(method='emcee',burn=300, steps=1000,nwalkers=100,workers=pool)
 print "bestfit:"
 result.params.pretty_print()
 print "all messages:"
-cov=result.covar
-print cov
-print "correlations"
-print "1 and 2: ", cov[0,1]/np.sqrt(cov[0,0]*cov[1,1])
-print "1 and 3: ", cov[0,2]/np.sqrt(cov[0,0]*cov[2,2])
-print "1 and 4: ", cov[0,3]/np.sqrt(cov[0,0]*cov[3,3])
-print "2 and 3: ", cov[1,2]/np.sqrt(cov[1,1]*cov[2,2])
-print "2 and 4: ", cov[1,3]/np.sqrt(cov[1,1]*cov[3,3])
-print "3 and 4: ", cov[2,3]/np.sqrt(cov[2,2]*cov[3,3])
 #corner.corner(result.flatchain, labels=result.var_names, truths=list(result.params.valuesdict().values()))
-'''
+
 lmfit.report_fit(result.params)
 highest_prob = np.argmax(result.lnprob)
 hp_loc = np.unravel_index(highest_prob, result.lnprob.shape)
@@ -149,5 +176,5 @@ for i, par in enumerate(p):
 print("\nMaximum likelihood Estimation")
 print('-----------------------------')
 print(p)
-'''
+
 #np.savetxt("chain.dat",result.flatchain)
