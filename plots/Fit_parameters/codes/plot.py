@@ -45,7 +45,8 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-ax.plot(data["z"]+1,data["gamma1"],'o',c='royalblue',mec='royalblue',ms=20,label=r'$\rm This$ $\rm work$')
+ax.errorbar(data["z"]+1,data["gamma1"],yerr=data['err1'],xerr=0.25*np.ones(len(data["z"])),linestyle='',marker='o',c='royalblue',mec='royalblue',ms=15,capsize=9,capthick=3,label=r'$\rm This$ $\rm work$')
+
 ax.plot(z_a+1,gamma1_a,'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 ax.plot(z_a+1,bestfit(z_a,'gamma1'),'-',c='seagreen',label=r'$\rm This$ $\rm work$')
 
@@ -55,7 +56,7 @@ ax.set_xlabel(r'$\rm 1+z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\rm Faint-end$ $\rm Slope$ $\rm \gamma_{\rm 1}$',fontsize=40,labelpad=5)
 
 ax.set_xlim(1,8.)
-ax.set_ylim(0.1,1.5)
+#ax.set_ylim(0.1,1.5)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
@@ -66,7 +67,8 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-ax.plot(data["z"]+1,data["gamma2"],'o',c='royalblue',mec='royalblue',ms=20)
+ax.errorbar(data["z"]+1,data["gamma2"],yerr=data['err2'],xerr=0.25*np.ones(len(data["z"])),linestyle='',marker='o',c='royalblue',mec='royalblue',ms=15,capsize=9,capthick=3,label=r'$\rm This$ $\rm work$')
+
 ax.plot(z_a+1,gamma2_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a+1,bestfit(z_a,'gamma2'),'-',c='seagreen')
 
@@ -76,7 +78,7 @@ ax.set_xlabel(r'$\rm 1+z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\rm Bright-end$ $\rm Slope$ $\rm \gamma_{\rm 2}$',fontsize=40,labelpad=5)
 
 ax.set_xlim(1,8.)
-ax.set_ylim(0.9,3.2)
+#ax.set_ylim(0.9,3.2)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
@@ -87,7 +89,8 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-ax.plot(data["z"]+1,data["phi_s"],'o',c='royalblue',mec='royalblue',ms=20)
+ax.errorbar(data["z"]+1,data["phi_s"],yerr=data['err3'],xerr=0.25*np.ones(len(data["z"])),linestyle='',marker='o',c='royalblue',mec='royalblue',ms=15,capsize=9,capthick=3,label=r'$\rm This$ $\rm work$')
+
 ax.plot(z_a+1,phi_s_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a+1,bestfit(z_a,'phi_s'),'-',c='seagreen')
 
@@ -97,7 +100,7 @@ ax.set_xlabel(r'$\rm 1+z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\phi_{\ast})}$ $[\rm Mpc]$',fontsize=40,labelpad=5)
 
 ax.set_xlim(1,8.)
-ax.set_ylim(-6.3,-4.1)
+#ax.set_ylim(-6.3,-4.1)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
@@ -108,7 +111,8 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-ax.plot(data["z"]+1,data["L_s"],'o',c='royalblue',mec='royalblue',ms=20)
+ax.errorbar(data["z"]+1,data["L_s"],yerr=data['err4'],xerr=0.25*np.ones(len(data["z"])),linestyle='',marker='o',c='royalblue',mec='royalblue',ms=15,capsize=9,capthick=3,label=r'$\rm This$ $\rm work$')
+
 ax.plot(z_a+1,Lbreak_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a+1,bestfit(z_a,'Lbreak'),'-',c='seagreen')
 
@@ -118,7 +122,7 @@ ax.set_xlabel(r'$\rm 1+z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(L_{\ast})}$ $[{\rm L}_{\odot}]$',fontsize=40,labelpad=5)
 
 ax.set_xlim(1,8.)
-ax.set_ylim(11.3,14.0)
+#ax.set_ylim(11.3,14.0)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
