@@ -1,0 +1,17 @@
+3193.39654903 1252
+bestfit:
+Name     Value      Min      Max   Stderr     Vary     Expr Brute_Step
+p0      1.446     -inf      inf   0.1985     True     None     None
+p1    -0.7785     -inf      inf   0.2097     True     None     None
+p10     10.15     -inf      inf   0.2961     True     None     None
+p11     8.652     -inf      inf   0.1591     True     None     None
+p12   -0.2609     -inf      inf  0.01364     True     None     None
+p13     1.477     -inf      inf   0.1123     True     None     None
+p2     0.1064     -inf      inf  0.03654     True     None     None
+p3   -0.004466     -inf      inf 0.001907     True     None     None
+p4      2.527     -inf      inf  0.08846     True     None     None
+p5      2.228     -inf      inf   0.2959     True     None     None
+p6     -1.002     -inf      inf   0.1138     True     None     None
+p7      1.881     -inf      inf   0.1882     True     None     None
+p8     -4.106     -inf      inf   0.1096     True     None     None
+p9    -0.3285     -inf      inf  0.03816     True     None     None

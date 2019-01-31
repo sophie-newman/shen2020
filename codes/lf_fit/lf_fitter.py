@@ -6,21 +6,18 @@ from convolve import *
 from scipy.optimize import curve_fit
 from scipy.optimize import minimize
 from scipy.optimize import least_squares
+import lmfit
 # fit the luminosity function based on datasets at a given redshift
 from lf_fitter_data import *
 from ctypes import *
 import ctypes
 
-#bestfit2        = np.array([0.39856372, 2.19426155, -4.73290265, 12.97241616, 0.43717880, -11.63470663, -11.72357430, -0.72820353, 1.36234503, -0.79697647])
-#bestfit         = np.array([0.38181256, 2.16955741, -4.70557406, 12.94851374, 0.43771614, -11.42561263, -11.34952214, -0.75528960, 1.32130027, -0.77768681])
 #parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 #parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"  , "k1"      , "k2"        , "k3"        , "k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
-#parameters_bound= (np.array([0,0,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf]),np.array([np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf]))
-parameters_init = np.array([1.564174333302102982e+00 ,-1.016230168520535493e+00,1.399510921760982185e-01 ,-4.932916393679327716e-03,
--2.500309789400909644e-01, 2.091426101298458740e+00,-2.732752488142333736e-01, 9.881703606408831497e-03,
--3.022957608375724803e+00,-9.164626678864009612e-01,4.038586299972657390e-02,
-1.014747998730198830e+01,1.447344386368419666e+00,-8.503127084155459592e-02])
-
+parameters_init = np.array([1.705501200816446294e+00 ,-1.078700539443752326e+00,1.417091812716838317e-01 ,-4.913503567223131800e-03,
+2.342208072486966941e+00 , 2.067114074110976141e+00,-1.000403268800853951e+00, 1.399154527410910287e+00,
+-3.860125192409941342e+00, -3.531881721705402155e-01,
+1.099643031838996166e+01, 7.302490517201445819e+00, -3.252882882822146215e-01, 1.239403614340442328e+00])
 parameters_info = np.array(["gamma1", "gamma2", "logphis"  , "logLs"])
 
 #load the shared object file
@@ -85,7 +82,10 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 
 	#print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
 
-def chisq(parameters):
+def residual(pars):
+	parvals = pars.valuesdict()
+	parameters=np.array([parvals['p0'],parvals['p1'],parvals['p2'],parvals['p3'],parvals['p4'],parvals['p5'],parvals['p6'],parvals['p7'],parvals['p8'],parvals['p9'],parvals['p10'],parvals['p11'],parvals['p12'],parvals['p13']])
+
 	alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
 	for key in dset_ids.keys():
 		get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
@@ -95,18 +95,32 @@ def chisq(parameters):
 
 	chitot = np.sum(((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
 	print chitot, len(alldata["L_OBS"])
-	return chitot#, len(alldata["L_OBS"])
+	return (alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"]
 
-#out = minimize(chisq,x0=parameters_init,method='Nelder-Mead',options={"maxiter":10000})#bounds=parameters_bound)
-res = minimize(chisq,x0=parameters_init,method='L-BFGS-B',options={"maxiter":10000})
-print res
 
-ftol = 2.220446049250313e-09
-tmp_i = np.zeros(len(res.x))
-for i in range(14):
-    tmp_i[i] = 1.0
-    uncertainty_i = np.sqrt(max(1, abs(res.fun))*ftol*res.hess_inv(tmp_i)[i])
-    tmp_i[i] = 0.0
-    print('{0:12.4e} +/- {1:.1e}'.format(res.x[i], uncertainty_i))
+params = lmfit.Parameters()
+# add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
+params.add_many(('p0' , parameters_init[0], True, None, None, None, None),
+                ('p1' , parameters_init[1], True, None, None, None, None),
+                ('p2' , parameters_init[2], True, None, None, None, None),
+                ('p3' , parameters_init[3], True, None, None, None, None),
+		('p4' , parameters_init[4], True, None, None, None, None),
+		('p5' , parameters_init[5], True, None, None, None, None),
+		('p6' , parameters_init[6], True, None, None, None, None),
+		('p7' , parameters_init[7], True, None, None, None, None),
+		('p8' , parameters_init[8], True, None, None, None, None),
+		('p9' , parameters_init[9], True, None, None, None, None),
+		('p10' , parameters_init[10], True, None, None, None, None),
+		('p11' , parameters_init[11], True, None, None, None, None),
+		('p12' , parameters_init[12], True, None, None, None, None),
+		('p13' , parameters_init[13], True, None, None, None, None))
 
+fitter = lmfit.Minimizer(residual, params, scale_covar=True,nan_policy='raise',calc_covar=True)
+#result=fitter.minimize(method='emcee',burn=300, steps=1000,nwalkers=100,workers=8)
+result=fitter.minimize(method='leastsq')
+print "bestfit:"
+result.params.pretty_print()
+print "all messages:"
+cov=result.covar
+print cov
 
