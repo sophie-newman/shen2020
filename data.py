@@ -31,12 +31,10 @@ L_solar=np.log10(3.9e33)  #4e33
 #KEYS
 KEYS={   
 	"LF_model": "Fiducial",  #LDDE  PLE   Modified_Schechter
-	"Extinction_model": "Fiducial",  #Fixed   Redshift_Evolved
+	"Extinction_model": "Fiducial",  #Fixed   H07
 	"Fit_method": "Chisq", #Modified_Chisq
 	"FIT_KEY": 0  
 }
-FIT_LOG_Z = True
-Z_NORM_SET = 2.0
 
 #LUMINOSITY GRID
 L_bol_grid = np.linspace(8.,18.,101)[:-1]#+0.008935

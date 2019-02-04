@@ -11,13 +11,12 @@ def LF(L_bol,P):
 	P_temp = np.log10(P_temp)		    
 	return P_temp
 
-'''
 def LF_at_z(L_bol,P,z,model):
 	if model=='Fiducial':
-		xsi_log	= np.log10((1.+z)/(1.+Z_NORM_SET))
-		xsi_lin	= z - Z_NORM_SET
+		xsi_log	= np.log10((1.+z)/(1.+2))
+		xsi_lin	= z - 2
 		xsi = xsi_lin
-		if (FIT_LOG_Z): xsi = xsi_log
+		xsi = xsi_log
 	
 		gamma1_0	= P[0]	#faint-end slope
 		gamma2_0	= P[1] 	#bright-end slope
@@ -58,4 +57,4 @@ def LF_at_z(L_bol,P,z,model):
 
                 P_temp = LF( L_bol, [gamma1,gamma2,Phis,Lbreak])
                 return P_temp
-
+'''

@@ -2,6 +2,7 @@ import numpy as np
 from data import *
 from utils import *
 import scipy.interpolate as inter
+from scipy.optimize import fsolve
 import astropy.constants as con
 import time
 #all the luminosities are in log10
@@ -39,6 +40,11 @@ def bolometric_correction(L_bol,nu):  #L_bol is in log10
 		L50  = return_ratio_to_hard_xray(nu50)/(Q[0]*np.power(10.,Q[3]*x)+Q[1]*np.power(10.,Q[2]*x))
 		L00  = np.log10(L500) + np.log10(L50/L500) * (np.log10(nu/nu500)/np.log10(nu50/nu500))
 		return L00 + L_bol
+
+def bolometric_correction_inverse(L_obs,nu):
+	def fobjective(L_bol):
+		return bolometric_correction(L_bol,nu)-L_obs
+	return fsolve(fobjective,x0=L_obs)[0]
 
 #return the appropriate jacobian factors for the above (dlogL/dlogL_band)
 def bolometric_correction_jacobian(L_bol,nu):
@@ -143,7 +149,7 @@ def extinction_correction(Phi_band, nu):
 
 	return Phi_obs_corrected
 
-def convolve(Phi_bol,nu):
+def convolve(Phi_bol,nu): #input phi is not in log
 	l_band=bolometric_correction(L_bol_grid,nu)
 	P_1=Phi_bol * bolometric_correction_jacobian(L_bol_grid,nu)
 	P_2=uncertainty_correction(P_1,nu)
