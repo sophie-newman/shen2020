@@ -119,7 +119,7 @@ params = lmfit.Parameters()
 # add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
 params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                 ('gamma2' , parameters_init[1], True, None, None, None, None),
-                ('logphis', parameters_init[2], True, None, None, None, None),
+                ('logphis', -5.95, False, None, None, None, None),
                 ('Lbreak' , parameters_init[3], True, None, None, None, None))
 
 fitter = lmfit.Minimizer(residual, params, scale_covar=True,nan_policy='raise',calc_covar=True)

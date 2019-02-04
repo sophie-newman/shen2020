@@ -92,23 +92,25 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
-#L_B = bolometric_correction(L_bol_grid,-1)
-#nu_c = c_double(-1)
-#input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-#res = convolve_c(input_c,nu_c)
-#res = [i for i in res.contents]
-#PHI_B = np.array(res,dtype=np.float64)
-'''
+def get_model_lf(parameters,nu):
+	L_B = bolometric_correction(L_bol_grid,-1)
+	nu_c = c_double(-1)
+	input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+	res = convolve_c(input_c,nu_c)
+	res = [i for i in res.contents]
+	PHI_B = np.array(res,dtype=np.float64)
+	return L_B, PHI_B
+
 result=0.0*zpoints
 for i in range(len(zpoints)):
 	id=pz==zpoints[i]
-	L_B, PHI_B=convolve(np.power(10.,LF(L_bol_grid,[pgamma1[id],pgamma2[id],plogphi[id],plbreak[id]])),-1)
+	#L_B, PHI_B=convolve(np.power(10.,LF(L_bol_grid,[pgamma1[id],pgamma2[id],plogphi[id],plbreak[id]])),-1)
 	#M_1450 = (M_sun_Bband_AB -2.5*L_B) + 0.706
 	#Phi_1450 = np.log10(PHI_B) - np.log10(2.5)
 	result[i]=np.log10( cumulative_count(L_B+L_solar,np.log10(PHI_B),46.0,46.5))
 	print result[i]
 ax.plot(zpoints,result,'o',c='royalblue')
-'''
+
 result=0.0*zlist
 for i in range(len(zlist)):
 	#L_B, PHI_B=convolve(np.power(10.,LF(L_bol_grid,[gamma1[i],gamma2[i],logphis[i],Lbreak[i]])),-1)
