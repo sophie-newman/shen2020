@@ -117,10 +117,17 @@ def residual(pars):
 
 params = lmfit.Parameters()
 # add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
-params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
-                ('gamma2' , parameters_init[1], True, None, None, None, None),
-                ('logphis', -5.95, False, None, None, None, None),
-                ('Lbreak' , parameters_init[3], True, None, None, None, None))
+if (redshift>3) and (redshift<6.5):
+	logphis_fixed=-3.85556103-0.35480482*(1+redshift)
+	params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
+                        ('gamma2' , parameters_init[1], True, None, None, None, None),
+                        ('logphis', logphis_fixed     ,False, None, None, None, None),
+                        ('Lbreak' , parameters_init[3], True, None, None, None, None))
+else:
+	params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
+        	        ('gamma2' , parameters_init[1], True, None, None, None, None),
+               		('logphis', parameters_init[2], True, None, None, None, None),
+                	('Lbreak' , parameters_init[3], True, None, None, None, None))
 
 fitter = lmfit.Minimizer(residual, params, scale_covar=True,nan_policy='raise',calc_covar=True)
 #result=fitter.minimize(method='emcee',burn=300, steps=1000,nwalkers=100,workers=8)
