@@ -29,11 +29,13 @@ id= (data["z"]!=4) & (data["z"]!=4.5)
 fit1=cfit(func3,data["z"][id],data["gamma1"][id],sigma=data["err1"][id],p0=np.array([0,0,0,0]))[0]
 id= (data["z"]!=5) & (data["z"]!=6)
 fit2=cfit(doublepower,data["z"][id],data["gamma2"][id],sigma=data["err2"][id],p0=np.array([0,2,0,0]))[0]
-id= (data["z"]<=4)
+id= (data["z"]<=3)
 fit3=cfit(func1,data["z"][id],data["phi_s"][id],sigma=data["err3"][id],p0=np.array([0,0,0,0]))[0]
 id= (data["z"]<5)
 fit4=cfit(doublepower,data["z"][id],data["L_s"][id],sigma=data["err4"][id],p0=np.array([0,2,0,0]))[0]
 
+print "intepreted logphi_s:"
+print func1(np.array([3.5,4,4.5,5,5.5,6,6.5]),*fit3)
 
 print 'gamma1',fit1
 print 'gamma2',fit2

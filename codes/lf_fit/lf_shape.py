@@ -14,8 +14,6 @@ def LF(L_bol,P):
 def LF_at_z(L_bol,P,z,model):
 	if model=='Fiducial':
 		xsi_log	= np.log10((1.+z)/(1.+2))
-		xsi_lin	= z - 2
-		xsi = xsi_lin
 		xsi = xsi_log
 	
 		gamma1_0	= P[0]	#faint-end slope
