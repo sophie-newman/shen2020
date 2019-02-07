@@ -106,7 +106,8 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-ax.errorbar(data["z"]+1,data["phi_s"],yerr=data['err3'],xerr=0.25*np.ones(len(data["z"])),linestyle='',marker='o',c='royalblue',mec='royalblue',ms=15,capsize=9,capthick=3)
+ax.errorbar(data["z"][data["z"]<=3]+1,data["phi_s"][data["z"]<=3],yerr=data['err3'][data["z"]<=3],xerr=0.25*np.ones(len(data["z"][data["z"]<=3])),linestyle='',marker='o',c='royalblue',mec='royalblue',ms=15,capsize=9,capthick=3)
+ax.errorbar(data["z"][data["z"]>3]+1,data["phi_s"][data["z"]>3],yerr=data['err3'][data["z"]>3],xerr=0.25*np.ones(len(data["z"][data["z"]>3])),linestyle='',marker='o',c='black',mec='black',ms=15,capsize=9,capthick=3)
 
 ax.plot(z_a+1,phi_s_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a+1,bestfit(z_a,'phi_s'),'-',c='seagreen')
