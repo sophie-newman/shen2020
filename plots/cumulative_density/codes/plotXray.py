@@ -108,51 +108,59 @@ def get_model_lf(parameters,nu,magnitude=False):
 
 result=np.zeros((len(zlist),3))
 for i in range(len(zlist)):
-	result[i,0]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF_at_z_H07(L_bol_grid,parameters_init,zlist[i],'Fiducial') ,45.5,46.5))
-	result[i,1]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF_at_z_H07(L_bol_grid,parameters_init,zlist[i],'Fiducial') ,46.5,47.5))
-	result[i,2]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF_at_z_H07(L_bol_grid,parameters_init,zlist[i],'Fiducial') ,47.5,48.5))
+	L_band = bolometric_correction(L_bol_grid,-4)
+        nu_c = c_double(-4)
+        input_c= np.power(10.,LF_at_z_H07(L_bol_grid,parameters_init,zlist[i],"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        res = convolve_c(input_c,nu_c)
+        res = [j for j in res.contents]
+        PHI_band = np.array(res,dtype=np.float64)
+
+	result[i,0]=np.log10( cumulative_count(L_band+L_solar, np.log10(PHI_band),43.5,44.5))
+	result[i,1]=np.log10( cumulative_count(L_band+L_solar, np.log10(PHI_band),44.5,45.5))
+	result[i,2]=np.log10( cumulative_count(L_band+L_solar, np.log10(PHI_band),45.5,46.5))
 ax.plot(zlist,result[:,0],'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins$ $\rm 2007$')
 ax.plot(zlist,result[:,1],'--',dashes=(25,15),c='crimson')
 ax.plot(zlist,result[:,2],'--',dashes=(25,15),c='crimson')
 
 result=np.zeros((len(zlist),3))
 for i in range(len(zlist)):
-        id=pz==zlist[i]
-        result[i,0]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF(L_bol_grid,[gamma1[i],gamma2[i],logphis[i],Lbreak[i]]) ,45.5,46.5))
-	result[i,1]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF(L_bol_grid,[gamma1[i],gamma2[i],logphis[i],Lbreak[i]]) ,46.5,47.5))
-	result[i,2]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF(L_bol_grid,[gamma1[i],gamma2[i],logphis[i],Lbreak[i]]) ,47.5,48.5))
+	id=pz==zlist[i]
+	L_HX, PHI_HX = get_model_lf([gamma1[i],gamma2[i],logphis[i],Lbreak[i]], -4)
+	result[i,0]=np.log10(cumulative_count(L_HX+L_solar,np.log10(PHI_HX),43.5,44.5))
+	result[i,1]=np.log10(cumulative_count(L_HX+L_solar,np.log10(PHI_HX),44.5,45.5))
+	result[i,2]=np.log10(cumulative_count(L_HX+L_solar,np.log10(PHI_HX),45.5,46.5))
 ax.plot(zlist,result[:,0],'-',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
 ax.plot(zlist,result[:,1],'-',c='seagreen')
 ax.plot(zlist,result[:,2],'-',c='seagreen')
 
 result=np.zeros((len(zpoints),3))
 for i in range(len(zpoints)):
-	id=pz==zpoints[i]
-	result[i,0]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF(L_bol_grid,[pgamma1[id],pgamma2[id],plogphis[id],pLbreak[id]]) ,45.5,46.5))
-	result[i,1]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF(L_bol_grid,[pgamma1[id],pgamma2[id],plogphis[id],pLbreak[id]]) ,46.5,47.5))
-	result[i,2]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF(L_bol_grid,[pgamma1[id],pgamma2[id],plogphis[id],pLbreak[id]]) ,47.5,48.5))
-
+        id=pz==zpoints[i]
+        L_HX, PHI_HX = get_model_lf([pgamma1[id],pgamma2[id],plogphis[id],pLbreak[id]], -4)
+	result[i,0]=np.log10( cumulative_count(L_HX+L_solar,np.log10(PHI_HX),43.5,44.5))
+	result[i,1]=np.log10( cumulative_count(L_HX+L_solar,np.log10(PHI_HX),44.5,45.5))
+        result[i,2]=np.log10( cumulative_count(L_HX+L_solar,np.log10(PHI_HX),45.5,46.5))
 ax.plot(zpoints,result[:,0],'o',c='royalblue',mec='royalblue',ms=15)
 ax.plot(zpoints,result[:,1],'o',c='royalblue',mec='royalblue',ms=15)
 ax.plot(zpoints,result[:,2],'o',c='royalblue',mec='royalblue',ms=15)
 
 prop = matplotlib.font_manager.FontProperties(size=30.0)
-ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=1,ncol=1,frameon=False)
+#ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=1,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\Phi[{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
 
-ax.text(0.4, 0.33, r'$\rm 47.5-48.5$'  ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
-ax.text(0.4, 0.58, r'$\rm 46.5-47.5$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
-ax.text(0.4, 0.88, r'$\rm 45.5-46.5$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
+ax.text(0.32, 0.3, r'$\rm 45.5-46.5$'  ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
+ax.text(0.32, 0.64, r'$\rm 44.5-45.5$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
+ax.text(0.32, 0.9, r'$\rm 43.5-44.5$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
-ax.text(0.2, 0.1, r'$\rm Bolometric$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40,color='navy')
+ax.text(0.2, 0.1, r'$\rm Hard$ $\rm X-ray$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40,color='navy')
 
 ax.set_xlim(0,7)
-ax.set_ylim(-10.3,-3.5)
+ax.set_ylim(-10.6,-3.4)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/cumu_num_bol.pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/cumu_num_Xray.pdf",fmt='pdf')
+#plt.show()
 

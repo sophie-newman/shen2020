@@ -100,7 +100,7 @@ ax.plot(x,y,'--',dashes=(25,15),c='black',label=r'$\rm new$ $\rm fit$')
 
 L_B = bolometric_correction(L_bol_grid,-1)
 nu_c = c_double(-1)
-input_c= np.power(10.,LF_at_z(L_bol_grid,parameters_init,redshift,"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+input_c= np.power(10.,LF_at_z_H07(L_bol_grid,parameters_init,redshift,"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
 res = convolve_c(input_c,nu_c)
 res = [i for i in res.contents]
 PHI_B = np.array(res,dtype=np.float64)

@@ -14,10 +14,10 @@ import ctypes
 
 #parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 #parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"  , "k1"      , "k2"        , "k3"        , "k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
-parameters_init = np.array([1.705501200816446294e+00 ,-1.078700539443752326e+00,1.417091812716838317e-01 ,-4.913503567223131800e-03,
-2.342208072486966941e+00 , 2.067114074110976141e+00,-1.000403268800853951e+00, 1.399154527410910287e+00,
--3.860125192409941342e+00, -3.531881721705402155e-01,
-1.099643031838996166e+01, 7.302490517201445819e+00, -3.252882882822146215e-01, 1.239403614340442328e+00])
+parameters_init = np.array([4.5638212952980256e-01,-5.3535826442735933e-02,8.291438766390475321e-03,
+ 2.23952286876408957e+00,9.6563649154324882e-01,-1.46845995121186257e+00,7.653560660287425099e-01,
+ -3.855561029913782800e+00, -3.548048158301563837e-01,
+ 9.92811918927010062e+00,-1.92756399797551145e-03,-1.2185864295518154e+00,2.072801872747117857e-01])
 parameters_info = np.array(["gamma1", "gamma2", "logphis"  , "logLs"])
 
 #load the shared object file
@@ -70,8 +70,9 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_data)
 			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_data)
 			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_data + 0.01)
-			alldata["Z_TOT"]  = np.append(alldata["Z_TOT"]  , np.ones(len(L_data)) * redshift)
-			alldata["ID"]     = np.append(alldata["ID"]     , np.ones(len(L_data)) * dset_id)
+			alldata["Z"]  = np.append(alldata["Z"]  , np.ones(len(L_data)) * redshift)
+			alldata["WEIGHT"]  = np.append(alldata["WEIGHT"]  , np.ones(len(L_data)) * np.sqrt(1+redshift))
+			alldata["ID"] = np.append(alldata["ID"] , np.ones(len(L_data)) * dset_id)
 			
 			alldata_tem["P_PRED"] = np.append(alldata_tem["P_PRED"] , phi_i)
 			alldata_tem["L_OBS"]  = np.append(alldata_tem["L_OBS"]  , L_data)
@@ -84,18 +85,18 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 
 def residual(pars):
 	parvals = pars.valuesdict()
-	parameters=np.array([parvals['p0'],parvals['p1'],parvals['p2'],parvals['p3'],parvals['p4'],parvals['p5'],parvals['p6'],parvals['p7'],parvals['p8'],parvals['p9'],parvals['p10'],parvals['p11'],parvals['p12'],parvals['p13']])
+	parameters=np.array([parvals['p0'],parvals['p1'],parvals['p2'],parvals['p3'],parvals['p4'],parvals['p5'],parvals['p6'],parvals['p7'],parvals['p8'],parvals['p9'],parvals['p10'],parvals['p11'],parvals['p12']])
 
-	alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
+	alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z":np.array([]),"WEIGHT":np.array([]),"ID":np.array([])}
 	for key in dset_ids.keys():
 		get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
 
 	bad = np.invert(np.isfinite(alldata["P_PRED"]))
 	if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
-	chitot = np.sum(((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
+	chitot = np.sum( (alldata["WEIGHT"]*(alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
 	print chitot, len(alldata["L_OBS"])
-	return (alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"]
+	return alldata["WEIGHT"]*((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])
 
 
 params = lmfit.Parameters()
@@ -112,8 +113,7 @@ params.add_many(('p0' , parameters_init[0], True, None, None, None, None),
 		('p9' , parameters_init[9], True, None, None, None, None),
 		('p10' , parameters_init[10], True, None, None, None, None),
 		('p11' , parameters_init[11], True, None, None, None, None),
-		('p12' , parameters_init[12], True, None, None, None, None),
-		('p13' , parameters_init[13], True, None, None, None, None))
+		('p12' , parameters_init[12], True, None, None, None, None))
 
 fitter = lmfit.Minimizer(residual, params, scale_covar=True,nan_policy='raise',calc_covar=True)
 #result=fitter.minimize(method='emcee',burn=300, steps=1000,nwalkers=100,workers=8)
