@@ -1,0 +1,16 @@
+11048.0499411 1252
+bestfit:
+Name     Value      Min      Max   Stderr     Vary     Expr Brute_Step
+p0     0.7433     -inf      inf     None     True     None     None
+p1   -0.09758     -inf      inf     None     True     None     None
+p10     7.794     -inf      inf     None     True     None     None
+p11   -0.3024     -inf      inf     None     True     None     None
+p12     1.162     -inf      inf     None     True     None     None
+p2   0.005112     -inf      inf     None     True     None     None
+p3      2.689     -inf      inf     None     True     None     None
+p4      1.683     -inf      inf     None     True     None     None
+p5     -1.264     -inf      inf     None     True     None     None
+p6      1.474     -inf      inf     None     True     None     None
+p7     -4.255     -inf      inf     None     True     None     None
+p8    -0.2928     -inf      inf     None     True     None     None
+p9      11.08     -inf      inf     None     True     None     None

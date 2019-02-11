@@ -16,7 +16,7 @@ import sys
 
 def Gamma(epsilon,z):
 	alphaEUV=-1.70
-	return 2.*(1+z)**(-1.5)*epsilon/1e24/(3.+np.abs(alphaEUV))
+	return ( 2.*(1+z)**(-1.5)*epsilon/1e24/(3.+np.abs(alphaEUV)) )
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
@@ -60,7 +60,8 @@ def cumulative_emissivity(L_band,Phi_band,L_limit_low,L_limit_up):
 	Mband, Mlow, Mup = L_band, L_limit_low, L_limit_up
 	logphi=inter.interp1d(Mband,Phi_band)
 	def emis(x):
-		fnu = np.power(10.,-0.4*x)*3631*1e-23*4*np.pi(10*con.pc.value*100)**2
+		fnu = np.power(10.,-0.4*x)*3631*1e-23*4*np.pi*(10*con.pc.value*100)**2
+		fnu912 = fnu * (912./1450.)**(0.61)
 		return np.power(10.,logphi(x))*fnu
 	return quad(emis,Mlow,Mup)[0]
 
@@ -107,8 +108,8 @@ for i in range(len(zlist)):
 
 	result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zlist[i])
 	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist[i])
-ax.plot(zlist,result[:,0],'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins$ $\rm 2007$')
-ax.plot(zlist,result[:,1],'--',dashes=(25,15),c='crimson')
+ax.plot(zlist,np.log10(result[:,0]),'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins$ $\rm 2007$')
+#ax.plot(zlist,result[:,1],'--',dashes=(25,15),c='crimson')
 
 result=np.zeros((len(zlist),2))
 for i in range(len(zlist)):
@@ -117,8 +118,8 @@ for i in range(len(zlist)):
 	PHI_1450 = return_kk18_lf_fitted(M_1450 ,zlist[i]) 
 	result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zlist[i])
 	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist[i])
-ax.plot(zlist,result[:,0],'--',dashes=(25,15),c='cyan',label=r'$\rm Kulkarni$ $\rm 2018$')
-ax.plot(zlist,result[:,1],'--',dashes=(25,15),c='cyan')
+ax.plot(zlist,np.log10(result[:,0]),'--',dashes=(25,15),c='cyan',label=r'$\rm Kulkarni$ $\rm 2018$')
+#ax.plot(zlist,result[:,1],'--',dashes=(25,15),c='cyan')
 
 result=np.zeros((len(zlist),2))
 for i in range(len(zlist)):
@@ -126,34 +127,43 @@ for i in range(len(zlist)):
 	M_1450, PHI_1450 = get_model_lf([gamma1[i],gamma2[i],logphis[i],Lbreak[i]], -1, magnitude=True)
 	result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zlist[i])
 	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist[i])
-ax.plot(zlist,result[:,0],'-',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
-ax.plot(zlist,result[:,1],'-',c='seagreen')
+ax.plot(zlist,np.log10(result[:,0]),'-',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
+#ax.plot(zlist,result[:,1],'-',c='seagreen')
 
 result=np.zeros((len(zpoints),2))
 for i in range(len(zpoints)):
         id=pz==zpoints[i]
         M_1450, PHI_1450 = get_model_lf([pgamma1[id],pgamma2[id],plogphis[id],pLbreak[id]], -1, magnitude=True)
-        result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zlist[i])
-		result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist[i])
-ax.plot(zpoints,result[:,0],'o',c='royalblue',mec='royalblue',ms=15)
-ax.plot(zpoints,result[:,1],'o',c='royalblue',mec='royalblue',ms=15)
+        result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zpoints[i])
+	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zpoints[i])
+ax.plot(zpoints,np.log10(result[:,0]),'o',c='royalblue',mec='royalblue',ms=15)
+#ax.plot(zpoints,result[:,1],'o',c='royalblue',mec='royalblue',ms=15)
 
-prop = matplotlib.font_manager.FontProperties(size=30.0)
-ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=1,ncol=1,frameon=False)
+ax.errorbar([2.40,2.80,3.20,3.60,4.00,4.40,4.75],[0.015,-0.066,-0.103,-0.097,-0.072,-0.019,-0.029],yerr=([0.146, 0.131, 0.121, 0.118, 0.117, 0.122, 0.147],[0.132, 0.129, 0.130, 0.131, 0.135, 0.140, 0.156]),marker='o',linestyle='none',ms=15,color='k',mec='k',capsize=9,capthick=4,label=r'$\rm Becker & Bolton+$ $\rm 2013$')
+
+ydata=np.array([0.58, 0.53, 0.48, 0.47, 0.45, 0.29])
+lowerr=np.array([0.20, 0.19, 0.18, 0.18, 0.17, 0.11])
+uperr=np.array([0.08, 0.09, 0.10, 0.12, 0.14, 0.11])
+
+ax.errorbar([4.8,5.0,5.2,5.4,5.6,5.8], np.log10(ydata) ,yerr=(np.log10(ydata)-np.log10(ydata-lowerr),np.log10(ydata+uperr)-np.log10(ydata)),marker='o',linestyle='none',ms=15,color='navy',mec='navy',capsize=9,capthick=4,label=r'$\rm Aloisio+$ $\rm 2018$')
+
+data=np.genfromtxt("kk18.dat",names=['z','gamma'])
+ax.plot(data['z'],data['gamma'],'--',c='gray',alpha=0.3)
+
+prop = matplotlib.font_manager.FontProperties(size=25.0)
+ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\log{(\Phi[{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$\Gamma_{\rm -12}$ [$\rm s^{-1}\,atom^{-1}$]',fontsize=40,labelpad=5)
 
-ax.text(0.25, 0.64, r'$\rm <-21$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
-ax.text(0.25, 0.87, r'$\rm <-18$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
-
-ax.text(0.2, 0.1, r'$\rm FUV$ ($\rm 1450\AA$)' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40,color='navy')
+#ax.text(0.25, 0.64, r'$\rm <-21$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
+#ax.text(0.25, 0.87, r'$\rm <-18$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
 ax.set_xlim(0,7)
-ax.set_ylim(-8.5,-3.4)
+ax.set_ylim(-2.3,0.3)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/cumu_num_1450.pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/ionizing_photon.pdf",fmt='pdf')
+#plt.show()
 

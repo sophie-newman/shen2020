@@ -94,9 +94,9 @@ def residual(pars):
 	bad = np.invert(np.isfinite(alldata["P_PRED"]))
 	if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
-	chitot = np.sum( (alldata["WEIGHT"]*(alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
+	chitot = np.sum( ((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
 	print chitot, len(alldata["L_OBS"])
-	return alldata["WEIGHT"]*((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])
+	return (alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"]
 
 
 params = lmfit.Parameters()
