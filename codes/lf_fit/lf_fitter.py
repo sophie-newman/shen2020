@@ -3,10 +3,11 @@ import numpy as np
 from lf_shape import *
 import scipy.interpolate as inter
 from convolve import *
-from scipy.optimize import curve_fit
-from scipy.optimize import minimize
-from scipy.optimize import least_squares
-import lmfit
+
+import emcee
+from emcee.utils import MPIPool
+import corner
+import matplotlib.pyplot as plt
 # fit the luminosity function based on datasets at a given redshift
 from lf_fitter_data import *
 from ctypes import *
@@ -84,8 +85,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 	#print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
 
 def residual(pars):
-	parvals = pars.valuesdict()
-	parameters=np.array([parvals['p0'],parvals['p1'],parvals['p2'],parvals['p3'],parvals['p4'],parvals['p5'],parvals['p6'],parvals['p7'],parvals['p8'],parvals['p9'],parvals['p10'],parvals['p11'],parvals['p12']])
+	parameters = pars
 
 	alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z":np.array([]),"WEIGHT":np.array([]),"ID":np.array([])}
 	for key in dset_ids.keys():
@@ -95,32 +95,44 @@ def residual(pars):
 	if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
 	chitot = np.sum( ((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
-	print chitot, len(alldata["L_OBS"])
-	return (alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"]
+	#print chitot, len(alldata["L_OBS"])
+	return (alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"], alldata["D_OBS"]
 
+def lnlike(pars):
+        res, sigma = residual(pars)
+        return -0.5*np.sum(res**2 + np.log(2*np.pi*sigma**2))
 
-params = lmfit.Parameters()
-# add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
-params.add_many(('p0' , parameters_init[0], True, None, None, None, None),
-                ('p1' , parameters_init[1], True, None, None, None, None),
-                ('p2' , parameters_init[2], True, None, None, None, None),
-                ('p3' , parameters_init[3], True, None, None, None, None),
-		('p4' , parameters_init[4], True, None, None, None, None),
-		('p5' , parameters_init[5], True, None, None, None, None),
-		('p6' , parameters_init[6], True, None, None, None, None),
-		('p7' , parameters_init[7], True, None, None, None, None),
-		('p8' , parameters_init[8], True, None, None, None, None),
-		('p9' , parameters_init[9], True, None, None, None, None),
-		('p10' , parameters_init[10], True, None, None, None, None),
-		('p11' , parameters_init[11], True, None, None, None, None),
-		('p12' , parameters_init[12], True, None, None, None, None))
+def lnprior(pars):
+        return 0.0
 
-fitter = lmfit.Minimizer(residual, params, scale_covar=True,nan_policy='raise',calc_covar=True)
-#result=fitter.minimize(method='emcee',burn=300, steps=1000,nwalkers=100,workers=8)
-result=fitter.minimize(method='leastsq')
-print "bestfit:"
-result.params.pretty_print()
-print "all messages:"
-cov=result.covar
-print cov
+def lnprob(pars):
+        lp = lnprior(pars)
+	llike = lnlike(pars)
+        if not np.isfinite(lp):  return -np.inf
+	if not np.isfinite(llike):  return -np.inf
+        return lp + llike
+
+ndim, nwalkers = 13, 100
+pos = np.array([np.random.randn(ndim) for i in range(nwalkers)])
+for i in range(pos.shape[0]):
+	pos[i,:] = pos[i,:] * 0.1 * parameters_init + parameters_init
+
+with MPIPool() as pool:
+	if not pool.is_master():
+        	pool.wait()
+        	sys.exit(0)
+
+	sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, pool=pool)
+	nsteps = 4000
+	#sampler.run_mcmc(pos, nsteps)
+	print "begin sampling"
+	for i, result in enumerate(sampler.sample(pos, iterations=nsteps)):
+        	#if pool.is_master(): 
+		if (i+1) % 10 == 0:
+        		print("{0:5.1%}".format(float(i) / nsteps)) 
+
+burn = 200
+samples = sampler.chain[:, burn:, :].reshape((-1, ndim))
+
+np.save("output/chain_main.npy",samples)
 

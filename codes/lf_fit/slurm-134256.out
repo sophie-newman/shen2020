@@ -1,0 +1,2 @@
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:46: RuntimeWarning: invalid value encountered in power
+  return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
