@@ -2,7 +2,17 @@ import corner
 import matplotlib.pyplot as plt
 import numpy as np
 
-samples = np.load("chain_main.npy")
+#samples = np.load("chain_main.npy")
+data = np.genfromtxt("chain.dat")
+id = data[1]>1000
+samples = data[:,2:]
 print samples.shape
-fig = corner.corner(samples)
-plt.show()
+
+best_fit = map(lambda v: (v[1], v[2]-v[1], v[1]-v[0]),
+          zip(*np.percentile(samples, [16, 50, 84],axis=0)))
+best_fit = np.array(best_fit)
+print best_fit.shape
+for i in range(best_fit.shape[0]):
+	print "p{0:d}:".format(i), best_fit[i,0], "+{0:f}".format(best_fit[i,1]),"-{0:f}".format(best_fit[i,2])
+#fig = corner.corner(samples)
+#fig.savefig("triangle.png",format='png')

@@ -13,12 +13,18 @@ from lf_fitter_data import *
 from ctypes import *
 import ctypes
 
+import time
+
 #parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 #parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"  , "k1"      , "k2"        , "k3"        , "k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
+'''
 parameters_init = np.array([4.5638212952980256e-01,-5.3535826442735933e-02,8.291438766390475321e-03,
  2.23952286876408957e+00,9.6563649154324882e-01,-1.46845995121186257e+00,7.653560660287425099e-01,
  -3.855561029913782800e+00, -3.548048158301563837e-01,
  9.92811918927010062e+00,-1.92756399797551145e-03,-1.2185864295518154e+00,2.072801872747117857e-01])
+'''
+parameters_init = np.array([0.05,0.20,-0.004,  2.4,1.0,-1.7,0.8,  -3.85,-0.6,   12.0,0.5,-0.6,0.16])
+
 parameters_info = np.array(["gamma1", "gamma2", "logphis"  , "logLs"])
 
 #load the shared object file
@@ -112,10 +118,15 @@ def lnprob(pars):
 	if not np.isfinite(llike):  return -np.inf
         return lp + llike
 
+start_time = time.time()
+
 ndim, nwalkers = 13, 100
 pos = np.array([np.random.randn(ndim) for i in range(nwalkers)])
 for i in range(pos.shape[0]):
-	pos[i,:] = pos[i,:] * 0.1 * parameters_init + parameters_init
+	pos[i,:] = pos[i,:] * 0.2 * parameters_init + parameters_init + pos[i,:] * 0.1
+
+f = open("output/chain.dat", "w")
+f.close()
 
 with MPIPool() as pool:
 	if not pool.is_master():
@@ -129,8 +140,14 @@ with MPIPool() as pool:
 	for i, result in enumerate(sampler.sample(pos, iterations=nsteps)):
         	#if pool.is_master(): 
 		if (i+1) % 10 == 0:
-        		print("{0:5.1%}".format(float(i) / nsteps)) 
-
+        		print "{0:5.1%}".format(float(i) / nsteps), "  t:", time.time()-start_time 
+		
+		position = result[0]
+		f = open("output/chain.dat", "a")
+		for k in range(position.shape[0]):
+			f.write("{0:3d} {1:7d} {2:s}\n".format(k, i, np.array2string(position[k]).strip('[').strip(']').replace('\n',' ') ))
+		f.close()
+		
 burn = 200
 samples = sampler.chain[:, burn:, :].reshape((-1, ndim))
 
