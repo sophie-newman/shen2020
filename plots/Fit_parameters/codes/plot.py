@@ -32,7 +32,7 @@ def bestfit(z,field):
 	else: return doublepower(z,p)
 
 def bestfit_global(z,field):
-	source=np.genfromtxt("zevolution_fit_global.dat",names=['gamma1','err1','gamma2','err2','phi_s','err3','Lbreak','err4'])
+	source=np.genfromtxt("zevolution_fit_global.dat",names=True)
 	p=source[field]
 	if (field=='gamma1') or (field=='phi_s'):
 		return polynomial(z,p)
