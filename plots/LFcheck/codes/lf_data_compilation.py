@@ -106,6 +106,7 @@ new_dset_ids={
 	"WILLOTT10":  -1,
 	"YANG16":     -1,
 	"YANG18":     -1
+	#Xray H
 }
 
 kk_dset_ids={

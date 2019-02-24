@@ -2,8 +2,11 @@ import corner
 import matplotlib.pyplot as plt
 import numpy as np
 
+import sys
+fname=sys.argv[1]
+
 #samples = np.load("chain_main.npy")
-data = np.genfromtxt("chain.dat")
+data = np.genfromtxt(fname+".dat")
 id = data[1]>1000
 samples = data[:,2:]
 print samples.shape

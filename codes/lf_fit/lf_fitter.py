@@ -102,7 +102,16 @@ def residual(pars):
 
 	chitot = np.sum( ((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
 	#print chitot, len(alldata["L_OBS"])
-	return (alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"], alldata["D_OBS"]
+	return alldata["WEIGHT"]*(alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"], alldata["D_OBS"]
+
+'''
+ptrial = np.array([0.124141258, 0.1592212035, -0.0021223755, 2.493809765, 1.11031779, -1.69997955, 0.870664252, -3.44704638, -0.575265774, 12.6792799, 1.03131765, -0.645694983, 0.315844737]) 
+sigmas,_ = residual(ptrial)
+#print np.sum(sigmas**2)
+sigmas,_ = residual(parameters_init)
+#print np.sum(sigmas**2)
+exit()
+'''
 
 def lnlike(pars):
         res, sigma = residual(pars)
@@ -120,12 +129,12 @@ def lnprob(pars):
 
 start_time = time.time()
 
-ndim, nwalkers = 13, 100
+ndim, nwalkers = 13, 200
 pos = np.array([np.random.randn(ndim) for i in range(nwalkers)])
 for i in range(pos.shape[0]):
-	pos[i,:] = pos[i,:] * 0.2 * parameters_init + parameters_init + pos[i,:] * 0.1
+	pos[i,:] = pos[i,:] * 0.4 * parameters_init + parameters_init + pos[i,:] * 0.1
 
-f = open("output/chain.dat", "w")
+f = open("output/chain_new.dat", "w")
 f.close()
 
 with MPIPool() as pool:
@@ -134,10 +143,10 @@ with MPIPool() as pool:
         	sys.exit(0)
 
 	sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, pool=pool)
-	nsteps = 4000
+	nsteps = 10000
 	#sampler.run_mcmc(pos, nsteps)
 	print "begin sampling"
-	for i, result in enumerate(sampler.sample(pos, iterations=nsteps)):
+	for i, result in enumerate(sampler.sample(pos, iterations=nsteps, storechain=False)):
         	#if pool.is_master(): 
 		if (i+1) % 10 == 0:
         		print "{0:5.1%}".format(float(i) / nsteps), "  t:", time.time()-start_time 
@@ -148,8 +157,4 @@ with MPIPool() as pool:
 			f.write("{0:3d} {1:7d} {2:s}\n".format(k, i, np.array2string(position[k]).strip('[').strip(']').replace('\n',' ') ))
 		f.close()
 		
-burn = 200
-samples = sampler.chain[:, burn:, :].reshape((-1, ndim))
-
-np.save("output/chain_main.npy",samples)
 
