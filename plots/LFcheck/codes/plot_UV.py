@@ -107,12 +107,12 @@ y = np.log10(PHI_B) - np.log10(2.5)
 ax.plot(x,y,'--',dashes=(25,15),c='gray',label=r'$\rm old$ $\rm fit$')
 
 x,y,dy,yfit=get_data(newdata=True)
-ax.errorbar(x,y,yerr=dy,capsize=10,linestyle='',c='crimson',marker='o',markeredgewidth=0, ms=10,alpha=0.6,label=r'$\rm new$ $\rm data$')
+ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='crimson',mec='crimson',marker='o', ms=10, capthick=2,label=r'$\rm new$ $\rm data$')
 
 x,y,dy,yfit=get_data()
 x = (M_sun_Bband_AB -2.5*x) + 0.706
 y = y - np.log10(2.5)
-ax.errorbar(x,y,yerr=dy,capsize=10,linestyle='',c='royalblue',marker='o',markeredgewidth=0, ms=10,alpha=0.6,label=r'$\rm old$ $\rm data$')
+ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='o', ms=10, capthick=2 ,label=r'$\rm old$ $\rm data$')
 
 prop = matplotlib.font_manager.FontProperties(size=30.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -127,6 +127,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/UV_"+str(redshift)+".pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/UV_"+str(redshift)+".pdf",fmt='pdf')
+#plt.show()
 

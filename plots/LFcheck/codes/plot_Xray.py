@@ -46,6 +46,10 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id,newdata=False):
 			phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
 			phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
 			PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
+	else:
+		phi_fit_tmp = return_miyaji15_lf_fitted(L_tmp + L_solar, redshift)
+		phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+		PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
 
 	if len(L_data)>0:
 			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_data)
@@ -103,12 +107,12 @@ ax.plot(x,y,'--',dashes=(25,15),c='gray',label=r'$\rm old$ $\rm fit$')
 x,y,dy,yfit=get_data(newdata=True)
 x = x + L_solar
 y = y
-ax.errorbar(x,y,yerr=dy,capsize=10,linestyle='',c='crimson',marker='o',markeredgewidth=0, ms=10,alpha=0.6,label=r'$\rm new$ $\rm data$')
+ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='crimson',mec='crimson',marker='o', ms=10,capthick=2,label=r'$\rm new$ $\rm data$')
 
 x,y,dy,yfit=get_data()
 x = x + L_solar
 y = y
-ax.errorbar(x,y,yerr=dy,capsize=10,linestyle='',c='royalblue',marker='o',markeredgewidth=0, ms=10,alpha=0.6,label=r'$\rm old$ $\rm data$')
+ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='o', ms=10,capthick=2, label=r'$\rm old$ $\rm data$')
 
 prop = matplotlib.font_manager.FontProperties(size=30.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -117,12 +121,12 @@ ax.set_xlabel(r'$\log{(L_{\rm HX}[{\rm erg}\,{\rm s}^{-1}])}$',fontsize=40,label
 ax.set_ylabel(r'$\log{(\phi[{\rm dex}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
 ax.text(0.88, 0.92, r'${\rm z\sim'+str(redshift)+'}$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
 
-ax.set_xlim(41.7, 48.3)
+ax.set_xlim(41.7, 47.7)
 ax.set_ylim(-10.2,-2.3)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/HX_"+str(redshift)+".pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/HX_"+str(redshift)+".pdf",fmt='pdf')
+#plt.show()
 

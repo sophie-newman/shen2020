@@ -17,5 +17,5 @@ best_fit = np.array(best_fit)
 print best_fit.shape
 for i in range(best_fit.shape[0]):
 	print "p{0:d}:".format(i), best_fit[i,0], "+{0:f}".format(best_fit[i,1]),"-{0:f}".format(best_fit[i,2])
-#fig = corner.corner(samples)
-#fig.savefig("triangle.png",format='png')
+fig = corner.corner(samples)
+fig.savefig("triangle.png",format='png')

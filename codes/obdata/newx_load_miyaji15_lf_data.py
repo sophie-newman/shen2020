@@ -49,4 +49,4 @@ def return_miyaji15_lf_fitted(Llist,z):
 	eds = np.zeros(len(Llist))
 	for i in range(len(eds)):
 		eds[i] = ed(Llist[i],z)
-	return phi_s/( np.power(x,gamma1) + np.power(x,gamma2))*eds
+	return np.log10( phi_s/( np.power(x,gamma1) + np.power(x,gamma2))*eds )
