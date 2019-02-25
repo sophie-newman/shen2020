@@ -60,11 +60,11 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-ax.errorbar(data["z"]+1,data["gamma1"],yerr=data['err1'],xerr=0.25*np.ones(len(data["z"])),linestyle='',marker='o',c='royalblue',mec='royalblue',ms=15,capsize=9,capthick=3)
+ax.errorbar(data["z"]+1,data["gamma1"],yerr=data['err1'],linestyle='',marker='o',c='royalblue',mec='royalblue',ms=18,capsize=10,capthick=4)
 
 ax.plot(z_a+1,gamma1_a,'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 ax.plot(z_a+1,bestfit(z_a,'gamma1'),'-',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
-ax.plot(z_a+1,bestfit_global(z_a,'gamma1'),'-',c='darkorchid',label=r'$\rm Global$ $\rm fit$')
+#ax.plot(z_a+1,bestfit_global(z_a,'gamma1'),'-',c='darkorchid',label=r'$\rm Global$ $\rm fit$')
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
@@ -83,11 +83,11 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-ax.errorbar(data["z"]+1,data["gamma2"],yerr=data['err2'],xerr=0.25*np.ones(len(data["z"])),linestyle='',marker='o',c='royalblue',mec='royalblue',ms=15,capsize=9,capthick=3)
+ax.errorbar(data["z"]+1,data["gamma2"],yerr=data['err2'],linestyle='',marker='o',c='royalblue',mec='royalblue',ms=18,capsize=10,capthick=4)
 
 ax.plot(z_a+1,gamma2_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a+1,bestfit(z_a,'gamma2'),'-',c='seagreen')
-ax.plot(z_a+1,bestfit_global(z_a,'gamma2'),'-',c='darkorchid')
+#ax.plot(z_a+1,bestfit_global(z_a,'gamma2'),'-',c='darkorchid')
 
 #prop = matplotlib.font_manager.FontProperties(size=25.0)
 #ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -106,12 +106,12 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-ax.errorbar(data["z"][data["z"]<=3]+1,data["phi_s"][data["z"]<=3],yerr=data['err3'][data["z"]<=3],xerr=0.25*np.ones(len(data["z"][data["z"]<=3])),linestyle='',marker='o',c='royalblue',mec='royalblue',ms=15,capsize=9,capthick=3)
-ax.errorbar(data["z"][data["z"]>3]+1,data["phi_s"][data["z"]>3],yerr=data['err3'][data["z"]>3],xerr=0.25*np.ones(len(data["z"][data["z"]>3])),linestyle='',marker='o',c='black',mec='black',ms=15,capsize=9,capthick=3)
+ax.errorbar(data["z"][data["z"]<=3]+1,data["phi_s"][data["z"]<=3],yerr=data['err3'][data["z"]<=3],linestyle='',marker='o',c='royalblue',mec='royalblue',ms=18,capsize=10,capthick=4)
+ax.errorbar(data["z"][data["z"]>3]+1,data["phi_s"][data["z"]>3],linestyle='',marker='o',c='black',mec='black',ms=18,capsize=10,capthick=4)
 
 ax.plot(z_a+1,phi_s_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a+1,bestfit(z_a,'phi_s'),'-',c='seagreen')
-ax.plot(z_a+1,bestfit_global(z_a,'phi_s'),'-',c='darkorchid')
+#ax.plot(z_a+1,bestfit_global(z_a,'phi_s'),'-',c='darkorchid')
 
 #prop = matplotlib.font_manager.FontProperties(size=25.0)
 #ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -130,11 +130,11 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-ax.errorbar(data["z"]+1,data["L_s"],yerr=data['err4'],xerr=0.25*np.ones(len(data["z"])),linestyle='',marker='o',c='royalblue',mec='royalblue',ms=15,capsize=9,capthick=3)
+ax.errorbar(data["z"]+1,data["L_s"],yerr=data['err4'],linestyle='',marker='o',c='royalblue',mec='royalblue',ms=18,capsize=10,capthick=4)
 
 ax.plot(z_a+1,Lbreak_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a+1,bestfit(z_a,'Lbreak'),'-',c='seagreen')
-ax.plot(z_a+1,bestfit_global(z_a,'Lbreak'),'-',c='darkorchid')
+#ax.plot(z_a+1,bestfit_global(z_a,'Lbreak'),'-',c='darkorchid')
 
 #prop = matplotlib.font_manager.FontProperties(size=25.0)
 #ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)

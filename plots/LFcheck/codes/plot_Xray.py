@@ -41,10 +41,11 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id,newdata=False):
 		else: return False
 
 	L_tmp=bolometric_correction(L_bol_grid,dset_id)
-	if (return_LF[dset_name]!=None):
-		phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
-		phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
-		PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
+	if newdata==False:
+		if (return_LF[dset_name]!=None):
+			phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
+			phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+			PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
 
 	if len(L_data)>0:
 			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_data)
@@ -99,8 +100,8 @@ x = L_HX + L_solar
 y = np.log10(PHI_HX)
 ax.plot(x,y,'--',dashes=(25,15),c='gray',label=r'$\rm old$ $\rm fit$')
 
-#x,y,dy,yfit=get_data(newdata=True)
-#ax.errorbar(x,y,yerr=dy,capsize=10,linestyle='',c='crimson',marker='o',markeredgewidth=0, ms=10,alpha=0.6,label=r'$\rm new$ $\rm data$')
+x,y,dy,yfit=get_data(newdata=True)
+ax.errorbar(x,y,yerr=dy,capsize=10,linestyle='',c='crimson',marker='o',markeredgewidth=0, ms=10,alpha=0.6,label=r'$\rm new$ $\rm data$')
 
 x,y,dy,yfit=get_data()
 x = x + L_solar

@@ -4,7 +4,7 @@ from data import *
 import numpy as np
 
 def load_miyaji15_lf_data(z): 
-	if (z <= 0.015) or (z > 5.80): return False
+	if (z <= 0.015) or (z > 4.60): return False
 	else:	
 		filename = datapath+'miyaji2015_table4.dat'
 		data = np.genfromtxt(filename,names=['z_min', 'z_max', 'z_mean', 

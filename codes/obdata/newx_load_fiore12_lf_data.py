@@ -7,13 +7,13 @@ import numpy as np
 
 def load_fiore12_lf_data(z): # L_HX, PHI_HX, DPHI_HX, z
 	# determine which redshift interval its in
-	if (z > 3.) and (z < 4.):
+	if (z > 3.) and (z <= 4.):
 		L_HX_high=np.array([43.50,44.00,44.50])
 		L_HX_low =np.array([42.75,43.50,44.00])
 		P_HX = np.log10(np.array([4.3e-5,4.0e-5,1.6e-5]))
 		D_HX_high = np.array([2.9,1.7,1.3])*1e-5
 		D_HX_low  = np.array([1.9,1.2,0.8])*1e-5
-	elif (z > 4.) and (z < 5.):
+	elif (z > 4.) and (z <= 5.):
 		L_HX_high=np.array([44.00])
 		L_HX_low =np.array([43.00])
 		P_HX = np.log10(np.array([2.1e-5]))

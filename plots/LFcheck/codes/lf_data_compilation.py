@@ -51,6 +51,15 @@ from new_load_yang18_lf_data import *
 
 from new_load_kk18_lf_shape import *
 
+from newx_load_aird08_lf_data import *
+from newx_load_aird10_lf_data import *
+from newx_load_aird15_lf_data import *
+from newx_load_aird15_b_lf_data import *
+from newx_load_embero09_lf_data import *
+from newx_load_fiore12_lf_data import *
+from newx_load_khorunzhev18_lf_data import *
+from newx_load_miyaji15_lf_data import *
+
 dset_ids={
 	#Bband
 	"DR3": -1,
@@ -105,8 +114,18 @@ new_dset_ids={
 	"WANG18":     -1,
 	"WILLOTT10":  -1,
 	"YANG16":     -1,
-	"YANG18":     -1
+	"YANG18":     -1,
 	#Xray H
+	"AIRD08":      -4,
+	"AIRD10":      -4,
+	"AIRD15_SX":   -4,
+	"AIRD15_HX":   -4,
+	"AIRD15_b":    -4,
+	"EBRERO09_SX": -4,
+	"EBRERO09_HX": -4,
+	"FIORE12":     -4,
+	"KHORUNZHEV18":-4,
+	"MIYAJI15":    -4
 }
 
 kk_dset_ids={
@@ -201,7 +220,18 @@ new_zmins={
 	"WANG18":     np.array([6.45]),
 	"WILLOTT10":  np.array([5.75]),
 	"YANG16":     np.array([4.7]),
-	"YANG18":     np.array([0.5,1.0,1.5,2.0,2.5,3.0])#,3.5,4.0])
+	"YANG18":     np.array([0.5,1.0,1.5,2.0,2.5,3.0]),#,3.5,4.0]),
+	#HX
+	"AIRD08":      np.array([2.5]),
+	"AIRD10":      np.array([0.0,0.2,0.5,0.8,1.0,1.2,1.5,2.0,2.5]),
+	"AIRD15_SX":   np.array([0.01,0.20,0.40,0.60,0.80,1.00,1.20,1.50,2.00,2.50,3.50,5.00]),
+	"AIRD15_HX":   np.array([0.01,0.20,0.40,0.60,0.80,1.00,1.20,1.50,2.00,2.50,3.50,5.00]),
+	"AIRD15_b":    np.array([0.1,0.5,1.0]),
+	"EBRERO09_SX": np.array([0.01,0.5,1.0,2.0]),
+	"EBRERO09_HX": np.array([0.01,0.5,1.0,2.0]),
+	"FIORE12":     np.array([3.,4.,5.8]),
+	"KHORUNZHEV18":np.array([3.,3.19,3.47,3.90,4.30]),
+	"MIYAJI15":    np.array([0.015,0.20,0.40,0.80,1.60,2.30])
 }
 new_zmaxs={
 	#1450
@@ -228,7 +258,18 @@ new_zmaxs={
 	"WANG18":     np.array([7.05]),
 	"WILLOTT10":  np.array([6.45]),
 	"YANG16":     np.array([5.4]),
-	"YANG18":     np.array([1.0,1.5,2.0,2.5,3.0,3.5])#,4.0,4.5])
+	"YANG18":     np.array([1.0,1.5,2.0,2.5,3.0,3.5]),#,4.0,4.5])
+	#HX
+	"AIRD08":      np.array([3.5]),
+	"AIRD10":      np.array([0.2,0.5,0.8,1.0,1.2,1.5,2.0,2.5,3.0]),
+	"AIRD15_SX":   np.array([0.20,0.40,0.60,0.80,1.00,1.20,1.50,2.00,2.50,3.50,5.00,7.00]),
+	"AIRD15_HX":   np.array([0.20,0.40,0.60,0.80,1.00,1.20,1.50,2.00,2.50,3.50,5.00,7.00]),
+	"AIRD15_b":    np.array([0.5,1.0,3.0]),
+	"EBRERO09_SX": np.array([0.5,1.0,2.0,3.0]),
+	"EBRERO09_HX": np.array([0.5,1.0,2.0,3.0]),
+	"FIORE12":     np.array([4.,5.,7.5]),
+	"KHORUNZHEV18":np.array([3.19,3.47,3.90,4.30,5.10]),
+	"MIYAJI15":    np.array([0.20,0.40,0.80,1.60,2.30,4.60])
 }
 
 load_LF_data={
@@ -303,5 +344,16 @@ new_load_LF_data={
 	"WANG18":     load_wang18_lf_data,
 	"WILLOTT10":  load_willott10_lf_data,
 	"YANG16":     load_yang16_lf_data,
-	"YANG18":     load_yang18_lf_data
+	"YANG18":     load_yang18_lf_data,
+	#Xray H
+	"AIRD08":      load_aird08_lf_data,
+	"AIRD10":      load_aird10_lf_data,
+	"AIRD15_SX":   load_aird15_lf_data_softsel,
+	"AIRD15_HX":   load_aird15_lf_data_hardsel,
+	"AIRD15_b":    load_aird15_b_lf_data,
+	"EBRERO09_SX": load_ebrero09_SX_lf_data,
+	"EBRERO09_HX": load_ebrero09_HX_lf_data,
+	"FIORE12":     load_fiore12_lf_data,
+	"KHORUNZHEV18":load_khorunzhev18_lf_data_vitobins,
+	"MIYAJI15":    load_miyaji15_lf_data
 }
