@@ -26,13 +26,13 @@ def doublepower(z,*p):
 	return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
 
 id= (data["z"]!=6)
-fit1=cfit(func2,data["z"][id],data["gamma1"][id],sigma=data["err1"][id],p0=np.array([0,0,0,0]))[0]
+fit1, cov1=cfit(func2,data["z"][id],data["gamma1"][id],sigma=data["err1"][id],p0=np.array([0.5,-0.1,0.,0.]))
 id= (data["z"]!=3.5) & (data["z"]!=6)
-fit2=cfit(doublepower,data["z"][id],data["gamma2"][id],sigma=data["err2"][id],p0=np.array([3.,1.5,-1.909707,0.822]))[0]
+fit2, cov2=cfit(doublepower,data["z"][id],data["gamma2"][id],sigma=data["err2"][id],p0=np.array([2.5,1.1,-1.5,0.8]))
 id= (data["z"]<=3)
-fit3=cfit(func1,data["z"][id],data["phi_s"][id],sigma=data["err3"][id],p0=np.array([0,0,0,0]))[0]
+fit3, cov3=cfit(func1,data["z"][id],data["phi_s"][id],sigma=data["err3"][id],p0=np.array([-3.5,-0.45,0.,0.]))
 id= (data["z"]!=6)
-fit4=cfit(doublepower,data["z"][id],data["L_s"][id],sigma=data["err4"][id],p0=np.array([9.59,-0.0516,-1.30,0.19]))[0]
+fit4, cov4=cfit(doublepower,data["z"][id],data["L_s"][id],sigma=data["err4"][id],p0=np.array([9.59,-0.0516,-1.30,0.19]))
 
 print "intepreted logphi_s:"
 print func1(np.array([3.5,4,4.5,5,5.5,6,6.5]),*fit3)

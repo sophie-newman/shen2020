@@ -15,9 +15,13 @@ T0 = np.polynomial.chebyshev.Chebyshev((1,0,0,0))
 T1 = np.polynomial.chebyshev.Chebyshev((0,1,0,0))
 T2 = np.polynomial.chebyshev.Chebyshev((0,0,1,0))
 T3 = np.polynomial.chebyshev.Chebyshev((0,0,0,1))
-def polynomial(z,p):
+def polynomial(z,p,n=3):
 	xsi=1.+z
-	return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)+p[3]*T3(xsi)
+	if n==1: return p[0]*T0(xsi)+p[1]*T1(xsi)
+	elif n==2: return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)
+	elif n==3:
+		return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)+p[3]*T3(xsi)
+	else: return False
 
 def doublepower(z,p):
 	xsi=1.+z
@@ -27,15 +31,20 @@ def doublepower(z,p):
 def bestfit(z,field):
 	source=np.genfromtxt("zevolution_fit.dat",names=['gamma1','gamma2','phi_s','Lbreak'])
 	p=source[field]
-	if (field=='gamma1') or (field=='phi_s'):
-		return polynomial(z,p)
+	if (field=='gamma1'): 
+		return polynomial(z,p,2)
+	elif (field=='phi_s'):
+		return polynomial(z,p,1)
 	else: return doublepower(z,p)
 
-def bestfit_global(z,field):
+def bestfit_global(z,paraid):
 	source=np.genfromtxt("zevolution_fit_global.dat",names=True)
-	p=source[field]
-	if (field=='gamma1') or (field=='phi_s'):
-		return polynomial(z,p)
+	p=source['value'][ source['paraid']==paraid ]
+	print p
+	if (paraid==0): 
+		return polynomial(z,p,2)
+	elif (paraid==2):
+		return polynomial(z,p,1)
 	else: return doublepower(z,p)
 
 def Hopkins07(z):
@@ -64,7 +73,7 @@ ax.errorbar(data["z"]+1,data["gamma1"],yerr=data['err1'],linestyle='',marker='o'
 
 ax.plot(z_a+1,gamma1_a,'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 ax.plot(z_a+1,bestfit(z_a,'gamma1'),'-',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
-#ax.plot(z_a+1,bestfit_global(z_a,'gamma1'),'-',c='darkorchid',label=r'$\rm Global$ $\rm fit$')
+ax.plot(z_a+1,bestfit_global(z_a,0),'-',c='darkorchid',label=r'$\rm Global$ $\rm fit$')
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
@@ -87,7 +96,7 @@ ax.errorbar(data["z"]+1,data["gamma2"],yerr=data['err2'],linestyle='',marker='o'
 
 ax.plot(z_a+1,gamma2_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a+1,bestfit(z_a,'gamma2'),'-',c='seagreen')
-#ax.plot(z_a+1,bestfit_global(z_a,'gamma2'),'-',c='darkorchid')
+ax.plot(z_a+1,bestfit_global(z_a,1),'-',c='darkorchid')
 
 #prop = matplotlib.font_manager.FontProperties(size=25.0)
 #ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -111,7 +120,7 @@ ax.errorbar(data["z"][data["z"]>3]+1,data["phi_s"][data["z"]>3],linestyle='',mar
 
 ax.plot(z_a+1,phi_s_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a+1,bestfit(z_a,'phi_s'),'-',c='seagreen')
-#ax.plot(z_a+1,bestfit_global(z_a,'phi_s'),'-',c='darkorchid')
+ax.plot(z_a+1,bestfit_global(z_a,2),'-',c='darkorchid')
 
 #prop = matplotlib.font_manager.FontProperties(size=25.0)
 #ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -134,7 +143,7 @@ ax.errorbar(data["z"]+1,data["L_s"],yerr=data['err4'],linestyle='',marker='o',c=
 
 ax.plot(z_a+1,Lbreak_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a+1,bestfit(z_a,'Lbreak'),'-',c='seagreen')
-#ax.plot(z_a+1,bestfit_global(z_a,'Lbreak'),'-',c='darkorchid')
+ax.plot(z_a+1,bestfit_global(z_a,3),'-',c='darkorchid')
 
 #prop = matplotlib.font_manager.FontProperties(size=25.0)
 #ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
