@@ -101,6 +101,8 @@ y = np.log10(PHI_HX)
 ax.plot(x,y,'--',dashes=(25,15),c='gray',label=r'$\rm old$ $\rm fit$')
 
 x,y,dy,yfit=get_data(newdata=True)
+x = x + L_solar
+y = y
 ax.errorbar(x,y,yerr=dy,capsize=10,linestyle='',c='crimson',marker='o',markeredgewidth=0, ms=10,alpha=0.6,label=r'$\rm new$ $\rm data$')
 
 x,y,dy,yfit=get_data()

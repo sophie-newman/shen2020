@@ -6,7 +6,7 @@ from data import *
 import numpy as np 
 
 def load_ebrero09_HX_lf_data(z): # L_HX, PHI_HX, DPHI_HX
-	if ((z <= 0.01) and (z > 3)): return False
+	if ((z <= 0.01) or (z > 3)): return False
 	elif (z<=0.5) and (z>0.01):
 		L_HX = np.array([42.25,42.75,43.25,43.75,44.25,44.75])
 		P_HX = np.log10(np.array([7.2220349476980418E-05,6.2779248371016384E-05,
@@ -44,7 +44,7 @@ def load_ebrero09_HX_lf_data(z): # L_HX, PHI_HX, DPHI_HX
 	return L_HX, PHI_HX, DPHI_HX
  
 def load_ebrero09_SX_lf_data(z): # L_SX, PHI_SX, DPHI_SX
-	if ((z <= 0.01) and (z > 3)): return False
+	if ((z <= 0.01) or (z > 3)): return False
 	elif (z<=0.5) and (z>0.01):
 		L_SX = np.array([40.5,41.5,42.5,43.5,44.5,45.5])
 		P_SX = np.log10(np.array([2.7905160705912985E-04,  6.1743569124893746E-05,  5.1199877138322907E-05,  

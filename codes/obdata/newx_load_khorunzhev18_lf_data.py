@@ -22,6 +22,7 @@ def load_khorunzhev18_lf_data_vitobins(z): # L_HX, PHI_HX, DPHI_HX
 		DPHI_HX= D_HX
 		L_HX = (L_HX - L_solar)
 
+		z_c = (data["z_min"][id]+data["z_max"][id])/2.
 		L_HX = L_HX + np.log10(lum_correct_cosmo_flexible(z_c, 0.7, 0.27))
 		PHI_HX = PHI_HX + np.log10(phi_correct_cosmo_flexible(z_c, 0.7, 0.27))
 
@@ -46,6 +47,7 @@ def load_khorunzhev18_lf_data_z345bins(z): # L_HX, PHI_HX, DPHI_HX
 		DPHI_HX= D_HX
 		L_HX = (L_HX - L_solar)
 
+		z_c = (data["z_min"][id]+data["z_max"][id])/2.
 		L_HX = L_HX + np.log10(lum_correct_cosmo_flexible(z_c, 0.7, 0.27))
 		PHI_HX = PHI_HX + np.log10(phi_correct_cosmo_flexible(z_c, 0.7, 0.27))
 
