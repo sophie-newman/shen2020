@@ -4,7 +4,7 @@ from data import *
 import numpy as np
 
 def load_bongiorno07_lf_data(z): 
-	if (z <= 1) or (z > 4): return False
+	if (z <= 2) or (z > 4): return False
 	else:	
 		filename = datapath+'kk18_compilation.dat'
 		data = np.genfromtxt(filename,names=['counter','sample', 'z_bin', 'z_min', 'z_max', 'z_mean', 'M1450', 

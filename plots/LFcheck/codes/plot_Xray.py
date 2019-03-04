@@ -47,7 +47,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id,newdata=False):
 			phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
 			PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
 	else:
-		phi_fit_tmp = return_miyaji15_lf_fitted(L_tmp + L_solar, redshift)
+		phi_fit_tmp = return_miyaji15_lf_fitted(L_tmp, redshift)
 		phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
 		PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
 

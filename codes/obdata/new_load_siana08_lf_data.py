@@ -4,8 +4,8 @@ from data import *
 import numpy as np
 
 def load_siana08_lf_data(z): 
-	if (z < 2.8) or (z > 3.5): return False
-	elif (z >= 2.8) and (z <= 3.5):	
+	if (z <= 2.8) or (z > 3.5): return False
+	elif (z > 2.8) and (z <= 3.5):	
 		filename = datapath+'kk18_compilation.dat'
 		data = np.genfromtxt(filename,names=['counter','sample', 'z_bin', 'z_min', 'z_max', 'z_mean', 'M1450', 
 			'left', 'right', 'log_phi', 'uperr', 'lowerr', 'nqso', 'Veff', 'P'])

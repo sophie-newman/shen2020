@@ -296,7 +296,7 @@ load_LF_data={
 	"WANG18":     load_wang18_lf_data,
 	"WILLOTT10":  load_willott10_lf_data,
 	"YANG16":     load_yang16_lf_data,
-	"YANG18":     load_yang18_lf_data
+	"YANG18":     load_yang18_lf_data,
 	#Xray H
 	"AIRD08":      load_aird08_lf_data,
 	"AIRD10":      load_aird10_lf_data,

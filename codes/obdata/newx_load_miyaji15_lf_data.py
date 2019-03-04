@@ -15,12 +15,14 @@ def load_miyaji15_lf_data(z):
 		L_X  = (data['L_min'][id]+data['L_max'][id])/2.
 		phi  = data['phi'][id]
 		phierr  = data['phierr'][id]
-			 
+	
+		L_X = L_X - L_solar		 
 		PHI_X = np.log10(phi)
 		DPHI_X = ((np.log10(phi+phierr)-np.log10(phi)) + (np.log10(phi)-np.log10(phi-phierr)))/2.
 		return L_X, PHI_X, DPHI_X
 
 def return_miyaji15_lf_fitted(Llist,z):
+	Llist = Llist + L_solar
 	p1_44,p2_44,p3 = 5.29, -0.35, -5.6
 	zb1_44,zb2 = 1.1, 2.7
 	alpha = 0.18

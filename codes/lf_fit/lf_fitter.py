@@ -102,7 +102,10 @@ def residual(pars):
 
 	chitot = np.sum( ((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
 	#print chitot, len(alldata["L_OBS"])
-	return alldata["WEIGHT"]*(alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"], alldata["D_OBS"]
+	residuals, sigmas = alldata["WEIGHT"]*(alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"],alldata["D_OBS"]
+	alldata=None	
+
+	return residuals, sigmas
 
 '''
 ptrial = np.array([0.124141258, 0.1592212035, -0.0021223755, 2.493809765, 1.11031779, -1.69997955, 0.870664252, -3.44704638, -0.575265774, 12.6792799, 1.03131765, -0.645694983, 0.315844737]) 
@@ -134,9 +137,8 @@ pos = np.array([np.random.randn(ndim) for i in range(nwalkers)])
 for i in range(pos.shape[0]):
 	pos[i,:] = pos[i,:] * 0.4 * parameters_init + parameters_init + pos[i,:] * 0.1
 
-f = open("output/chain_new.dat", "w")
+f = open("output/chain.dat", "w")
 f.close()
-
 with MPIPool() as pool:
 	if not pool.is_master():
         	pool.wait()

@@ -75,7 +75,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 
 			#print "NAME:",dset_name,"; redshift",redshift,";  chisq:", np.sum(((phi_i-PHI_BB)/DPHI_BB)**2)," / ",len(L_BB)
 
-	#if dset_id==-1: print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
+	#if dset_id==-4: print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
 
 def chisq(pars):
 	parvals = pars.valuesdict()
@@ -117,6 +117,7 @@ def residual(pars):
 
 params = lmfit.Parameters()
 # add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
+'''
 if (redshift>3) and (redshift<6):
 	logphis_fixed=-3.85556103-0.35480482*(1+redshift)
 	params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
@@ -124,22 +125,27 @@ if (redshift>3) and (redshift<6):
                         ('logphis', logphis_fixed     ,False, None, None, None, None),
                         ('Lbreak' , parameters_init[3], True, None, None, None, None))
 elif (redshift<=3):
-	params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
+'''
+params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
         	        ('gamma2' , parameters_init[1], True, None, None, None, None),
                		('logphis', parameters_init[2], True, None, None, None, None),
                 	('Lbreak' , parameters_init[3], True, None, None, None, None))
+'''
 else:
 	logphis_fixed=-3.85556103-0.35480482*(1+redshift)
         params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                         ('gamma2' , parameters_init[1], True, None, None, "gamma1", None),
                         ('logphis', logphis_fixed     ,False, None, None, None, None),
                         ('Lbreak' , parameters_init[3], True, None, None, None, None))
-
+'''
 fitter = lmfit.Minimizer(residual, params, scale_covar=True,nan_policy='raise',calc_covar=True)
 #result=fitter.minimize(method='emcee',burn=300, steps=1000,nwalkers=100,workers=8)
 result=fitter.minimize(method='leastsq')
 print "bestfit:"
 result.params.pretty_print()
+
+print redshift, result.params['gamma1'].value, result.params['gamma1'].stderr, result.params['gamma2'].value, result.params['gamma2'].stderr, result.params['logphis'].value, result.params['logphis'].stderr, result.params['Lbreak'].value, result.params['Lbreak'].stderr
+'''
 print "all messages:"
 cov=result.covar
 print cov
@@ -150,17 +156,4 @@ print "1 and 4: ", cov[0,3]/np.sqrt(cov[0,0]*cov[3,3])
 print "2 and 3: ", cov[1,2]/np.sqrt(cov[1,1]*cov[2,2])
 print "2 and 4: ", cov[1,3]/np.sqrt(cov[1,1]*cov[3,3])
 print "3 and 4: ", cov[2,3]/np.sqrt(cov[2,2]*cov[3,3])
-#corner.corner(result.flatchain, labels=result.var_names, truths=list(result.params.valuesdict().values()))
 '''
-lmfit.report_fit(result.params)
-highest_prob = np.argmax(result.lnprob)
-hp_loc = np.unravel_index(highest_prob, result.lnprob.shape)
-mle_soln = result.chain[hp_loc]
-for i, par in enumerate(p):
-	p[par].value = mle_soln[i]
-
-print("\nMaximum likelihood Estimation")
-print('-----------------------------')
-print(p)
-'''
-#np.savetxt("chain.dat",result.flatchain)

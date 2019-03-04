@@ -7,7 +7,7 @@ from scipy.optimize import curve_fit
 from scipy.optimize import minimize
 from scipy.optimize import least_squares
 # fit the luminosity function based on datasets at a given redshift
-from lf_data_compilation import *
+from lf_fitter_data import *
 from ctypes import *
 import ctypes
 import sys
@@ -29,50 +29,89 @@ c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
-def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id,newdata=False):
-	alldata_tem={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([])}
-	
-	if dset_id!=-1: return False
-	if newdata==False: 
-		if load_LF_data[dset_name](redshift)!=False:
-			L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
-		else: return False
-	else: 
-		if new_load_LF_data[dset_name](redshift)!=False:
-			L_data, PHI_data, DPHI_data = new_load_LF_data[dset_name](redshift)
-		else: return False
+def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
+        alldata_tem={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([])}
+        if load_LF_data[dset_name](redshift)!=False:
+                L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
+        else:
+                return False
 
-	L_tmp=bolometric_correction(L_bol_grid,dset_id)
-	if newdata==False:
-		if (return_LF[dset_name]!=None):
-			phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
-			phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
-			PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
-	else:
-		M_1450_tmp = (M_sun_Bband_AB -2.5*L_tmp) + 0.706
-		M_1450_tmp = np.sort(M_1450_tmp)
-		phi_fit_tmp = return_kk18_lf_fitted(M_1450_tmp, redshift)
-		phi_fit_pts = np.interp(L_data ,M_1450_tmp, phi_fit_tmp)
-		PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+        if dset_id==-1.1: L_tmp=bolometric_correction(L_bol_grid,-1)
+        elif dset_id==-1:
+                L_tmp=bolometric_correction(L_bol_grid,dset_id)
+                L_tmp = (M_sun_Bband_AB -2.5*L_tmp) + 0.706
+                L_tmp = np.sort(L_tmp)
+        else: L_tmp=bolometric_correction(L_bol_grid,dset_id)
+        if return_LF[dset_name]!=None:
+                phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
+                phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+                PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+	#if len(PHI_data)==0:
+	#	print dset_name
 
-	if len(L_data)>0:
-			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_data)
-			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_data)
-			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_data)# + 0.01)
-	print "NAME:",dset_name
+        if (len(L_data) > 0):
+                        if dset_id==-1.1:
+                                L_model = bolometric_correction(L_bol_grid,-1)
+                                nu_c = c_double(-1)
+                        else:
+                                L_model = bolometric_correction(L_bol_grid,dset_id)
+                                nu_c = c_double(dset_id)
+                        input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+                        res = convolve_c(input_c,nu_c)
+                        res = [i for i in res.contents]
+                        PHI_model = np.array(res,dtype=np.float64)
+                        #L_model, PHI_model = convolve(np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")), dset_id)
 
-def get_data(parameters=parameters_init,newdata=False):
+			if dset_id==-1:
+                                L_Bband = (M_sun_Bband_AB-(L_data - 0.706))/2.5
+                                phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+                                phi_i = phi_i - np.log10(2.5)
+                        else:
+                                phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+
+                        alldata["P_PRED"] = np.append(alldata["P_PRED"] , phi_i)
+                        alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_data)
+                        alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_data)
+                        alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_data + 0.01)
+                        alldata["Z_TOT"]  = np.append(alldata["Z_TOT"]  , np.ones(len(L_data)) * redshift)
+                        alldata["ID"]     = np.append(alldata["ID"]     , np.ones(len(L_data)) * dset_id)
+
+                        alldata_tem["P_PRED"] = np.append(alldata_tem["P_PRED"] , phi_i)
+                        alldata_tem["L_OBS"]  = np.append(alldata_tem["L_OBS"]  , L_data)
+                        alldata_tem["P_OBS"]  = np.append(alldata_tem["P_OBS"]  , PHI_data)
+                        alldata_tem["D_OBS"]  = np.append(alldata_tem["D_OBS"]  , DPHI_data + 0.01)
+
+def get_data(parameters,dataid):
         alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
-	if newdata==False:
-        	for key in dset_ids.keys():
-                	get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+        for key in dset_ids.keys():
+                get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
 
-        	return alldata["L_OBS"],alldata["P_OBS"],alldata["D_OBS"],alldata["P_PRED"]
-	if newdata==True:
-		for key in new_dset_ids.keys():
-                        get_fit_data(alldata,parameters,new_zmins[key],new_zmaxs[key],key,new_dset_ids[key],newdata=True)
+        bad = np.invert(np.isfinite(alldata["P_PRED"]))
+        if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
-		return alldata["L_OBS"],alldata["P_OBS"],alldata["D_OBS"],alldata["P_PRED"]
+	if (dataid!=-1) and  (dataid!=-1.1):
+		select = alldata["ID"]==dataid
+		logLbol = 0.0*alldata["L_OBS"][select]
+		for i,Lband in enumerate(alldata["L_OBS"][select]):
+			logLbol[i] = bolometric_correction_inverse(Lband,dataid)
+	elif (dataid==-1.1):
+		select = alldata["ID"]==dataid
+                logLbol = 0.0*alldata["L_OBS"][select]
+		for i,Lband in enumerate(alldata["L_OBS"][select]):
+                        logLbol[i] = bolometric_correction_inverse(Lband,-1)
+	elif (dataid==-1):
+		select = alldata["ID"]==dataid
+		L_Bband = (M_sun_Bband_AB-(alldata["L_OBS"][select] - 0.706))/2.5
+		logLbol = 0.0*L_Bband
+		for i,Lband in enumerate(L_Bband):
+			logLbol[i] = bolometric_correction_inverse(Lband,dataid)
+
+	x = L_bol_grid
+	y = LF(L_bol_grid,parameters)
+	phi_fit_pts = np.interp(logLbol , x, y)
+
+        return logLbol+L_solar, phi_fit_pts+(alldata["P_OBS"][select]-alldata["P_PRED"][select]),alldata["D_OBS"][select]
+
 
 import matplotlib.pyplot as plt 
 import matplotlib
@@ -88,47 +127,37 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
-L_B = bolometric_correction(L_bol_grid,-1)
-nu_c = c_double(-1)
-input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-res = convolve_c(input_c,nu_c)
-res = [i for i in res.contents]
-PHI_B = np.array(res,dtype=np.float64)
-x = (M_sun_Bband_AB -2.5*L_B) + 0.706
-y = np.log10(PHI_B) - np.log10(2.5)
+x = L_bol_grid + L_solar 
+y = LF(L_bol_grid,parameters)
 ax.plot(x,y,'--',dashes=(25,15),c='black',label=r'$\rm new$ $\rm fit$')
 
-L_B = bolometric_correction(L_bol_grid,-1)
-nu_c = c_double(-1)
-input_c= np.power(10.,LF_at_z(L_bol_grid,parameters_init,redshift,"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-res = convolve_c(input_c,nu_c)
-res = [i for i in res.contents]
-PHI_B = np.array(res,dtype=np.float64)
-x = (M_sun_Bband_AB -2.5*L_B) + 0.706
-y = np.log10(PHI_B) - np.log10(2.5)
+x = L_bol_grid + L_solar 
+y = LF_at_z_H07(L_bol_grid,parameters_init,redshift,"Fiducial")
 ax.plot(x,y,'--',dashes=(25,15),c='gray',label=r'$\rm old$ $\rm fit$')
 
-x,y,dy,yfit=get_data(newdata=True)
-ax.errorbar(x,y,yerr=dy,capsize=10,linestyle='',c='crimson',marker='o',markeredgewidth=0, ms=10,alpha=0.6,label=r'$\rm new$ $\rm data$')
+x,y,dy=get_data(parameters,dataid=-1)
+ax.errorbar(x,y,yerr=dy,linestyle='none',c='crimson',mec='crimson',marker='o',ms=10,capsize=6,capthick=2,label=r'$\rm UV$ $\rm 1450\AA$')
+x,y,dy=get_data(parameters,dataid=-1.1)
+ax.errorbar(x,y,yerr=dy,linestyle='none',c='crimson',mec='crimson',marker='o',ms=10,capsize=6,capthick=2)
 
-x,y,dy,yfit=get_data()
-x = (M_sun_Bband_AB -2.5*x) + 0.706
-y = y - np.log10(2.5)
-ax.errorbar(x,y,yerr=dy,capsize=10,linestyle='',c='royalblue',marker='o',markeredgewidth=0, ms=10,alpha=0.6,label=r'$\rm old$ $\rm data$')
+x,y,dy=get_data(parameters,dataid=-4)
+ax.errorbar(x,y,yerr=dy,linestyle='none',c='royalblue',mec='royalblue',marker='o',ms=10,capsize=6,capthick=2,label=r'$\rm Hard$ $\rm Xray$')
+
+ax.axvline(parameters[3]+L_solar,color='cyan',lw=2)
+ax.axhline(parameters[2]-np.log10(2.),color='cyan',lw=2)
 
 prop = matplotlib.font_manager.FontProperties(size=30.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
-#ax.set_xlabel(r'$\log{(L_{\rm B}/{\rm L}_{\odot})}$',fontsize=40,labelpad=2.5)
-ax.set_xlabel(r'$M_{\rm 1450}$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\log{(\phi[{\rm mag}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
+ax.set_xlabel(r'$\log{(L_{\rm bol}[{\rm erg}\,{\rm s}^{-1}])}$',fontsize=40,labelpad=2.5)
+ax.set_ylabel(r'$\log{(\phi[{\rm dex}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
 ax.text(0.88, 0.92, r'${\rm z\sim'+str(redshift)+'}$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
 
-ax.set_xlim(-19.5,-32)
-ax.set_ylim(-10.2,-4.3)
+ax.set_xlim(42.5,51.3)
+ax.set_ylim(-11.2,-2.3)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/fig"+str(redshift)+".pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
+#plt.show()
 

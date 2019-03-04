@@ -157,6 +157,7 @@ for i in range(len(zpoints)):
 print uncertainty[:,0]
 uperr = np.log10(result + uncertainty)-np.log10(result)
 loerr = np.log10(result)-np.log10(result - uncertainty)
+loerr[np.invert(np.isfinite(loerr))] = 100
 ax.plot(zpoints,np.log10(result[:,0]),'o',c='royalblue',mec='royalblue',ms=15)
 ax.errorbar(zpoints,np.log10(result[:,0]),yerr=(loerr[:,0],uperr[:,0]),linestyle='none',marker='o',c='royalblue',mec='royalblue',ms=15,capsize=9,capthick=4)
 #ax.plot(zpoints,result[:,1],'o',c='royalblue',mec='royalblue',ms=15)
