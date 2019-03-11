@@ -48,6 +48,8 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
                 PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
 	#if len(PHI_data)==0:
 	#	print dset_name
+	if dset_id == -1:
+		print dset_name, L_data
 
         if (len(L_data) > 0):
                         if dset_id==-1.1:
@@ -158,6 +160,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
-#plt.show()
+#plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
+plt.show()
 

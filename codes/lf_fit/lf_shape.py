@@ -4,7 +4,7 @@ from data import *
 def LF(L_bol,P):
 	gamma1	= P[0]	#faint-end slope
 	gamma2	= P[1] 	#bright-end slope
-	P0		= P[2]	#normalization
+	P0	= P[2]	#normalization
 	Lbreak	= P[3]	#luminosity break
 	x = np.power(10.,(L_bol-Lbreak))
 	P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
@@ -54,5 +54,8 @@ def LF_at_z(L_bol,P,z,model):
 		Lbreak=doublepower(z,[P[9],P[10],P[11],P[12]])
 
                 P_temp = LF( L_bol, [gamma1,gamma2,Phis,Lbreak])
-                return P_temp
+		if len(P_temp[np.invert(np.isfinite(P_temp))])!=0:
+			return np.ones(len(L_bol))*(-40.)
+		else: 
+			return P_temp
 

@@ -232,3 +232,710 @@ lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
   P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:46: RuntimeWarning: invalid value encountered in power
+  return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:46: RuntimeWarning: invalid value encountered in power
+  return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:46: RuntimeWarning: invalid value encountered in power
+  return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:46: RuntimeWarning: invalid value encountered in power
+  return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:9: RuntimeWarning: overflow encountered in power
+  x = np.power(10.,(L_bol-Lbreak))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in divide
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in divide
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:46: RuntimeWarning: invalid value encountered in power
+  return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in divide
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in divide
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in divide
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in divide
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:46: RuntimeWarning: invalid value encountered in power
+  return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:46: RuntimeWarning: invalid value encountered in power
+  return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:71: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+lf_fitter.py:74: RuntimeWarning: divide by zero encountered in log10
+  phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
+Traceback (most recent call last):
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/ensemble.py", line 519, in __call__
+    return self.f(x, *self.args, **self.kwargs)
+  File "lf_fitter.py", line 128, in lnprob
+    llike = lnlike(pars)
+  File "lf_fitter.py", line 120, in lnlike
+    res, sigma = residual(pars)
+  File "lf_fitter.py", line 98, in residual
+    get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+  File "lf_fitter.py", line 42, in get_fit_data
+    L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
+  File "/home/xuejian/works/quasarLF/git/codes/obdata/load_sdss_dr3_lf_data.py", line 23, in load_sdss_dr3_lf_data
+    data = np.genfromtxt(filename,names=['M_i','logphi','dphi','fill','zbar','Nqso','Ncor'],skip_header=1)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/npyio.py", line 1689, in genfromtxt
+    fhd = iter(np.lib._datasource.open(fname, 'rt', encoding=encoding))
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 260, in open
+    return ds.open(path, mode, encoding=encoding, newline=newline)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 614, in open
+    encoding=encoding, newline=newline)
+MemoryError
+Traceback (most recent call last):
+  File "lf_fitter.py", line 144, in <module>
+    pool.wait()
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/mpi_pool.py", line 117, in wait
+    result = self.function(task)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/ensemble.py", line 519, in __call__
+    return self.f(x, *self.args, **self.kwargs)
+  File "lf_fitter.py", line 128, in lnprob
+    llike = lnlike(pars)
+  File "lf_fitter.py", line 120, in lnlike
+    res, sigma = residual(pars)
+  File "lf_fitter.py", line 98, in residual
+    get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+  File "lf_fitter.py", line 42, in get_fit_data
+    L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
+  File "/home/xuejian/works/quasarLF/git/codes/obdata/load_sdss_dr3_lf_data.py", line 23, in load_sdss_dr3_lf_data
+    data = np.genfromtxt(filename,names=['M_i','logphi','dphi','fill','zbar','Nqso','Ncor'],skip_header=1)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/npyio.py", line 1689, in genfromtxt
+    fhd = iter(np.lib._datasource.open(fname, 'rt', encoding=encoding))
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 260, in open
+    return ds.open(path, mode, encoding=encoding, newline=newline)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 614, in open
+    encoding=encoding, newline=newline)
+MemoryError
+Traceback (most recent call last):
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/ensemble.py", line 519, in __call__
+    return self.f(x, *self.args, **self.kwargs)
+  File "lf_fitter.py", line 128, in lnprob
+    llike = lnlike(pars)
+  File "lf_fitter.py", line 120, in lnlike
+    res, sigma = residual(pars)
+  File "lf_fitter.py", line 98, in residual
+    get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+  File "lf_fitter.py", line 42, in get_fit_data
+    L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
+  File "/home/xuejian/works/quasarLF/git/codes/obdata/new_load_shen12_lf_data.py", line 10, in load_shen12_lf_data
+    data = np.genfromtxt(filename,names=["z_min", "z_max", "z_mid", "magz2", "logPhi", "elogPhi"])
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/npyio.py", line 1713, in genfromtxt
+    first_line = _decode_line(next(fhd), encoding)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/codecs.py", line 314, in decode
+MemoryError
+Traceback (most recent call last):
+  File "lf_fitter.py", line 144, in <module>
+    pool.wait()
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/mpi_pool.py", line 117, in wait
+    result = self.function(task)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/ensemble.py", line 519, in __call__
+    return self.f(x, *self.args, **self.kwargs)
+  File "lf_fitter.py", line 128, in lnprob
+    llike = lnlike(pars)
+  File "lf_fitter.py", line 120, in lnlike
+    res, sigma = residual(pars)
+  File "lf_fitter.py", line 98, in residual
+    get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+  File "lf_fitter.py", line 42, in get_fit_data
+    L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
+  File "/home/xuejian/works/quasarLF/git/codes/obdata/new_load_shen12_lf_data.py", line 10, in load_shen12_lf_data
+    data = np.genfromtxt(filename,names=["z_min", "z_max", "z_mid", "magz2", "logPhi", "elogPhi"])
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/npyio.py", line 1713, in genfromtxt
+    first_line = _decode_line(next(fhd), encoding)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/codecs.py", line 314, in decode
+    (result, consumed) = self._buffer_decode(data, self.errors, final)
+MemoryError
+Traceback (most recent call last):
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/ensemble.py", line 519, in __call__
+    return self.f(x, *self.args, **self.kwargs)
+  File "lf_fitter.py", line 128, in lnprob
+    llike = lnlike(pars)
+  File "lf_fitter.py", line 120, in lnlike
+    res, sigma = residual(pars)
+  File "lf_fitter.py", line 98, in residual
+    get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+  File "lf_fitter.py", line 42, in get_fit_data
+    L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
+  File "/home/xuejian/works/quasarLF/git/codes/obdata/newx_load_aird15_lf_data.py", line 31, in load_aird15_lf_data_hardsel
+    data = np.genfromtxt(filename,names=True)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/npyio.py", line 1713, in genfromtxt
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/codecs.py", line 314, in decode
+    (result, consumed) = self._buffer_decode(data, self.errors, final)
+MemoryError
+Traceback (most recent call last):
+  File "lf_fitter.py", line 144, in <module>
+    pool.wait()
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/mpi_pool.py", line 117, in wait
+    result = self.function(task)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/ensemble.py", line 519, in __call__
+    return self.f(x, *self.args, **self.kwargs)
+  File "lf_fitter.py", line 128, in lnprob
+    llike = lnlike(pars)
+  File "lf_fitter.py", line 120, in lnlike
+    res, sigma = residual(pars)
+  File "lf_fitter.py", line 98, in residual
+    get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+  File "lf_fitter.py", line 42, in get_fit_data
+    L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
+  File "/home/xuejian/works/quasarLF/git/codes/obdata/newx_load_aird15_lf_data.py", line 31, in load_aird15_lf_data_hardsel
+    data = np.genfromtxt(filename,names=True)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/npyio.py", line 1713, in genfromtxt
+    first_line = _decode_line(next(fhd), encoding)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/codecs.py", line 314, in decode
+    (result, consumed) = self._buffer_decode(data, self.errors, final)
+Traceback (most recent call last):
+MemoryError
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/ensemble.py", line 519, in __call__
+    return self.f(x, *self.args, **self.kwargs)
+  File "lf_fitter.py", line 128, in lnprob
+    llike = lnlike(pars)
+  File "lf_fitter.py", line 120, in lnlike
+    res, sigma = residual(pars)
+  File "lf_fitter.py", line 98, in residual
+    get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+  File "lf_fitter.py", line 42, in get_fit_data
+    L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
+  File "/home/xuejian/works/quasarLF/git/codes/obdata/load_sdss_dr3_lf_data.py", line 23, in load_sdss_dr3_lf_data
+    data = np.genfromtxt(filename,names=['M_i','logphi','dphi','fill','zbar','Nqso','Ncor'],skip_header=1)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/npyio.py", line 1689, in genfromtxt
+    fhd = iter(np.lib._datasource.open(fname, 'rt', encoding=encoding))
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 260, in open
+    return ds.open(path, mode, encoding=encoding, newline=newline)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 614, in open
+    encoding=encoding, newline=newline)
+MemoryError
+Traceback (most recent call last):
+  File "lf_fitter.py", line 144, in <module>
+    pool.wait()
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/mpi_pool.py", line 117, in wait
+    result = self.function(task)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/ensemble.py", line 519, in __call__
+    return self.f(x, *self.args, **self.kwargs)
+  File "lf_fitter.py", line 128, in lnprob
+    llike = lnlike(pars)
+  File "lf_fitter.py", line 120, in lnlike
+    res, sigma = residual(pars)
+  File "lf_fitter.py", line 98, in residual
+    get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+  File "lf_fitter.py", line 42, in get_fit_data
+    L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
+  File "/home/xuejian/works/quasarLF/git/codes/obdata/load_sdss_dr3_lf_data.py", line 23, in load_sdss_dr3_lf_data
+    data = np.genfromtxt(filename,names=['M_i','logphi','dphi','fill','zbar','Nqso','Ncor'],skip_header=1)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/npyio.py", line 1689, in genfromtxt
+    fhd = iter(np.lib._datasource.open(fname, 'rt', encoding=encoding))
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 260, in open
+    return ds.open(path, mode, encoding=encoding, newline=newline)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 614, in open
+    encoding=encoding, newline=newline)
+MemoryError
+Traceback (most recent call last):
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/ensemble.py", line 519, in __call__
+    return self.f(x, *self.args, **self.kwargs)
+  File "lf_fitter.py", line 128, in lnprob
+    llike = lnlike(pars)
+  File "lf_fitter.py", line 120, in lnlike
+    res, sigma = residual(pars)
+  File "lf_fitter.py", line 98, in residual
+    get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+  File "lf_fitter.py", line 42, in get_fit_data
+    L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
+  File "/home/xuejian/works/quasarLF/git/codes/obdata/new_load_palanque13_lf_data.py", line 12, in load_palanque13_lf_data
+    'left', 'right', 'log_phi', 'uperr', 'lowerr', 'nqso', 'Veff', 'P'])
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/npyio.py", line 1689, in genfromtxt
+    fhd = iter(np.lib._datasource.open(fname, 'rt', encoding=encoding))
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 260, in open
+    return ds.open(path, mode, encoding=encoding, newline=newline)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 614, in open
+    encoding=encoding, newline=newline)
+MemoryError
+Traceback (most recent call last):
+  File "lf_fitter.py", line 144, in <module>
+    pool.wait()
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/mpi_pool.py", line 117, in wait
+    result = self.function(task)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/ensemble.py", line 519, in __call__
+    return self.f(x, *self.args, **self.kwargs)
+  File "lf_fitter.py", line 128, in lnprob
+    llike = lnlike(pars)
+  File "lf_fitter.py", line 120, in lnlike
+    res, sigma = residual(pars)
+  File "lf_fitter.py", line 98, in residual
+    get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+  File "lf_fitter.py", line 42, in get_fit_data
+    L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
+  File "/home/xuejian/works/quasarLF/git/codes/obdata/new_load_palanque13_lf_data.py", line 12, in load_palanque13_lf_data
+    'left', 'right', 'log_phi', 'uperr', 'lowerr', 'nqso', 'Veff', 'P'])
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/npyio.py", line 1689, in genfromtxt
+    fhd = iter(np.lib._datasource.open(fname, 'rt', encoding=encoding))
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 260, in open
+    return ds.open(path, mode, encoding=encoding, newline=newline)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 614, in open
+    encoding=encoding, newline=newline)
+MemoryError
+Traceback (most recent call last):
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/ensemble.py", line 519, in __call__
+    return self.f(x, *self.args, **self.kwargs)
+  File "lf_fitter.py", line 128, in lnprob
+    llike = lnlike(pars)
+  File "lf_fitter.py", line 120, in lnlike
+    res, sigma = residual(pars)
+  File "lf_fitter.py", line 98, in residual
+    get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+  File "lf_fitter.py", line 42, in get_fit_data
+    L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
+  File "/home/xuejian/works/quasarLF/git/codes/obdata/newx_load_aird15_lf_data.py", line 11, in load_aird15_lf_data_softsel
+    data = np.genfromtxt(filename,names=True)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/npyio.py", line 1689, in genfromtxt
+    fhd = iter(np.lib._datasource.open(fname, 'rt', encoding=encoding))
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 260, in open
+    return ds.open(path, mode, encoding=encoding, newline=newline)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 614, in open
+    encoding=encoding, newline=newline)
+MemoryError
+Traceback (most recent call last):
+  File "lf_fitter.py", line 144, in <module>
+    pool.wait()
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/mpi_pool.py", line 117, in wait
+    result = self.function(task)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/ensemble.py", line 519, in __call__
+    return self.f(x, *self.args, **self.kwargs)
+  File "lf_fitter.py", line 128, in lnprob
+    llike = lnlike(pars)
+  File "lf_fitter.py", line 120, in lnlike
+    res, sigma = residual(pars)
+  File "lf_fitter.py", line 98, in residual
+    get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+  File "lf_fitter.py", line 42, in get_fit_data
+    L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
+  File "/home/xuejian/works/quasarLF/git/codes/obdata/newx_load_aird15_lf_data.py", line 11, in load_aird15_lf_data_softsel
+    data = np.genfromtxt(filename,names=True)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/npyio.py", line 1689, in genfromtxt
+    fhd = iter(np.lib._datasource.open(fname, 'rt', encoding=encoding))
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 260, in open
+    return ds.open(path, mode, encoding=encoding, newline=newline)
+  File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/_datasource.py", line 614, in open
+    encoding=encoding, newline=newline)
+MemoryError
+slurmstepd: error: *** JOB 137269 ON wheeler020 CANCELLED AT 2019-03-04T17:31:18 ***

@@ -13,17 +13,13 @@ from lf_fitter_data import *
 from ctypes import *
 import ctypes
 
+import resource
 import time
 
 #parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 #parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"  , "k1"      , "k2"        , "k3"        , "k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
-'''
-parameters_init = np.array([4.5638212952980256e-01,-5.3535826442735933e-02,8.291438766390475321e-03,
- 2.23952286876408957e+00,9.6563649154324882e-01,-1.46845995121186257e+00,7.653560660287425099e-01,
- -3.855561029913782800e+00, -3.548048158301563837e-01,
- 9.92811918927010062e+00,-1.92756399797551145e-03,-1.2185864295518154e+00,2.072801872747117857e-01])
-'''
-parameters_init = np.array([0.05,0.20,-0.004,  2.4,1.0,-1.7,0.8,  -3.85,-0.6,   12.0,0.5,-0.6,0.16])
+#parameters_init = np.array([0.05,0.20,-0.004,  2.4,1.0,-1.7,0.8,  -3.85,-0.6,   12.0,0.5,-0.6,0.16])
+parameters_init = np.array([0.780732305  ,-0.219809805 ,0.01901827   ,2.13867979   ,0.61875941   ,-2.1876942   ,0.72638008   ,-3.716400325 ,-0.44067309  ,12.629287985 ,  1.00815347  ,  -0.677230985,  0.34795411])
 
 parameters_info = np.array(["gamma1", "gamma2", "logphis"  , "logLs"])
 
@@ -60,11 +56,18 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 			else:
 				L_model = bolometric_correction(L_bol_grid,dset_id)
 				nu_c = c_double(dset_id)
-			input_c= np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+			bolLF_model = LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")
+			if len(bolLF_model[np.invert(np.isfinite(bolLF_model))])!=0:
+                                alldata_tem = None
+                                return False
+			input_c= np.power(10., bolLF_model).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
 			res = convolve_c(input_c,nu_c)
 			res = [i for i in res.contents]
 			PHI_model = np.array(res,dtype=np.float64)
 			#L_model, PHI_model = convolve(np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")), dset_id) 
+			if len(PHI_model[np.invert(np.isfinite(PHI_model))])!=0: 
+				alldata_tem = None
+				return False
 			
 			if dset_id==-1:
 				L_Bband = (M_sun_Bband_AB-(L_data - 0.706))/2.5
@@ -86,7 +89,8 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 			alldata_tem["P_OBS"]  = np.append(alldata_tem["P_OBS"]  , PHI_data)
 			alldata_tem["D_OBS"]  = np.append(alldata_tem["D_OBS"]  , DPHI_data + 0.01)
 
-			#print "NAME:",dset_name,"; redshift",redshift,";  chisq:", np.sum(((phi_i-PHI_BB)/DPHI_BB)**2)," / ",len(L_BB)
+	alldata_tem = None
+	#print "NAME:",dset_name,"; redshift",redshift,";  chisq:", np.sum(((phi_i-PHI_BB)/DPHI_BB)**2)," / ",len(L_BB)
 
 	#print "NAME:",dset_name,";  CHISQ:", np.sum(((alldata_tem["P_PRED"]-alldata_tem["P_OBS"])/alldata_tem["D_OBS"])**2)," / ",len(alldata_tem["L_OBS"])
 
@@ -97,6 +101,8 @@ def residual(pars):
 	for key in dset_ids.keys():
 		get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
 
+	if len(alldata["P_PRED"])==0: return np.inf, np.inf, False
+
 	bad = np.invert(np.isfinite(alldata["P_PRED"]))
 	if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
@@ -105,39 +111,53 @@ def residual(pars):
 	residuals, sigmas = alldata["WEIGHT"]*(alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"],alldata["D_OBS"]
 	alldata=None	
 
-	return residuals, sigmas
+	return residuals, sigmas, True
 
 '''
-ptrial = np.array([0.124141258, 0.1592212035, -0.0021223755, 2.493809765, 1.11031779, -1.69997955, 0.870664252, -3.44704638, -0.575265774, 12.6792799, 1.03131765, -0.645694983, 0.315844737]) 
+ptrial = np.array([0.83691542, -0.25284731, 0.02012548,  2.00024558,  0.55533203, -2.68877347,
+ 0.60159866, -3.77676405, -0.40248141, 12.9239114,   1.45773985, -0.63119067, 0.40561221])
 sigmas,_ = residual(ptrial)
-#print np.sum(sigmas**2)
+print np.sum(sigmas**2)
 sigmas,_ = residual(parameters_init)
-#print np.sum(sigmas**2)
+print np.sum(sigmas**2)
 exit()
 '''
 
 def lnlike(pars):
-        res, sigma = residual(pars)
-        return -0.5*np.sum(res**2 + np.log(2*np.pi*sigma**2))
+        res, sigma, success = residual(pars)
+	if success==True:
+        	return -0.5*np.sum(res**2 + np.log(2*np.pi*sigma**2))
+	else: return -np.inf
 
 def lnprior(pars):
-        return 0.0
+	P=pars
+	zdummy = 4.
+	xsi = 1.+ zdummy
+	gamma1=P[0]*T0(xsi)+P[1]*T1(xsi)+P[2]*T2(xsi)
+	gamma2=doublepower(zdummy,[P[3],P[4],P[5],P[6]])
+	Phis  =P[7]*T0(xsi)+P[8]*T1(xsi)
+	Lbreak=doublepower(zdummy,[P[9],P[10],P[11],P[12]])
+	if (np.isfinite(gamma1)) and (np.isfinite(gamma2)) and (np.isfinite(Phis)) and (np.isfinite(Lbreak)): 
+		if (gamma1>-5) and (gamma1<5) and (gamma2>-5) and (gamma2<5) and (Phis>-15) and (Phis<5) and (Lbreak>5) and (Lbreak<20):
+			return 0.0
+		else: return -np.inf
+	else: return -np.inf
 
 def lnprob(pars):
         lp = lnprior(pars)
 	llike = lnlike(pars)
         if not np.isfinite(lp):  return -np.inf
 	if not np.isfinite(llike):  return -np.inf
-        return lp + llike
+	return lp + llike
 
 start_time = time.time()
 
-ndim, nwalkers = 13, 200
+ndim, nwalkers = 13, 100
 pos = np.array([np.random.randn(ndim) for i in range(nwalkers)])
 for i in range(pos.shape[0]):
-	pos[i,:] = pos[i,:] * 0.4 * parameters_init + parameters_init + pos[i,:] * 0.1
+	pos[i,:] = pos[i,:] * 0.2 * parameters_init + parameters_init + pos[i,:] * 0.1
 
-f = open("output/chain.dat", "w")
+f = open("output/chain2.dat", "w")
 f.close()
 with MPIPool() as pool:
 	if not pool.is_master():
@@ -145,18 +165,21 @@ with MPIPool() as pool:
         	sys.exit(0)
 
 	sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, pool=pool)
-	nsteps = 10000
+	nsteps = 5000
 	#sampler.run_mcmc(pos, nsteps)
 	print "begin sampling"
+	mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+	print "initial memory consumption: ",  mem
 	for i, result in enumerate(sampler.sample(pos, iterations=nsteps, storechain=False)):
         	#if pool.is_master(): 
 		if (i+1) % 10 == 0:
+			mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         		print "{0:5.1%}".format(float(i) / nsteps), "  t:", time.time()-start_time 
-		
+			print "memory: ", mem		
+
 		position = result[0]
-		f = open("output/chain.dat", "a")
+		f = open("output/chain2.dat", "a")
 		for k in range(position.shape[0]):
 			f.write("{0:3d} {1:7d} {2:s}\n".format(k, i, np.array2string(position[k]).strip('[').strip(']').replace('\n',' ') ))
 		f.close()
-		
 
