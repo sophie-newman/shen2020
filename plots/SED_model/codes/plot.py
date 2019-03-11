@@ -16,31 +16,36 @@ ax = fig.add_axes([0.12,0.12,0.83,0.83])
 
 data=np.genfromtxt(datapath+"MySED.dat",names=["lamb","logall"])
 ax.plot(data['lamb'],data['logall'],lw=5,c='royalblue',label=r'$\rm This$ $\rm work$')
-
+myf2500 = data['logall'][(data['lamb']-2500)<0][0]
 
 data=np.genfromtxt(datapath+"K13_SED.dat",names=["lognu","logall"],)
 lamb=con.c.value/(10**data['lognu'])*1e10
-ax.plot(lamb[lamb>912],data['logall'][lamb>912],'--',dashes=(15,9),c='cyan',label=r'$\rm Krawczyk+$ $\rm 2013$')
+scale = 0#myf2500 - data['logall'][(lamb-2500)<0][0]
+ax.plot(lamb[lamb>912],data['logall'][lamb>912]+scale,'--',dashes=(15,9),c='cyan',label=r'$\rm Krawczyk+$ $\rm 2013$')
 
 data=np.genfromtxt(datapath+"R06_SED.dat",names=["lognu","logall","sigall","blue"],)
 lamb=con.c.value/(10**data['lognu'])*1e10
-ax.plot(lamb[lamb>500],data['blue'][lamb>500],'--',dashes=(15,9),c='crimson',label=r'$\rm Richards+$ $\rm 2006$ ($\rm blue$ $\rm quasars$)'
+scale = 0#myf2500 - data['blue'][(lamb-2500)<0][0]
+ax.plot(lamb[lamb>500],data['blue'][lamb>500]+scale,'--',dashes=(15,9),c='crimson',label=r'$\rm Richards+$ $\rm 2006$ ($\rm blue$ $\rm quasars$)'
 	+'\n'+r'$\rm adopted$ $\rm in$ $\rm Hopkins+$ $\rm 2007$')
 lamb=con.c.value/(10**data['lognu'])*1e10
-ax.plot(lamb[lamb>500],data['logall'][lamb>500],'--',dashes=(15,9),c='chocolate',label=r'$\rm Richards+$ $\rm 2006$ ($\rm all$ $\rm quasars$)')
+scale = 0#myf2500 - data['logall'][(lamb-2500)<0][0]
+ax.plot(lamb[lamb>500],data['logall'][lamb>500]+scale,'--',dashes=(15,9),c='chocolate',label=r'$\rm Richards+$ $\rm 2006$ ($\rm all$ $\rm quasars$)')
+'''
+data=np.genfromtxt(datapath+"OpticalSED.dat",names=["lognu","logall"])
+lamb=con.c.value/(10**data['lognu'])*1e10
+scale = myf2500 - data['logall'][(lamb-2500)<0][0]
+ax.plot(lamb,data['logall']+scale,'--',c='darkorchid',label=r'$\rm Vanden$ $\rm Berk+$ $\rm 2001$')
+'''
 
-#data=np.genfromtxt(datapath+"OpticalSED.dat",names=["lognu","logall"])
-#lamb=con.c.value/(10**data['lognu'])*1e10
-#ax.plot(lamb,data['logall'],'-',c='seagreen',label=r'$\rm Hopkins+$ $\rm 2007$')
-
-f2500 = np.power(10.,data['logall'][np.abs(lamb-2500)<=100])/np.power(10.,data['lognu'][np.abs(lamb-2500)<=100])
+f2500 = np.power(10., myf2500)/(con.c.value/2500./1e-10)
 alphaox = -0.137*np.log10(f2500)+2.638
 f2kev=10**(alphaox/0.384)*f2500
 data=np.genfromtxt(datapath+"XRAY_SED.dat",names=["lognu","logall"],)
 lamb=con.c.value/(10**data['lognu'])*1e10
 ratio = data['logall'][np.abs(10**data['lognu']*con.h.value/con.e.value/1000-2)<=0.05]-(-1.47406)
 L_HX =  np.log10( f2kev*(2.*1000.*con.e.value/con.h.value) / 10**ratio )
-ax.plot(lamb[lamb<50],(data['logall'][lamb<50]-(-1.47406))+L_HX-0.012,'--',dashes=(15,9),c='yellow',label=r'$\rm Xray$ $\rm Hopkins+$ $\rm 2007$')
+ax.plot(lamb[lamb<50],(data['logall'][lamb<50]-(-1.47406))+L_HX,'--',dashes=(15,9),c='yellow',label=r'$\rm Xray$ $\rm Hopkins+$ $\rm 2007$')
 
 x=np.logspace(2.7,4.,1000)
 ax.plot(x, 45.766+np.log10((912./x)**(-0.44+1)) ,'-', lw=2, c='seagreen',label=r'$\rm Vanden$ $\rm Berk+$ $\rm 2001$')

@@ -26,7 +26,7 @@ def H07(logLbol,band):
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
-data = np.genfromtxt("bolcorr.dat",names=['Lbol','LHX','LSX','LB','LIR'])
+data = np.genfromtxt("bolcorr_new.dat",names=['Lbol','LHX','LSX','LB','LIR'])
 
 ax.plot(data['Lbol'],data['Lbol']-data['LB'],c='royalblue',label=r'$\rm B$ $\rm band$')
 ax.plot(data['Lbol'],data['Lbol']-data['LHX'],c='crimson',label=r'$\rm Hard$ $\rm Xray$')

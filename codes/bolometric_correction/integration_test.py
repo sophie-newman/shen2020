@@ -6,6 +6,8 @@ from scipy.integrate import romberg
 from scipy.integrate import quad
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
+import time
+
 def returnIR_to_UV_H07(sed2500):
 	data1=np.genfromtxt(datapath+"OpticalSED.dat",names=["lognu","logall"],)
 	lamb1=con.c.value/(10**data1['lognu'])*1e10
@@ -94,7 +96,7 @@ def returnXray(sed2500):
 	return lamb3[lamb3<50], sed3[lamb3<50]
 
 def returnall(sed2500):
-	lambNX, sedNX = returnIR_to_UV_H07(sed2500)
+	lambNX, sedNX = returnIR_to_UV(sed2500)
 	lambX, sedX = returnXray(sed2500)
 
 	lamball = np.append(lambNX, lambX)
@@ -105,35 +107,40 @@ def returnall(sed2500):
 	#plt.show()
 	#exit()
 	
-	funclog = interp1d(freqall,sedall)
-	def func(x):
-		return np.power(10.,funclog(x))/x
-	LHX_trial =quad(func, 2.*1000.*con.e.value/con.h.value,10.*1000.*con.e.value/con.h.value)[0]
-	LHX = romberg(func, 2.*1000.*con.e.value/con.h.value,10.*1000.*con.e.value/con.h.value,
-		divmax=30, tol=5e-2*LHX_trial , rtol=5e-2)
-	LSX_trial =quad(func, 0.5*1000.*con.e.value/con.h.value,2.*1000.*con.e.value/con.h.value)[0]
-	LSX = romberg(func, 0.5*1000.*con.e.value/con.h.value,2.*1000.*con.e.value/con.h.value,
-		divmax=30, tol=5e-2*LSX_trial , rtol=5e-2)
-	logLB  =np.mean(sedall[np.abs(lamball-4400.)<200])
-	logLIR =np.mean(sedall[np.abs(lamball-150000.)<500])
-	Lbol_trial=quad(func, con.c.value/94.8e-6, 500.*1000.*con.e.value/con.h.value)[0]
-	Lbol= romberg(func, con.c.value/94.8e-6, 500.*1000.*con.e.value/con.h.value,
-		divmax=30, tol=5e-2*Lbol_trial , rtol=5e-2)
-	
-	print 'done'
-	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logLIR
+	funcint1 = interp1d(freqall,sedall)
+	funcint2 = interp1d(np.log10(freqall),sedall)
+	def func1(x):
+		return np.power(10.,funcint1(x))/x
+	def func2(logx):
+		x=10**logx
+		return np.power(10.,funcint1(x))
+	def func3(logx):
+		return np.power(10.,funcint2(logx))
 
-sed2500s = np.linspace(5,15,10)+L_solar
-Lbols = 0*sed2500s
-LHXs = 0*sed2500s
-LSXs = 0*sed2500s
-LBs  = 0*sed2500s
-LIRs = 0*sed2500s
-for i in range(len(sed2500s)):
-	Lbols[i],LHXs[i],LSXs[i],LBs[i],LIRs[i] = returnall(sed2500s[i])
+	t0 = time.time()
+	Lbol_trial=quad(func1, con.c.value/94.8e-6, 500.*1000.*con.e.value/con.h.value)[0]
+	print time.time()-t0, np.log10(Lbol_trial)
+	t0 = time.time()
 
-np.savetxt("bolcorr.dat", np.c_[Lbols,LHXs,LSXs,LBs,LIRs], header='Lbols,LHXs,LSXs,LBs,LIRs')
+	Lbol_1= romberg(func1, con.c.value/94.8e-6, 500.*1000.*con.e.value/con.h.value,
+		divmax=50, tol=1e-2*Lbol_trial , rtol=1e-2)
+	print time.time()-t0, np.log10(Lbol_1)
+	t0 = time.time()
+	Lbol_2= romberg(func2, np.log10(con.c.value/94.8e-6), np.log10(500.*1000.*con.e.value/con.h.value),
+		divmax=50, tol=1e-2*Lbol_trial , rtol=1e-2)
+	print time.time()-t0, np.log10(Lbol_2)
+	t0 = time.time()
+	Lbol_3= romberg(func3, np.log10(con.c.value/94.8e-6), np.log10(500.*1000.*con.e.value/con.h.value),
+		divmax=50, tol=1e-2*Lbol_trial , rtol=1e-2)
+	print time.time()-t0, np.log10(Lbol_3)
+	t0 = time.time()
 
+	id = (freqall>con.c.value/94.8e-6) & (freqall<500.*1000.*con.e.value/con.h.value)
+	Lbol_4 = np.trapz(10**sedall[id]/freqall[id],freqall[id])
+	print time.time()-t0, np.log10(Lbol_4)
+	t0 = time.time()
+	Lbol_5 = np.trapz(10**sedall[id], np.log10(freqall[id]))
+	print time.time()-t0, np.log10(Lbol_5)
+	t0 = time.time()
 
-
-
+returnall(10)
