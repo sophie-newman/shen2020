@@ -14,15 +14,29 @@ import sys
 
 redshift=float(sys.argv[1])
 
-#bestfit        = np.array([0.39856372, 2.19426155, -4.73290265, 12.97241616, 0.43717880, -11.63470663, -11.72357430, -0.72820353, 1.36234503, -0.79697647])
-#bestfit         = np.array([0.38181256, 2.16955741, -4.70557406, 12.94851374, 0.43771614, -11.42561263, -11.34952214, -0.75528960, 1.32130027, -0.77768681])
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
-#parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"  , "k1"      , "k2"        , "k3"        , "k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
-#parameters_bound= (np.array([0,0,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf]),np.array([np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf]))
+
+fit_res=np.genfromtxt("../../fitresult/fit_at_z_nofix.dat",names=True)
+id=fit_res["z"]==redshift
+parameters_free_local=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
 
 fit_res=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
 id=fit_res["z"]==redshift
-parameters=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
+parameters_fix_local=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
+
+fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit.dat",names=['gamma1','gamma2','phis','Lbreak'])
+parameters_global_1 = pars_at_z(fit_evolve,redshift)
+
+source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
+p=source['value'][ source['paraid']==0 ]
+gamma1 = polynomial(redshift,p,2)
+p=source['value'][ source['paraid']==1 ]
+gamma2 = doublepower(redshift,p)
+p=source['value'][ source['paraid']==2 ]
+logphi = polynomial(redshift,p,1)
+p=source['value'][ source['paraid']==3 ]
+Lbreak = doublepower(redshift,p)
+parameters_global_2 = np.array([gamma1,gamma2,logphi,Lbreak])
 
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
@@ -48,8 +62,8 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
                 PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
 	#if len(PHI_data)==0:
 	#	print dset_name
-	if dset_id == -1:
-		print dset_name, L_data
+	#if dset_id == -1:
+	#	print dset_name, L_data
 
         if (len(L_data) > 0):
                         if dset_id==-1.1:
@@ -110,8 +124,7 @@ def get_data(parameters,dataid):
 
 	x = L_bol_grid
 	y = LF(L_bol_grid,parameters)
-	phi_fit_pts = np.interp(logLbol , x, y)
-
+	phi_fit_pts = np.interp(logLbol, x, y)
         return logLbol+L_solar, phi_fit_pts+(alldata["P_OBS"][select]-alldata["P_PRED"][select]),alldata["D_OBS"][select]
 
 
@@ -130,25 +143,39 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 x = L_bol_grid + L_solar 
-y = LF(L_bol_grid,parameters)
-ax.plot(x,y,'--',dashes=(25,15),c='black',label=r'$\rm new$ $\rm fit$')
+y = LF(L_bol_grid,parameters_free_local)
+ax.plot(x,y,'--',dashes=(25,15),c='navy',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\rm free$)')
+y = LF(L_bol_grid,parameters_fix_local)
+ax.plot(x,y,'--',dashes=(25,15),c='chocolate',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\phi_{\ast}$ $\rm fixed$)')
+y = LF(L_bol_grid,parameters_global_1)
+ax.plot(x,y,':',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
+y = LF(L_bol_grid,parameters_global_2)
+ax.plot(x,y,':',c='darkorchid',label=r'$\rm Global$ $\rm fit$')
 
 x = L_bol_grid + L_solar 
 y = LF_at_z_H07(L_bol_grid,parameters_init,redshift,"Fiducial")
-ax.plot(x,y,'--',dashes=(25,15),c='gray',label=r'$\rm old$ $\rm fit$')
+ax.plot(x,y,':',c='gray',label=r'$\rm Hopkins+$ $\rm 2007$')
 
-x,y,dy=get_data(parameters,dataid=-1)
+xcollect = np.array([])
+x,y,dy=get_data(parameters_fix_local,dataid=-1)
 ax.errorbar(x,y,yerr=dy,linestyle='none',c='crimson',mec='crimson',marker='o',ms=10,capsize=6,capthick=2,label=r'$\rm UV$ $\rm 1450\AA$')
-x,y,dy=get_data(parameters,dataid=-1.1)
+xcollect = np.append(xcollect,x)
+
+x,y,dy=get_data(parameters_fix_local,dataid=-1.1)
 ax.errorbar(x,y,yerr=dy,linestyle='none',c='crimson',mec='crimson',marker='o',ms=10,capsize=6,capthick=2)
+xcollect = np.append(xcollect,x)
 
-x,y,dy=get_data(parameters,dataid=-4)
+x,y,dy=get_data(parameters_fix_local,dataid=-4)
 ax.errorbar(x,y,yerr=dy,linestyle='none',c='royalblue',mec='royalblue',marker='o',ms=10,capsize=6,capthick=2,label=r'$\rm Hard$ $\rm Xray$')
+xcollect = np.append(xcollect,x)
 
-ax.axvline(parameters[3]+L_solar,color='cyan',lw=2)
-ax.axhline(parameters[2]-np.log10(2.),color='cyan',lw=2)
+xcollect = np.sort(xcollect-L_solar)
+print redshift, xcollect[2], xcollect[4]
 
-prop = matplotlib.font_manager.FontProperties(size=30.0)
+ax.axvline(parameters_fix_local[3]+L_solar,color='cyan',lw=2)
+ax.axhline(parameters_fix_local[2]-np.log10(2.),color='cyan',lw=2)
+
+prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 ax.set_xlabel(r'$\log{(L_{\rm bol}[{\rm erg}\,{\rm s}^{-1}])}$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\phi[{\rm dex}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
@@ -160,6 +187,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
+#plt.show()
 

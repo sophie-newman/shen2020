@@ -30,18 +30,6 @@ pz=fit_res['z']
 zpoints=np.array(pz)
 
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit.dat",names=['gamma1','gamma2','phis','Lbreak'])
-T0 = np.polynomial.chebyshev.Chebyshev((1,0,0,0))
-T1 = np.polynomial.chebyshev.Chebyshev((0,1,0,0))
-T2 = np.polynomial.chebyshev.Chebyshev((0,0,1,0))
-T3 = np.polynomial.chebyshev.Chebyshev((0,0,0,1))
-def polynomial(z,p):
-        xsi=1.+z
-        return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)+p[3]*T3(xsi)
-
-def doublepower(z,p):
-        xsi=1.+z
-        zref=p[1]
-        return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
 zlist=np.linspace(0.4,7,100)
 p=fit_evolve['gamma1']
 gamma1=polynomial(zlist,p)

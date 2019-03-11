@@ -117,43 +117,28 @@ def residual(pars):
 
 params = lmfit.Parameters()
 # add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
-'''
-if (redshift>3) and (redshift<6):
-	logphis_fixed=-3.85556103-0.35480482*(1+redshift)
+
+if (redshift>=0.6) and (redshift<=2.8):
+	params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
+                        ('gamma2' , parameters_init[1], True, None, None, None, None),
+                        ('logphis', parameters_init[2], True, None, None, None, None),
+                        ('Lbreak' , parameters_init[3], True, None, None, None, None))
+elif (redshift<5.8):
+	logphis_fixed=-4.0296096-0.27116524*(1+redshift)
 	params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                         ('gamma2' , parameters_init[1], True, None, None, None, None),
                         ('logphis', logphis_fixed     ,False, None, None, None, None),
                         ('Lbreak' , parameters_init[3], True, None, None, None, None))
-elif (redshift<=3):
-'''
-params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
-        	        ('gamma2' , parameters_init[1], True, None, None, None, None),
-               		('logphis', parameters_init[2], True, None, None, None, None),
-                	('Lbreak' , parameters_init[3], True, None, None, None, None))
-'''
 else:
-	logphis_fixed=-3.85556103-0.35480482*(1+redshift)
-        params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
+	logphis_fixed=-4.0296096-0.27116524*(1+redshift)
+	params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                         ('gamma2' , parameters_init[1], True, None, None, "gamma1", None),
                         ('logphis', logphis_fixed     ,False, None, None, None, None),
                         ('Lbreak' , parameters_init[3], True, None, None, None, None))
-'''
+
 fitter = lmfit.Minimizer(residual, params, scale_covar=True,nan_policy='raise',calc_covar=True)
-#result=fitter.minimize(method='emcee',burn=300, steps=1000,nwalkers=100,workers=8)
 result=fitter.minimize(method='leastsq')
 print "bestfit:"
 result.params.pretty_print()
 
 print redshift, result.params['gamma1'].value, result.params['gamma1'].stderr, result.params['gamma2'].value, result.params['gamma2'].stderr, result.params['logphis'].value, result.params['logphis'].stderr, result.params['Lbreak'].value, result.params['Lbreak'].stderr
-'''
-print "all messages:"
-cov=result.covar
-print cov
-print "correlations"
-print "1 and 2: ", cov[0,1]/np.sqrt(cov[0,0]*cov[1,1])
-print "1 and 3: ", cov[0,2]/np.sqrt(cov[0,0]*cov[2,2])
-print "1 and 4: ", cov[0,3]/np.sqrt(cov[0,0]*cov[3,3])
-print "2 and 3: ", cov[1,2]/np.sqrt(cov[1,1]*cov[2,2])
-print "2 and 4: ", cov[1,3]/np.sqrt(cov[1,1]*cov[3,3])
-print "3 and 4: ", cov[2,3]/np.sqrt(cov[2,2]*cov[3,3])
-'''

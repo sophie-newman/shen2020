@@ -40,6 +40,14 @@ T0 = np.polynomial.chebyshev.Chebyshev((1,0,0,0))
 T1 = np.polynomial.chebyshev.Chebyshev((0,1,0,0))
 T2 = np.polynomial.chebyshev.Chebyshev((0,0,1,0))
 T3 = np.polynomial.chebyshev.Chebyshev((0,0,0,1))
+def polynomial(z,p,n=3):
+        xsi=1.+z
+        if n==1: return p[0]*T0(xsi)+p[1]*T1(xsi)
+        elif n==2: return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)
+        elif n==3:
+                return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)+p[3]*T3(xsi)
+        else: return False
+
 def doublepower(z,p):
         xsi=1.+z
         zref=p[1]
@@ -59,3 +67,14 @@ def LF_at_z(L_bol,P,z,model):
 		else: 
 			return P_temp
 
+def pars_at_z(fit_evolve,redshift):
+	p=fit_evolve['gamma1']
+	gamma1=polynomial(redshift,p)
+	p=fit_evolve['gamma2']
+	gamma2=doublepower(redshift,p)
+	p=fit_evolve['phis']
+	logphis=polynomial(redshift,p)
+	p=fit_evolve['Lbreak']
+	Lbreak=doublepower(redshift,p)
+	parameters=np.array([gamma1,gamma2,logphis,Lbreak])
+	return parameters

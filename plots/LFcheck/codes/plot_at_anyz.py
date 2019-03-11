@@ -14,50 +14,21 @@ import sys
 
 redshift=float(sys.argv[1])
 
-#bestfit        = np.array([0.39856372, 2.19426155, -4.73290265, 12.97241616, 0.43717880, -11.63470663, -11.72357430, -0.72820353, 1.36234503, -0.79697647])
-#bestfit         = np.array([0.38181256, 2.16955741, -4.70557406, 12.94851374, 0.43771614, -11.42561263, -11.34952214, -0.75528960, 1.32130027, -0.77768681])
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
-#parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"  , "k1"      , "k2"        , "k3"        , "k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
-#parameters_bound= (np.array([0,0,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf]),np.array([np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf]))
-
-#fit_res=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-#id=fit_res["z"]==redshift
-#parameters=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
 
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit.dat",names=['gamma1','gamma2','phis','Lbreak'])
-T0 = np.polynomial.chebyshev.Chebyshev((1,0,0,0))
-T1 = np.polynomial.chebyshev.Chebyshev((0,1,0,0))
-T2 = np.polynomial.chebyshev.Chebyshev((0,0,1,0))
-T3 = np.polynomial.chebyshev.Chebyshev((0,0,0,1))
-def polynomial(z,p):
-        xsi=1.+z
-        return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)+p[3]*T3(xsi)
+parameters = pars_at_z(fit_evolve,redshift)
 
-def doublepower(z,p):
-        xsi=1.+z
-        zref=p[1]
-        return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
-
-p=fit_evolve['gamma1']
-gamma1=polynomial(redshift,p)
-p=fit_evolve['gamma2']
-gamma2=doublepower(redshift,p)
-p=fit_evolve['phis']
-logphis=polynomial(redshift,p)
-p=fit_evolve['Lbreak']
-Lbreak=doublepower(redshift,p)
-parameters=np.array([gamma1,gamma2,logphis,Lbreak])
-
-fit_evolve_g = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
-p=fit_evolve_g['gamma1']
-gamma1_g=polynomial(redshift,p)
-p=fit_evolve_g['gamma2']
-gamma2_g=doublepower(redshift,p)
-p=fit_evolve_g['phis']
-logphis_g=polynomial(redshift,p)
-p=fit_evolve_g['Lbreak']
-Lbreak_g=doublepower(redshift,p)
-parameters_g=np.array([gamma1_g,gamma2_g,logphis_g,Lbreak_g])
+source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
+p=source['value'][ source['paraid']==0 ]
+gamma1 = polynomial(redshift,p,2)
+p=source['value'][ source['paraid']==1 ]
+gamma2 = doublepower(redshift,p)
+p=source['value'][ source['paraid']==2 ]
+logphi = polynomial(redshift,p,1)
+p=source['value'][ source['paraid']==3 ]
+Lbreak = doublepower(redshift,p)
+parameters_g = np.array([gamma1,gamma2,logphi,Lbreak])
 
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
