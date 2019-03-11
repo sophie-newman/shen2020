@@ -162,8 +162,12 @@ ax.plot(z_a+1,Lbreak_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a+1,bestfit(z_a,'Lbreak'),'-',c='seagreen')
 ax.plot(z_a+1,bestfit_global(z_a,3),'-',c='darkorchid')
 
-#prop = matplotlib.font_manager.FontProperties(size=25.0)
-#ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
+limit = np.genfromtxt("../../fitresult/stat_limit.dat",names=True)
+ax.step(limit['z']+1,limit['Lmin3'],where='mid',linestyle=':',color='chocolate',label=r'$\rm 3$ $\rm data$ $\rm points$ $\rm limit$')
+ax.step(limit['z']+1,limit['Lmin5'],where='mid',linestyle=':',color='gray',label=r'$\rm 5$ $\rm data$ $\rm points$ $\rm limit$')
+
+prop = matplotlib.font_manager.FontProperties(size=25.0)
+ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm 1+z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(L_{\ast})}$ $[{\rm L}_{\odot}]$',fontsize=40,labelpad=5)
 
