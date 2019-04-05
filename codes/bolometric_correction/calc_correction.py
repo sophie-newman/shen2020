@@ -7,13 +7,14 @@ from scipy.integrate import quad
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 def returnIR_to_UV_H07(sed2500):
+	'''
 	data1=np.genfromtxt(datapath+"OpticalSED.dat",names=["lognu","logall"],)
 	lamb1=con.c.value/(10**data1['lognu'])*1e10
 	sed1 =data1['logall']
 
 	lamb1, sed1 = lamb1[(lamb1>1300) & (lamb1<10000)], sed1[(lamb1>1300) & (lamb1<10000)]
 	overlay = interp1d(lamb1,sed1)
-
+	'''
 	################
 	data2=np.genfromtxt(datapath+"R06_SED.dat",names=["lognu","logall","sigall","blue"],)
 	lamb2=con.c.value/(10**data2['lognu'])*1e10
@@ -30,12 +31,12 @@ def returnIR_to_UV_H07(sed2500):
 	
 	lamb2= np.append( lamb2, UVlamb2)
 	sed2 = np.append( sed2 , UVsed2+ (sed2[-1]-UVsed2[0]))
-	
+	freq2= con.c.value/(lamb2*1e-10)
+
 	####
 	#sed2[(lamb2>1300) & (lamb2<lamb1[0])] += overlay(lamb2[(lamb2>1300) & (lamb2<lamb1[0])]) - 1.
 
-	id2500 = np.arange(0,len(lamb2),dtype=np.int32)[(lamb2-2500)<0][0]
-	totscale = sed2500-sed2[id2500]
+	totscale = sed2500-interp1d(np.log10(freq2),sed2)(np.log10(con.c.value/2500e-10))
 
 	return lamb2[lamb2>500], sed2[lamb2>500]+totscale
 
@@ -66,64 +67,69 @@ def returnIR_to_UV(sed2500):
 	
 	lamb1,sed1 = lamb1[lamb1>UV_end],sed1[lamb1>UV_end]
 	
-	lambUV= np.linspace(UV_end,500.,10)
+	lambUV= np.linspace(UV_end,600.,100)
 	sedUV = sed1[-1] + (UVslope-1) * (np.log10(lambUV) - np.log10(lamb1[-1]))
 	
 	lamb1= np.append( lamb1, lambUV)
 	sed1 = np.append( sed1 , sedUV)
-	freq1= np.log10(con.c.value/(lamb1*1e-10))
+	freq1= con.c.value/(lamb1*1e-10)
 
-	totscale = sed2500-interp1d(lamb1,sed1)(2500.)
+	totscale = sed2500-interp1d(np.log10(freq1),sed1)(np.log10(con.c.value/2500e-10))
 
 	return lamb1, sed1+totscale
 
 def returnXray(sed2500):
 	f2500 = np.power(10.,sed2500)/(con.c.value/2500./1e-10)
+
 	#alphaox = -0.137*np.log10(f2500)+2.638
 	alphaox = -0.107*np.log10(f2500)+1.739
 	#alphaox = -0.154*np.log10(f2500)+3.176
+
 	f2kev=10**(alphaox/0.384)*f2500
 	data3=np.genfromtxt(datapath+"XRAY_SED.dat",names=["lognu","logall"],)
 	lamb3=con.c.value/(10**data3['lognu'])*1e10
-	
-	lamb2kev = con.c.value/ (2.*1000.*con.e.value/con.h.value) *1e10
-	#id2kev = np.arange(0,len(lamb3),dtype=np.int32)[(lamb3-lamb2kev)<0][0]
+	freq3=10**data3['lognu']
 
-	scale = np.log10( f2kev*(2.*1000.*con.e.value/con.h.value) ) - interp1d(lamb3,data3['logall'])(lamb2kev)
+	lamb2kev = con.c.value/ (2.*1000.*con.e.value/con.h.value) *1e10
+	freq2kev = 2.*1000.*con.e.value/con.h.value
+
+	scale = np.log10( f2kev*(2.*1000.*con.e.value/con.h.value) ) - interp1d(np.log10(freq3),data3['logall'])(np.log10(freq2kev))
 	sed3 = data3['logall'] + scale
 	return lamb3[lamb3<50], sed3[lamb3<50]
 
 def returnall(sed2500):
-	lambNX, sedNX = returnIR_to_UV_H07(sed2500)
+	lambNX, sedNX = returnIR_to_UV(sed2500)
 	lambX, sedX = returnXray(sed2500)
 
 	lamball = np.append(lambNX, lambX)
 	sedall  = np.append(sedNX, sedX)
-	freqall = con.c.value/(lamball*1e-10)
-	#plt.plot(lamball,sedall)
-	#plt.xscale('log')
-	#plt.show()
-	#exit()
+	freqall = con.c.value/(lamball*1e-10)	
 	
-	funclog = interp1d(freqall,sedall)
-	def func(x):
-		return np.power(10.,funclog(x))/x
-	LHX_trial =quad(func, 2.*1000.*con.e.value/con.h.value,10.*1000.*con.e.value/con.h.value)[0]
-	LHX = romberg(func, 2.*1000.*con.e.value/con.h.value,10.*1000.*con.e.value/con.h.value,
-		divmax=30, tol=5e-2*LHX_trial , rtol=5e-2)
-	LSX_trial =quad(func, 0.5*1000.*con.e.value/con.h.value,2.*1000.*con.e.value/con.h.value)[0]
-	LSX = romberg(func, 0.5*1000.*con.e.value/con.h.value,2.*1000.*con.e.value/con.h.value,
-		divmax=30, tol=5e-2*LSX_trial , rtol=5e-2)
-	logLB  =np.mean(sedall[np.abs(lamball-4400.)<200])
-	logLIR =np.mean(sedall[np.abs(lamball-150000.)<500])
-	Lbol_trial=quad(func, con.c.value/94.8e-6, 500.*1000.*con.e.value/con.h.value)[0]
-	Lbol= romberg(func, con.c.value/94.8e-6, 500.*1000.*con.e.value/con.h.value,
-		divmax=30, tol=5e-2*Lbol_trial , rtol=5e-2)
+	def integrate(sed, freq, fmin, fmax):
+		idmin= np.arange(0,len(freq),dtype=np.int32)[freq>fmin][0]
+		idmax= np.arange(0,len(freq),dtype=np.int32)[freq<fmax][-1]
+
+		sed_at_fmin= sed[idmin-1] + (fmin-freq[idmin-1]) * (sed[idmin]-sed[idmin-1])/(freq[idmin]-freq[idmin-1])
+		sed_at_fmax= sed[idmax]   + (fmax-freq[idmax])   * (sed[idmax+1]-sed[idmax])/(freq[idmax+1]-freq[idmax])
+
+		freq = np.append(np.append(fmin,freq[idmin:idmax+1]),fmax)
+		sed  = np.append(np.append(sed_at_fmin,sed[idmin:idmax+1]),sed_at_fmax)
+
+		return np.trapz(np.log(10)*10**sed, np.log10(freq))
+
+	LHX =integrate( sedall, freqall, 2.*1000.*con.e.value/con.h.value, 10.*1000.*con.e.value/con.h.value)
+
+	LSX =integrate( sedall, freqall, 0.5*1000.*con.e.value/con.h.value,2.*1000.*con.e.value/con.h.value)
+	
+	logLB  =np.mean(sedall[np.abs(lamball-4450.)<940])
+	logLIR =np.mean(sedall[np.abs(lamball-150000.)<75000])
+
+	Lbol= integrate( sedall, freqall, con.c.value/(30.*1e-6), 500*1000.*con.e.value/con.h.value)
 	
 	print 'done'
 	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logLIR
 
-sed2500s = np.linspace(5,15,10)+L_solar
+sed2500s = np.linspace(5,15,100)+L_solar
 Lbols = 0*sed2500s
 LHXs = 0*sed2500s
 LSXs = 0*sed2500s

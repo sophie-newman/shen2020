@@ -5,8 +5,8 @@ import sys
 from astropy.cosmology import FlatLambdaCDM
 import astropy.constants as con
 
-#homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
-homepath="/home/xuejian/works/quasarLF/git/"
+homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
+#homepath="/home/xuejian/works/quasarLF/git/"
 sys.path.append(homepath+"codes/bolometric_correction/")
 sys.path.append(homepath+"codes/convolution/")
 sys.path.append(homepath+"codes/lf_fit/")
