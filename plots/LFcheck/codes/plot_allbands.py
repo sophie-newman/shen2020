@@ -62,7 +62,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
                 PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
 	#if len(PHI_data)==0:
 	#	print dset_name
-	#if dset_id == -1:
+	#if dset_id == -4:
 	#	print dset_name, L_data
 
         if (len(L_data) > 0):
@@ -148,7 +148,7 @@ ax.plot(x,y,'--',dashes=(25,15),c='navy',alpha=0.7,label=r'$\rm Local$ $\rm fit$
 y = LF(L_bol_grid,parameters_fix_local)
 ax.plot(x,y,'--',dashes=(25,15),c='chocolate',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\phi_{\ast}$ $\rm fixed$)')
 y = LF(L_bol_grid,parameters_global_1)
-ax.plot(x,y,':',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
+ax.plot(x,y,':',c='tan',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
 y = LF(L_bol_grid,parameters_global_2)
 ax.plot(x,y,':',c='darkorchid',label=r'$\rm Global$ $\rm fit$')
 
@@ -158,15 +158,23 @@ ax.plot(x,y,':',c='gray',label=r'$\rm Hopkins+$ $\rm 2007$')
 
 xcollect = np.array([])
 x,y,dy=get_data(parameters_fix_local,dataid=-1)
-ax.errorbar(x,y,yerr=dy,linestyle='none',c='crimson',mec='crimson',marker='o',ms=10,capsize=6,capthick=2,label=r'$\rm UV$ $\rm 1450\AA$')
+ax.errorbar(x,y,yerr=dy,linestyle='none',c='crimson',mec='crimson',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm UV$ $\rm 1450\AA$')
 xcollect = np.append(xcollect,x)
 
 x,y,dy=get_data(parameters_fix_local,dataid=-1.1)
-ax.errorbar(x,y,yerr=dy,linestyle='none',c='crimson',mec='crimson',marker='o',ms=10,capsize=6,capthick=2)
+ax.errorbar(x,y,yerr=dy,linestyle='none',c='crimson',mec='crimson',marker='o',ms=10,capsize=6,capthick=2,lw=2)
 xcollect = np.append(xcollect,x)
 
 x,y,dy=get_data(parameters_fix_local,dataid=-4)
-ax.errorbar(x,y,yerr=dy,linestyle='none',c='royalblue',mec='royalblue',marker='o',ms=10,capsize=6,capthick=2,label=r'$\rm Hard$ $\rm Xray$')
+ax.errorbar(x,y,yerr=dy,linestyle='none',c='royalblue',mec='royalblue',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm Hard$ $\rm Xray$')
+xcollect = np.append(xcollect,x)
+
+x,y,dy=get_data(parameters_fix_local,dataid=-3)
+ax.errorbar(x,y,yerr=dy,linestyle='none',c='seagreen',mec='seagreen',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm Soft$ $\rm Xray$')
+xcollect = np.append(xcollect,x)
+
+x,y,dy=get_data(parameters_fix_local,dataid=-2)
+ax.errorbar(x,y,yerr=dy,linestyle='none',c='olive',mec='olive',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm Mid$ $\rm Infrared$')
 xcollect = np.append(xcollect,x)
 
 xcollect = np.sort(xcollect-L_solar)
@@ -175,7 +183,7 @@ print redshift, xcollect[2], xcollect[4]
 ax.axvline(parameters_fix_local[3]+L_solar,color='cyan',lw=2)
 ax.axhline(parameters_fix_local[2]-np.log10(2.),color='cyan',lw=2)
 
-prop = matplotlib.font_manager.FontProperties(size=25.0)
+prop = matplotlib.font_manager.FontProperties(size=22.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 ax.set_xlabel(r'$\log{(L_{\rm bol}[{\rm erg}\,{\rm s}^{-1}])}$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\phi[{\rm dex}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
@@ -187,6 +195,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
-#plt.show()
+#plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
+plt.show()
 

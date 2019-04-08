@@ -20,32 +20,44 @@ def Gamma(epsilon,z):
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
-fit_res=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-pgamma1, pgamma1_err  = fit_res["gamma1"], fit_res["err1"]
-pgamma2, pgamma2_err  = fit_res["gamma2"], fit_res["err2"]
-plogphis,plogphis_err = fit_res["phi_s"], fit_res["err3"]
-pLbreak, pLbreak_err  = fit_res["L_s"], fit_res["err3"]
-pz=fit_res['z']
-#zpoints=np.array([0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,6])
-zpoints=np.array(pz)
+data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
+pgamma1_fix, pgamma1_err_fix  = data["gamma1"], data["err1"]
+pgamma2_fix, pgamma2_err_fix  = data["gamma2"], data["err2"]
+plogphis_fix,plogphis_err_fix = data["phi_s"],  data["err3"]
+pLbreak_fix, pLbreak_err_fix  = data["L_s"],    data["err3"]
+pz_fix=data['z']
+zpoints_fix=np.array(pz)
 
-fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit.dat",names=['gamma1','gamma2','phis','Lbreak'])
-zlist=np.linspace(0.4,7,100)
-p=fit_evolve['gamma1']
-gamma1=polynomial(zlist,p)
-p=fit_evolve['gamma2']
-gamma2=doublepower(zlist,p)
-p=fit_evolve['phis']
-logphis=polynomial(zlist,p)
-p=fit_evolve['Lbreak']
-Lbreak=doublepower(zlist,p)
+data=np.genfromtxt("../../fitresult/fit_at_z_nofix.dat",names=True)
+pgamma1_free, pgamma1_err_free  = data["gamma1"], data["err1"]
+pgamma2_free, pgamma2_err_free  = data["gamma2"], data["err2"]
+plogphis_free,plogphis_err_free = data["phi_s"],  data["err3"]
+pLbreak_free, pLbreak_err_free  = data["L_s"],    data["err3"]
+pz_free=data['z']
+zpoints_free=np.array(pz_free)
+
+fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
+paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['values'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
+zlist=np.linspace(0.2,7,100)
 
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
-def get_model_lf(parameters,nu,magnitude=False,global_model=False):
+def get_model_lf_global(parameters,nu,redshift,magnitude=False):
+	p=parameters[paraid==0]
+	gamma1 = polynomial(redshift,p,2)
+	p=parameters[paraid==1]
+	gamma2 = doublepower(redshift,p)
+	p=parameters[paraid==2]
+	logphi = polynomial(redshift,p,1)
+	p=parameters[paraid==3]	
+	Lbreak = doublepower(redshift,p)
+	parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
+	return get_model_lf(parameters_at_z,nu,magnitude=magnitude)
+
+def get_model_lf(parameters,nu,magnitude=False):
         L_band = bolometric_correction(L_bol_grid,nu)
         nu_c = c_double(nu)
         input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
@@ -53,7 +65,7 @@ def get_model_lf(parameters,nu,magnitude=False,global_model=False):
         res = [i for i in res.contents]
         PHI_band = np.array(res,dtype=np.float64)
         if magnitude==False:
-                return L_band, PHI_band
+                return L_band, np.log10(PHI_band)
         else:
                 M_1450 = (M_sun_Bband_AB -2.5*L_band) + 0.706
                 PHI_1450 = np.log10(PHI_band) - np.log10(2.5)
@@ -68,7 +80,7 @@ def cumulative_emissivity(L_band,Phi_band,L_limit_low,L_limit_up):
 		return np.power(10.,logphi(x))*fnu
 	return quad(emis,Mlow,Mup)[0]
 
-def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift):
+def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift,global=False):
 	partials = 0.0 * parameters
 	delta = 1e-6
 	def fobjective(parameters):
@@ -80,7 +92,6 @@ def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift):
 		partials[i] = ( fobjective(parameters_add) - fobjective(parameters))/delta
 		partials[i] = np.abs(partials[i])
 
-	print np.ravel(partials)
 	return np.sqrt(np.sum((partials * errs)**2))
 
 import matplotlib.pyplot as plt 
@@ -112,8 +123,7 @@ for i in range(len(zlist)):
 
 	result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zlist[i])
 	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist[i])
-ax.plot(zlist,np.log10(result[:,0]),'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins$ $\rm 2007$')
-#ax.plot(zlist,result[:,1],'--',dashes=(25,15),c='crimson')
+ax.plot(zlist,np.log10(result[:,0]),'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 
 result=np.zeros((len(zlist),2))
 for i in range(len(zlist)):
@@ -132,7 +142,6 @@ for i in range(len(zlist)):
 	result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zlist[i])
 	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist[i])
 ax.plot(zlist,np.log10(result[:,0]),'-',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
-#ax.plot(zlist,result[:,1],'-',c='seagreen')
 
 result=np.zeros((len(zpoints),2))
 uncertainty=np.zeros((len(zpoints),2))
