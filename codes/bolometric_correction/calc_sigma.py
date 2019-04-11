@@ -7,17 +7,20 @@ from scipy.integrate import quad
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 
+from scipy.stats import binned_statistic
+
 def returnIR_to_UV(sed2500, slope):
-	optical_slope = slope
-	lamb1= np.linspace(1e4,700.,100)
-	sed1 = 1. + (optical_slope-1) * (np.log10(lamb1) - np.log10(lamb1[-1]))
+	data1=np.genfromtxt(datapath+"K13_SED.dat",names=["lognu","logall"],)
+	freq1=data1['lognu']
+	lamb1=con.c.value/(10**data1['lognu'])*1e10
+	sed1 =data1['logall']
 	
 	#IR construction
 	IR_end=lamb1[0]
 	data2=np.genfromtxt(datapath+"R06_SED.dat",names=["lognu","logall","sigall","blue"],)
 	lamb2=con.c.value/(10**data2['lognu'])*1e10
 	sed2 =data2['blue']
-	
+
 	lamb2_ir= lamb2[lamb2>IR_end]
 	sed2_ir = sed2[lamb2>IR_end]
 	
@@ -25,6 +28,16 @@ def returnIR_to_UV(sed2500, slope):
 	
 	lamb1= np.append( lamb2_ir, lamb1)
 	sed1 = np.append( sed2_ir*scale, sed1)
+
+	sed1 = sed1[lamb1 > 1e4]
+	lamb1= lamb1[lamb1 > 1e4]
+
+	optical_slope = slope
+	lamb_op= np.linspace(1e4, 700., 100)
+	sed_op = sed1[-1] + (optical_slope-1) * (np.log10(lamb_op) - np.log10(lamb1[-1]))
+	
+	lamb1 = np.append(lamb1, lamb_op)
+	sed1  = np.append(sed1,  sed_op)
 	
 	#UV construction
 	UV_end  =912.
@@ -32,7 +45,7 @@ def returnIR_to_UV(sed2500, slope):
 	
 	lamb1,sed1 = lamb1[lamb1>UV_end],sed1[lamb1>UV_end]
 	
-	lambUV= np.linspace(UV_end,600.,100)
+	lambUV= np.linspace(UV_end, 600.,100)
 	sedUV = sed1[-1] + (UVslope-1) * (np.log10(lambUV) - np.log10(lamb1[-1]))
 	
 	lamb1= np.append( lamb1, lambUV)
@@ -69,10 +82,6 @@ def returnall(sed2500, slope, gamma, alphaox):
 	lamball = np.append(lambNX, lambX)
 	sedall  = np.append(sedNX, sedX)
 	freqall = con.c.value/(lamball*1e-10)	
-	
-	plt.loglog(lamball,sedall)
-	plt.show()
-	exit()
 
 	def integrate(sed, freq, fmin, fmax):
 		idmin= np.arange(0,len(freq),dtype=np.int32)[freq>fmin][0]
@@ -97,44 +106,58 @@ def returnall(sed2500, slope, gamma, alphaox):
 	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logLIR
 
 def weighted_std(values, weights):
-    average = np.average(values, weights=weights)
-    variance = np.average((values-average)**2, weights=weights)
-    return np.sqrt(variance)
+	average = np.average(values, weights=weights)
+	variance = np.average((values-average)**2, weights=weights)
+	return np.sqrt(variance)
 
 slope_uncertainty, slope_best = 0.125, 0.44
 pindex_uncertainty, pindex_best = 0.3, 1.9
-alphaox_uncertainty, alphaox_best = 1., 0.107
+alphaox_uncertainty, alphaox_best = 10*0.11*0.384, 0.107
 
-pindexlist = np.genfromtxt("./xspec_lib/pindex_list.dat")
+#pindexlist = np.genfromtxt("./xspec_lib/pindex_list.dat")
+pindexlist = np.array([1.7,1.8,1.9,2.0,2.1])
 pindex_weight = 1./np.sqrt(2.*np.pi*pindex_uncertainty)*np.exp(-((pindexlist-pindex_best)/pindex_uncertainty)**2)
-slopelist = 0.44 + np.linspace(-0.25,0.25,1)
+slopelist = 0.44 + np.linspace(-0.25,0.25,11)
 slope_weight = 1./np.sqrt(2.*np.pi*slope_uncertainty)*np.exp(-((slopelist-slope_best)/slope_uncertainty)**2)
-alphaoxlist = 0.107 + np.linspace(-1.2,1.2,1)
+alphaoxlist = 0.107 + np.linspace(-0.2,0.2,11)
 alphaox_weight = 1./np.sqrt(2.*np.pi*alphaox_uncertainty)*np.exp(-((alphaoxlist-alphaox_best)/alphaox_uncertainty)**2)
 
-sed2500s = np.linspace(5,15,3)+L_solar
-sigmaHX = 0*sed2500s
-sigmaSX = 0*sed2500s
-sigmaB  = 0*sed2500s
-sigmaIR = 0*sed2500s
-for i in range(len(sed2500s)):
-	HXcorrs =np.array([])
-	SXcorrs =np.array([])
-	Bcorrs  =np.array([])
-	IRcorrs =np.array([])
-	weights =np.array([])
+sed2500s = np.linspace(5,15,50)+L_solar
+Lbols   = np.zeros( (len(sed2500s), len(slopelist), len(alphaoxlist), len(pindexlist)) )
+HXcorrs = np.zeros( (len(sed2500s), len(slopelist), len(alphaoxlist), len(pindexlist)) )
+SXcorrs = np.zeros( (len(sed2500s), len(slopelist), len(alphaoxlist), len(pindexlist)) )
+Bcorrs  = np.zeros( (len(sed2500s), len(slopelist), len(alphaoxlist), len(pindexlist)) )
+IRcorrs = np.zeros( (len(sed2500s), len(slopelist), len(alphaoxlist), len(pindexlist)) )
+weights = np.zeros( (len(sed2500s), len(slopelist), len(alphaoxlist), len(pindexlist)) )
+
+for i in range(len(sed2500s)):	
 	for j in range(len(slopelist)):
 		for k in range(len(alphaoxlist)):
 			for m in range(len(pindexlist)): 
-				print i,j,k,m
-				Lbol,LHX,LSX,LB,LIR = returnall(sed2500s[i],slopelist[j],pindexlist[m],alphaoxlist[k])
-				print Lbol, LHX, Lbol-LHX
-				HXcorrs=np.append(HXcorrs, Lbol-LHX)
-				weights=np.append(weights, slope_weight[j]*alphaox_weight[k]*pindex_weight[m])
-	print HXcorrs
-	sigmaHX[i]=weighted_std(HXcorrs, weights)
+				#print i,j,k,m
+				Lbol,LHX,LSX,LB,LIR = returnall(sed2500s[i],slopelist[j],pindexlist[m],alphaoxlist[k])				
+				Lbols[i,j,k,m]   = Lbol
+				HXcorrs[i,j,k,m] = Lbol-LHX
+				SXcorrs[i,j,k,m] = Lbol-LSX
+				Bcorrs[i,j,k,m]  = Lbol-LB
+				IRcorrs[i,j,k,m] = Lbol-LIR
+				weights[i,j,k,m] = slope_weight[j]*alphaox_weight[k]*pindex_weight[m]
 
-print sigmaHX
-#np.savetxt("sigmas.dat", np.c_[sigmaHX,sigmaSX,sigmaB,sigmaIR], header='HX,SX,B,IR')
+def my_binned_statistic(x, y, w, func, bins):
+	result = np.zeros(bins.shape[0]-1)
+	for i in range(bins.shape[0]-1):
+		id_sel = (x>bins[i]) & (x<bins[i+1])
+		if len(x[id_sel])!=0:
+			w_sel, y_sel = w[id_sel], y[id_sel]
+			result[i] = weighted_std(y_sel, w_sel)
+		else: result[i] = np.nan
+	return result
 
+bins=np.linspace(42,48,20)
+bincenter=(bins[1:]+bins[:-1])/2.
+numbers,bedges,_ = binned_statistic(np.ravel(Lbols), np.ravel(HXcorrs), statistic="count", bins=bins)
+print numbers
+sigmas = my_binned_statistic(np.ravel(Lbols), np.ravel(HXcorrs), np.ravel(weights), func = weighted_std, bins=bins)
 
+plt.plot(bincenter,sigmas)
+plt.show()
