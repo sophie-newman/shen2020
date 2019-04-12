@@ -12,11 +12,33 @@ from ctypes import *
 import ctypes
 import sys
 
+obdataPath = '../GUVLF_data/'
+def plt_obdata(fname,papername,color,label=True):
+	obdata=np.genfromtxt(obdataPath+fname,names=True, comments='#')
+	x_ob=obdata['m']
+	phi=obdata['phi']
+	id1=phi>0
+	id2= (phi<=0)
+	y_ob=0.0*x_ob
+	y_ob[id1]=np.log10(phi[id1])
+	y_ob[id2]=phi[id2]
+	uperr=0.0*x_ob
+	uperr[id1]=np.log10(phi[id1]+obdata['uperr'][id1])-y_ob[id1]
+	uperr[id2]=obdata['uperr'][id2]
+	low=phi-obdata['lowerr']
+	low[low<=0]=1e-10
+	lowerr=0.0*x_ob
+	lowerr[id1]=-np.log10(low[id1])+y_ob[id1]
+	lowerr[id2]=obdata['lowerr'][id2]
+	#if label==True:
+	#	ax.errorbar(x_ob,y_ob,yerr=(lowerr,uperr),c=color,lw=3,linestyle='',marker='o',markersize=9,capsize=4.5,label=papername)
+	#else: 
+	ax.errorbar(x_ob,y_ob,yerr=(lowerr,uperr),c=color,mec=color,linestyle='none',marker='o',lw=2,markersize=10,capsize=6,capthick=2,alpha=0.7)
+
+
 redshift=float(sys.argv[1])
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
-#parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"  , "k1"      , "k2"        , "k3"        , "k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
-#parameters_bound= (np.array([0,0,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf]),np.array([np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf]))
 
 fit_res=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
 id=fit_res["z"]==redshift
@@ -94,25 +116,34 @@ res = [i for i in res.contents]
 PHI_B = np.array(res,dtype=np.float64)
 x = (M_sun_Bband_AB -2.5*L_B) + 0.706
 y = np.log10(PHI_B) - np.log10(2.5)
-ax.plot(x,y,'--',dashes=(25,15),c='black',label=r'$\rm new$ $\rm fit$')
-
-L_B = bolometric_correction(L_bol_grid,-1)
-nu_c = c_double(-1)
-input_c= np.power(10.,LF_at_z_H07(L_bol_grid,parameters_init,redshift,"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-res = convolve_c(input_c,nu_c)
-res = [i for i in res.contents]
-PHI_B = np.array(res,dtype=np.float64)
-x = (M_sun_Bband_AB -2.5*L_B) + 0.706
-y = np.log10(PHI_B) - np.log10(2.5)
-ax.plot(x,y,'--',dashes=(25,15),c='gray',label=r'$\rm old$ $\rm fit$')
+ax.plot(x,y,'--',dashes=(25,15),c='black',label=r'$\rm Modelled$ $\rm quasar$ $\rm UVLF$')
 
 x,y,dy,yfit=get_data(newdata=True)
-ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='crimson',mec='crimson',marker='o', ms=10, capthick=2,label=r'$\rm new$ $\rm data$')
+ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='o', ms=10, capthick=2)
 
 x,y,dy,yfit=get_data()
 x = (M_sun_Bband_AB -2.5*x) + 0.706
 y = y - np.log10(2.5)
-ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='o', ms=10, capthick=2 ,label=r'$\rm old$ $\rm data$')
+ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='o', ms=10, capthick=2 ,label=r'$\rm Quasar$ $\rm UVLF$ $\rm compilation$')
+
+if redshift==2:
+	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_red.dat',r'${\rm Reddy+}$ ${\rm 2008,} {\rm 2009}$','darkorchid')
+	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_ala.dat',r'${\rm Alavi+}$ ${\rm 2014}$','darkorchid')
+	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_par.dat',r'${\rm Parsa+}$ ${\rm 2016}$','darkorchid')
+	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_oes.dat',r'${\rm Oesch+}$ ${\rm 2010}$','darkorchid')
+	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_hat.dat',r'${\rm Hathi+}$ ${\rm 2010}$','darkorchid')
+	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_met.dat',r'${\rm Mehta+}$ ${\rm 2017}$','darkorchid')
+elif redshift==4:
+	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'.dat',r'${\rm Finkelstein+}$ ${\rm 2016}$'+'\n'+r'${\rm Compilation}$','darkorchid')
+	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_par.dat','','darkorchid',label=False)
+	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_ono.dat',r'${\rm Ono+}$ ${\rm 2018}$','darkorchid')
+elif redshift==6:
+	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'.dat','','darkorchid',label=False)
+	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_bou.dat',r'${\rm Bouwens+}$ ${\rm 2017}$','darkorchid')
+	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_ate.dat',r'${\rm Atek+}$ ${\rm 2018}$','darkorchid')
+	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_ono.dat','','darkorchid',label=False)
+ax.plot([],[],c='darkorchid',label=r'$\rm Galaxy$ $\rm UVLF$ $compilation$')
+
 
 prop = matplotlib.font_manager.FontProperties(size=30.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -121,8 +152,8 @@ ax.set_xlabel(r'$M_{\rm 1450}$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\phi[{\rm mag}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
 ax.text(0.88, 0.92, r'${\rm z\sim'+str(redshift)+'}$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
 
-ax.set_xlim(-19.5,-32)
-ax.set_ylim(-10.2,-4.3)
+ax.set_xlim(-16.5,-32)
+ax.set_ylim(-10.2,-0.3)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
