@@ -28,16 +28,16 @@ ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data = np.genfromtxt("bolcorr.dat",names=['Lbol','LHX','LSX','LB','LIR'])
 
-ax.plot(data['Lbol']-L_solar,data['Lbol']-data['LB'],c='royalblue',label=r'$\rm B$ $\rm band$')
-ax.plot(data['Lbol']-L_solar,data['Lbol']-data['LHX'],c='crimson',label=r'$\rm Hard$ $\rm Xray$')
-ax.plot(data['Lbol']-L_solar,data['Lbol']-data['LSX'],c='seagreen',label=r'$\rm Soft$ $\rm Xray$')
-ax.plot(data['Lbol']-L_solar,data['Lbol']-data['LIR'],c='chocolate',label=r'$\rm Mid$ $\rm IR$')
+ax.plot(data['Lbol']-L_solar,data['Lbol']-data['LB'] , lw=6, c='royalblue',label=r'$\rm B$ $\rm band$')
+ax.plot(data['Lbol']-L_solar,data['Lbol']-data['LHX'], lw=6, c='crimson',label=r'$\rm Hard$ $\rm Xray$')
+ax.plot(data['Lbol']-L_solar,data['Lbol']-data['LSX'], lw=6, c='seagreen',label=r'$\rm Soft$ $\rm Xray$')
+ax.plot(data['Lbol']-L_solar,data['Lbol']-data['LIR'], lw=6, c='chocolate',label=r'$\rm Mid$ $\rm IR$')
 
 ax.plot(data['Lbol']-L_solar,H07(data['Lbol'],'B'),'--',dashes=(25,15), c='royalblue')
 ax.plot(data['Lbol']-L_solar,H07(data['Lbol'],'HX'),'--',dashes=(25,15), c='crimson')
 ax.plot(data['Lbol']-L_solar,H07(data['Lbol'],'SX'),'--',dashes=(25,15), c='seagreen')
 ax.plot(data['Lbol']-L_solar,H07(data['Lbol'],'IR'),'--',dashes=(25,15), c='chocolate')
-
+ax.plot([],[],'--',dashes=(25,15), c='k',label=r'$\rm Hopkins+$ $\rm 2007$')
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
@@ -46,7 +46,7 @@ ax.set_ylabel(r'$\log{(L_{\rm bol}/L_{\rm band})}$',fontsize=40,labelpad=5)
 
 #ax.set_xlim(42.1,47.8)
 ax.set_xlim(8.5,14)
-ax.set_ylim(0.3,2.7)
+ax.set_ylim(0.85,2.45)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)

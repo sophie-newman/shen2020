@@ -40,6 +40,22 @@ def returnIR_to_UV_H07(sed2500):
 
 	return lamb2[lamb2>500], sed2[lamb2>500]+totscale
 
+def returnXray_H07(sed2500):
+	f2500 = np.power(10.,sed2500)/(con.c.value/2500./1e-10)
+
+	alphaox = -0.107*np.log10(f2500)+1.739
+
+	f2kev=10**(alphaox/0.384)*f2500
+	data3=np.genfromtxt(datapath+"XRAY_SED.dat",names=["lognu","logall"],)	
+	lamb3=con.c.value/(10**data3['lognu'])*1e10
+	freq3=10**data3['lognu']
+
+	lamb2kev = con.c.value/ (2.*1000.*con.e.value/con.h.value) *1e10
+	freq2kev = 2.*1000.*con.e.value/con.h.value
+
+	scale = np.log10( f2kev*(2.*1000.*con.e.value/con.h.value) ) - interp1d(np.log10(freq3),data3['logall'])(np.log10(freq2kev))
+	sed3 = data3['logall'] + scale
+	return lamb3[lamb3<50], sed3[lamb3<50]
 
 def returnIR_to_UV(sed2500):
 	data1=np.genfromtxt(datapath+"K13_SED.dat",names=["lognu","logall"],)
@@ -86,18 +102,28 @@ def returnXray(sed2500):
 	#alphaox = -0.154*np.log10(f2500)+3.176
 
 	f2kev=10**(alphaox/0.384)*f2500
-	data3=np.genfromtxt(datapath+"XRAY_SED.dat",names=["lognu","logall"],)
-	lamb3=con.c.value/(10**data3['lognu'])*1e10
-	freq3=10**data3['lognu']
+	data3=np.genfromtxt("xspec_lib/Xspec_1_9.dat",names=["E","f"],)	
+	freq3=data3['E']*1000.*con.e.value/con.h.value
+	lamb3=con.c.value/freq3 * 1e10
+	sed3 =np.log10(data3['f']*data3['E'])
 
 	lamb2kev = con.c.value/ (2.*1000.*con.e.value/con.h.value) *1e10
 	freq2kev = 2.*1000.*con.e.value/con.h.value
 
-	scale = np.log10( f2kev*(2.*1000.*con.e.value/con.h.value) ) - interp1d(np.log10(freq3),data3['logall'])(np.log10(freq2kev))
-	sed3 = data3['logall'] + scale
+	scale = np.log10( f2kev*(2.*1000.*con.e.value/con.h.value) ) - interp1d(np.log10(freq3),sed3)(np.log10(freq2kev))
+	sed3 = sed3 + scale
 	return lamb3[lamb3<50], sed3[lamb3<50]
 
 def returnall(sed2500):
+	'''
+	lambNX, sedNX = returnIR_to_UV_H07(sed2500)
+	lambX, sedX = returnXray_H07(sed2500)
+
+	lamball = np.append(lambNX, lambX)
+	sedall  = np.append(sedNX, sedX)
+	freqall = con.c.value/(lamball*1e-10)	
+	plt.loglog(lamball, sedall,'r-')
+	'''
 	lambNX, sedNX = returnIR_to_UV(sed2500)
 	lambX, sedX = returnXray(sed2500)
 
@@ -105,6 +131,10 @@ def returnall(sed2500):
 	sedall  = np.append(sedNX, sedX)
 	freqall = con.c.value/(lamball*1e-10)	
 	
+	#plt.loglog(lamball, sedall,'b--')
+	#plt.show()
+	#exit()
+
 	def integrate(sed, freq, fmin, fmax):
 		idmin= np.arange(0,len(freq),dtype=np.int32)[freq>fmin][0]
 		idmax= np.arange(0,len(freq),dtype=np.int32)[freq<fmax][-1]
@@ -130,6 +160,7 @@ def returnall(sed2500):
 	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logLIR
 
 sed2500s = np.linspace(5,15,100)+L_solar
+#sed2500s = np.linspace(12,12,1)+L_solar
 Lbols = 0*sed2500s
 LHXs = 0*sed2500s
 LSXs = 0*sed2500s
