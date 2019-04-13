@@ -26,14 +26,14 @@ def plt_obdata(fname,papername,color,label=True):
 	uperr[id1]=np.log10(phi[id1]+obdata['uperr'][id1])-y_ob[id1]
 	uperr[id2]=obdata['uperr'][id2]
 	low=phi-obdata['lowerr']
-	low[low<=0]=1e-10
+	low[low<=0]=1e-20
 	lowerr=0.0*x_ob
 	lowerr[id1]=-np.log10(low[id1])+y_ob[id1]
 	lowerr[id2]=obdata['lowerr'][id2]
 	#if label==True:
 	#	ax.errorbar(x_ob,y_ob,yerr=(lowerr,uperr),c=color,lw=3,linestyle='',marker='o',markersize=9,capsize=4.5,label=papername)
 	#else: 
-	ax.errorbar(x_ob,y_ob,yerr=(lowerr,uperr),c=color,mec=color,linestyle='none',marker='o',lw=2,markersize=10,capsize=6,capthick=2,alpha=0.7)
+	ax.errorbar(x_ob,y_ob,yerr=(lowerr,uperr),c=color,mec=color,linestyle='none',marker='o',lw=2,markersize=10,capsize=6,capthick=2)
 
 
 redshift=float(sys.argv[1])
@@ -43,6 +43,17 @@ parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.
 fit_res=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
 id=fit_res["z"]==redshift
 parameters=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
+
+source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
+p=source['value'][ source['paraid']==0 ]
+gamma1 = polynomial(redshift,p,2)
+p=source['value'][ source['paraid']==1 ]
+gamma2 = doublepower(redshift,p)
+p=source['value'][ source['paraid']==2 ]
+logphi = polynomial(redshift,p,1)
+p=source['value'][ source['paraid']==3 ]
+Lbreak = doublepower(redshift,p)
+parameters_global = np.array([gamma1,gamma2,logphi,Lbreak])
 
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
@@ -116,48 +127,59 @@ res = [i for i in res.contents]
 PHI_B = np.array(res,dtype=np.float64)
 x = (M_sun_Bband_AB -2.5*L_B) + 0.706
 y = np.log10(PHI_B) - np.log10(2.5)
-ax.plot(x,y,'--',dashes=(25,15),c='black',label=r'$\rm Modelled$ $\rm quasar$ $\rm UVLF$')
+ax.plot(x,y,'-',lw=4,c='crimson',label=r'$\rm Modelled$ $\rm quasar$ $\rm UVLF$')
+
+data = np.genfromtxt("../GUVLF_data/schechter_fits.dat",names=True)
+id_z = data['z']==redshift
+def single_sch(M,phi_s,M_s,alpha):
+        return np.log10( 0.4*np.log(10.)*phi_s*np.power(10.,-0.4*(M-M_s)*(alpha+1.))*np.exp(-np.power(10.,-0.4*(M-M_s))) )
+x = np.linspace(-13,-25,100)
+y = single_sch(x, 10**data['LogPhis'][id_z], data["Ms"][id_z], data["alpha"][id_z])
+ax.plot(x,y,'-',lw=4,c='royalblue',label=r'$\rm Galaxy$ $\rm UVLF$ $\rm fit$')
 
 x,y,dy,yfit=get_data(newdata=True)
-ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='o', ms=10, capthick=2)
+ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='gray',mec='gray',marker='o', ms=10, capthick=2)
 
 x,y,dy,yfit=get_data()
 x = (M_sun_Bband_AB -2.5*x) + 0.706
 y = y - np.log10(2.5)
-ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='o', ms=10, capthick=2 ,label=r'$\rm Quasar$ $\rm UVLF$ $\rm compilation$')
+ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='gray',mec='gray',marker='o', ms=10, capthick=2 ,label=r'$\rm Quasar$ $\rm UVLF$ $\rm compilation$')
 
 if redshift==2:
-	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_red.dat',r'${\rm Reddy+}$ ${\rm 2008,} {\rm 2009}$','darkorchid')
-	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_ala.dat',r'${\rm Alavi+}$ ${\rm 2014}$','darkorchid')
-	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_par.dat',r'${\rm Parsa+}$ ${\rm 2016}$','darkorchid')
-	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_oes.dat',r'${\rm Oesch+}$ ${\rm 2010}$','darkorchid')
-	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_hat.dat',r'${\rm Hathi+}$ ${\rm 2010}$','darkorchid')
-	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_met.dat',r'${\rm Mehta+}$ ${\rm 2017}$','darkorchid')
+	snapnum=33
+	plt_obdata('obdata'+str(snapnum).zfill(3)+'_ala.dat',r'${\rm Alavi+}$ ${\rm 2014}$','darkorchid')
+	plt_obdata('obdata'+str(snapnum).zfill(3)+'_par.dat',r'${\rm Parsa+}$ ${\rm 2016}$','darkorchid')
+	plt_obdata('obdata'+str(snapnum).zfill(3)+'_oes.dat',r'${\rm Oesch+}$ ${\rm 2010}$','darkorchid')
+	plt_obdata('obdata'+str(snapnum).zfill(3)+'_hat.dat',r'${\rm Hathi+}$ ${\rm 2010}$','darkorchid')
+	plt_obdata('obdata'+str(snapnum).zfill(3)+'_met.dat',r'${\rm Mehta+}$ ${\rm 2017}$','darkorchid')
 elif redshift==4:
-	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'.dat',r'${\rm Finkelstein+}$ ${\rm 2016}$'+'\n'+r'${\rm Compilation}$','darkorchid')
-	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_par.dat','','darkorchid',label=False)
-	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_ono.dat',r'${\rm Ono+}$ ${\rm 2018}$','darkorchid')
+	snapnum=21
+	plt_obdata('obdata'+str(snapnum).zfill(3)+'.dat',r'${\rm Finkelstein+}$ ${\rm 2016}$'+'\n'+r'${\rm Compilation}$','darkorchid')
+	plt_obdata('obdata'+str(snapnum).zfill(3)+'_par.dat','','darkorchid',label=False)
+	plt_obdata('obdata'+str(snapnum).zfill(3)+'_ono.dat',r'${\rm Ono+}$ ${\rm 2018}$','darkorchid')
 elif redshift==6:
-	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'.dat','','darkorchid',label=False)
-	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_bou.dat',r'${\rm Bouwens+}$ ${\rm 2017}$','darkorchid')
-	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_ate.dat',r'${\rm Atek+}$ ${\rm 2018}$','darkorchid')
-	plt_obdata('obdata'+str(Snaps[i]).zfill(3)+'_ono.dat','','darkorchid',label=False)
-ax.plot([],[],c='darkorchid',label=r'$\rm Galaxy$ $\rm UVLF$ $compilation$')
+	snapnum=13
+	plt_obdata('obdata'+str(snapnum).zfill(3)+'.dat','','darkorchid',label=False)
+	plt_obdata('obdata'+str(snapnum).zfill(3)+'_bou.dat',r'${\rm Bouwens+}$ ${\rm 2017}$','darkorchid')
+	plt_obdata('obdata'+str(snapnum).zfill(3)+'_ate.dat',r'${\rm Atek+}$ ${\rm 2018}$','darkorchid')
+	plt_obdata('obdata'+str(snapnum).zfill(3)+'_ono.dat','','darkorchid',label=False)
+
+ax.errorbar([],[],yerr=([],[]),c='darkorchid',mec='darkorchid',linestyle='none',marker='o',lw=2,markersize=10,capsize=6,capthick=2,label=r'$\rm Galaxy$ $\rm UVLF$ $\rm compilation$')
 
 
-prop = matplotlib.font_manager.FontProperties(size=30.0)
+prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 #ax.set_xlabel(r'$\log{(L_{\rm B}/{\rm L}_{\odot})}$',fontsize=40,labelpad=2.5)
 ax.set_xlabel(r'$M_{\rm 1450}$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\phi[{\rm mag}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
 ax.text(0.88, 0.92, r'${\rm z\sim'+str(redshift)+'}$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
 
-ax.set_xlim(-16.5,-32)
-ax.set_ylim(-10.2,-0.3)
+ax.set_xlim(-15.5,-30.5)
+ax.set_ylim(-12.2,-0.3)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/UV_"+str(redshift)+".pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/compare_"+str(redshift)+".pdf",fmt='pdf')
+#plt.show()
 
