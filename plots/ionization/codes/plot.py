@@ -26,7 +26,7 @@ pgamma2_fix, pgamma2_err_fix  = data["gamma2"], data["err2"]
 plogphis_fix,plogphis_err_fix = data["phi_s"],  data["err3"]
 pLbreak_fix, pLbreak_err_fix  = data["L_s"],    data["err3"]
 pz_fix=data['z']
-zpoints_fix=np.array(pz)
+zpoints_fix=np.array(pz_fix)
 
 data=np.genfromtxt("../../fitresult/fit_at_z_nofix.dat",names=True)
 pgamma1_free, pgamma1_err_free  = data["gamma1"], data["err1"]
@@ -37,8 +37,8 @@ pz_free=data['z']
 zpoints_free=np.array(pz_free)
 
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
-paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['values'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
-zlist=np.linspace(0.2,7,100)
+paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
+zlist=np.linspace(0.1,7,100)
 
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
@@ -80,17 +80,27 @@ def cumulative_emissivity(L_band,Phi_band,L_limit_low,L_limit_up):
 		return np.power(10.,logphi(x))*fnu
 	return quad(emis,Mlow,Mup)[0]
 
-def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift,global=False):
+def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift,global_fit=False):
 	partials = 0.0 * parameters
 	delta = 1e-6
-	def fobjective(parameters):
-		M_1450, PHI_1450 = get_model_lf(parameters, -1, magnitude=True)
-        	return Gamma(cumulative_emissivity(M_1450, PHI_1450, L_limit_low, L_limit_up),redshift)
-	for i in range(len(parameters)):
-		parameters_add = parameters.copy()
-		parameters_add[i] += delta
-		partials[i] = ( fobjective(parameters_add) - fobjective(parameters))/delta
-		partials[i] = np.abs(partials[i])
+	if global_fit==False:
+		def fobjective(parameters):
+			M_1450, PHI_1450 = get_model_lf(parameters, -1, magnitude=True)
+        		return Gamma(cumulative_emissivity(M_1450, PHI_1450, L_limit_low, L_limit_up),redshift)
+		for i in range(len(parameters)):
+			parameters_add = parameters.copy()
+			parameters_add[i] += delta
+			partials[i] = ( fobjective(parameters_add) - fobjective(parameters))/delta
+			partials[i] = np.abs(partials[i])
+	else:
+		def fobjective(parameters):
+                        M_1450, PHI_1450 = get_model_lf_global(parameters, -1, redshift, magnitude=True)
+                        return Gamma(cumulative_emissivity(M_1450, PHI_1450, L_limit_low, L_limit_up),redshift)
+                for i in range(len(parameters)):
+                        parameters_add = parameters.copy()
+                        parameters_add[i] += delta
+                        partials[i] = ( fobjective(parameters_add) - fobjective(parameters))/delta
+                        partials[i] = np.abs(partials[i])
 
 	return np.sqrt(np.sum((partials * errs)**2))
 
@@ -126,39 +136,47 @@ for i in range(len(zlist)):
 ax.plot(zlist,np.log10(result[:,0]),'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 
 result=np.zeros((len(zlist),2))
+uncertainty=np.zeros((len(zlist),2))
 for i in range(len(zlist)):
-	L_band = bolometric_correction(L_bol_grid,-1)
-	M_1450 = (M_sun_Bband_AB -2.5*L_band) + 0.706
-	PHI_1450 = return_kk18_lf_fitted(M_1450 ,zlist[i]) 
+	M_1450, PHI_1450 = get_model_lf_global(pglobal, -1, zlist[i], magnitude=True)
 	result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zlist[i])
 	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist[i])
-ax.plot(zlist,np.log10(result[:,0]),'--',dashes=(25,15),c='darkorchid',label=r'$\rm Kulkarni$ $\rm 2018$')
-#ax.plot(zlist,result[:,1],'--',dashes=(25,15),c='cyan')
-
-result=np.zeros((len(zlist),2))
-for i in range(len(zlist)):
-	id=pz==zlist[i]
-	M_1450, PHI_1450 = get_model_lf([gamma1[i],gamma2[i],logphis[i],Lbreak[i]], -1, magnitude=True)
-	result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zlist[i])
-	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist[i])
-ax.plot(zlist,np.log10(result[:,0]),'-',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
-
-result=np.zeros((len(zpoints),2))
-uncertainty=np.zeros((len(zpoints),2))
-for i in range(len(zpoints)):
-        id=pz==zpoints[i]
-        M_1450, PHI_1450 = get_model_lf([pgamma1[id],pgamma2[id],plogphis[id],pLbreak[id]], -1, magnitude=True)
-        result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zpoints[i])
-	uncertainty[i,0]= Gamma_err(np.array([pgamma1[id],pgamma2[id],plogphis[id],pLbreak[id]]), [pgamma1_err[id],pgamma2_err[id],plogphis_err[id],pLbreak_err[id]], lowlimit, -18, zpoints[i])
-	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zpoints[i])
-print uncertainty[:,0]
+	uncertainty[i,0]= Gamma_err(pglobal, pglobal_err, lowlimit, -18, zlist[i], global_fit=True)
 uperr = np.log10(result + uncertainty)-np.log10(result)
 loerr = np.log10(result)-np.log10(result - uncertainty)
 loerr[np.invert(np.isfinite(loerr))] = 100
-ax.plot(zpoints,np.log10(result[:,0]),'o',c='royalblue',mec='royalblue',ms=15)
-ax.errorbar(zpoints,np.log10(result[:,0]),yerr=(loerr[:,0],uperr[:,0]),linestyle='none',marker='o',c='royalblue',mec='royalblue',ms=15,capsize=9,capthick=4)
-#ax.plot(zpoints,result[:,1],'o',c='royalblue',mec='royalblue',ms=15)
+ax.plot(zlist,np.log10(result[:,0]),'-',c='darkorchid',label=r'$\rm Global$ $\rm fit$')
+ax.fill_between(zlist, y1=np.log10(result[:,0])+uperr[:,0] ,y2=np.log10(result[:,0])-loerr[:,0], color='darkorchid', alpha=0.4)
 
+###### fit at a given redshift
+result=np.zeros((len(zpoints_free),2))
+uncertainty=np.zeros((len(zpoints_free),2))
+for i in range(len(zpoints_free)):
+        id = pz_free==zpoints_free[i]
+        M_1450, PHI_1450 = get_model_lf([pgamma1_free[id],pgamma2_free[id],plogphis_free[id],pLbreak_free[id]], -1, magnitude=True)
+        result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zpoints_free[i])
+        uncertainty[i,0]= Gamma_err(np.array([pgamma1_free[id],pgamma2_free[id],plogphis_free[id],pLbreak_free[id]]), [pgamma1_err_free[id],pgamma2_err_free[id],plogphis_err_free[id],pLbreak_err_free[id]], lowlimit, -18, zpoints_free[i])
+        result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zpoints_free[i])
+uperr = np.log10(result + uncertainty)-np.log10(result)
+loerr = np.log10(result)-np.log10(result - uncertainty)
+loerr[np.invert(np.isfinite(loerr))] = 100
+ax.errorbar(zpoints_free,np.log10(result[:,0]),yerr=(loerr[:,0],uperr[:,0]),linestyle='none',marker='o',c='gray',mec='gray',ms=15,capsize=9,capthick=4,alpha=0.5)
+
+
+result=np.zeros((len(zpoints_fix),2))
+uncertainty=np.zeros((len(zpoints_fix),2))
+for i in range(len(zpoints_fix)):
+        id= pz_fix==zpoints_fix[i]
+        M_1450, PHI_1450 = get_model_lf([pgamma1_fix[id],pgamma2_fix[id],plogphis_fix[id],pLbreak_fix[id]], -1, magnitude=True)
+        result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zpoints_fix[i])
+	uncertainty[i,0]= Gamma_err(np.array([pgamma1_fix[id],pgamma2_fix[id],plogphis_fix[id],pLbreak_fix[id]]), [pgamma1_err_fix[id],pgamma2_err_fix[id],plogphis_err_fix[id],pLbreak_err_fix[id]], lowlimit, -18, zpoints_fix[i])
+	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zpoints_fix[i])
+uperr = np.log10(result + uncertainty)-np.log10(result)
+loerr = np.log10(result)-np.log10(result - uncertainty)
+loerr[np.invert(np.isfinite(loerr))] = 100
+ax.errorbar(zpoints_fix,np.log10(result[:,0]),yerr=(loerr[:,0],uperr[:,0]),linestyle='none',marker='o',c='royalblue',mec='royalblue',ms=15,capsize=9,capthick=4)
+
+#######################################################################
 ax.errorbar([2.40,2.80,3.20,3.60,4.00,4.40,4.75],[0.015,-0.066,-0.103,-0.097,-0.072,-0.019,-0.029],yerr=([0.146, 0.131, 0.121, 0.118, 0.117, 0.122, 0.147],[0.132, 0.129, 0.130, 0.131, 0.135, 0.140, 0.156]),marker='s',linestyle='none',ms=15,color='k',mec='k',capsize=9,capthick=4,label=r'$\rm Becker$ $\rm &$ $\rm Bolton+$ $\rm 2013$')
 
 ydata=np.array([0.58, 0.53, 0.48, 0.47, 0.45, 0.29])
@@ -168,6 +186,7 @@ ax.errorbar([4.8,5.0,5.2,5.4,5.6,5.8], np.log10(ydata) ,yerr=(np.log10(ydata)-np
 
 #data=np.genfromtxt("kk18.dat",names=['z','gamma'])
 #ax.plot(data['z'],data['gamma'],'--',c='gray',alpha=0.3)
+#######################################################################
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -177,7 +196,7 @@ ax.set_ylabel(r'$\Gamma_{\rm -12}$ [$\rm s^{-1}\,atom^{-1}$]',fontsize=40,labelp
 #ax.text(0.25, 0.64, r'$\rm <-21$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 #ax.text(0.25, 0.87, r'$\rm <-18$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
-ax.set_xlim(0.3,7)
+ax.set_xlim(0.1,7)
 ax.set_ylim(-2.5,0.3)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)

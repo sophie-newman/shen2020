@@ -15,36 +15,17 @@ import sys
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
-fit_res=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-pgamma1=fit_res["gamma1"]
-pgamma2=fit_res["gamma2"]
-plogphis=fit_res["phi_s"]
-pLbreak=fit_res["L_s"]
-pz=fit_res['z']
-zpoints=np.array([0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,6])
+data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
+pgamma1, pgamma1_err  = data["gamma1"], data["err1"]
+pgamma2, pgamma2_err  = data["gamma2"], data["err2"]
+plogphis,plogphis_err = data["phi_s"],  data["err3"]
+pLbreak, pLbreak_err  = data["L_s"],    data["err3"]
+pz=data['z']
+zpoints=np.array(pz)
 
-fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit.dat",names=['gamma1','gamma2','phis','Lbreak'])
-T0 = np.polynomial.chebyshev.Chebyshev((1,0,0,0))
-T1 = np.polynomial.chebyshev.Chebyshev((0,1,0,0))
-T2 = np.polynomial.chebyshev.Chebyshev((0,0,1,0))
-T3 = np.polynomial.chebyshev.Chebyshev((0,0,0,1))
-def polynomial(z,p):
-        xsi=1.+z
-        return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)+p[3]*T3(xsi)
-
-def doublepower(z,p):
-        xsi=1.+z
-        zref=p[1]
-        return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
-zlist=np.linspace(0,7,100)
-p=fit_evolve['gamma1']
-gamma1=polynomial(zlist,p)
-p=fit_evolve['gamma2']
-gamma2=doublepower(zlist,p)
-p=fit_evolve['phis']
-logphis=polynomial(zlist,p)
-p=fit_evolve['Lbreak']
-Lbreak=doublepower(zlist,p)
+fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
+paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
+zlist=np.linspace(0.1,7,100)
 
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
@@ -92,19 +73,16 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
-def get_model_lf(parameters,nu,magnitude=False):
-	L_band = bolometric_correction(L_bol_grid,nu)
-	nu_c = c_double(nu)
-	input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-	res = convolve_c(input_c,nu_c)
-	res = [i for i in res.contents]
-	PHI_band = np.array(res,dtype=np.float64)
-	if magnitude==False:
-		return L_band, PHI_band
-	else:
-		M_1450 = (M_sun_Bband_AB -2.5*L_band) + 0.706
-		PHI_1450 = np.log10(PHI_band) - np.log10(2.5)
-		return M_1450, PHI_1450
+def get_pars(parameters,redshift):
+        p=parameters[paraid==0]
+        gamma1 = polynomial(redshift,p,2)
+        p=parameters[paraid==1]
+        gamma2 = doublepower(redshift,p)
+        p=parameters[paraid==2]
+        logphi = polynomial(redshift,p,1)
+        p=parameters[paraid==3]
+        Lbreak = doublepower(redshift,p)
+        return gamma1, gamma2, logphi, Lbreak
 
 result=np.zeros((len(zlist),3))
 for i in range(len(zlist)):
@@ -117,13 +95,12 @@ ax.plot(zlist,result[:,2],'--',dashes=(25,15),c='crimson')
 
 result=np.zeros((len(zlist),3))
 for i in range(len(zlist)):
-        id=pz==zlist[i]
-        result[i,0]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF(L_bol_grid,[gamma1[i],gamma2[i],logphis[i],Lbreak[i]]) ,45.5,46.5))
-	result[i,1]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF(L_bol_grid,[gamma1[i],gamma2[i],logphis[i],Lbreak[i]]) ,46.5,47.5))
-	result[i,2]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF(L_bol_grid,[gamma1[i],gamma2[i],logphis[i],Lbreak[i]]) ,47.5,48.5))
-ax.plot(zlist,result[:,0],'-',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
-ax.plot(zlist,result[:,1],'-',c='seagreen')
-ax.plot(zlist,result[:,2],'-',c='seagreen')
+        result[i,0]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF(L_bol_grid,get_pars(pglobal,zlist[i])) ,45.5,46.5))
+	result[i,1]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF(L_bol_grid,get_pars(pglobal,zlist[i])) ,46.5,47.5))
+	result[i,2]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF(L_bol_grid,get_pars(pglobal,zlist[i])) ,47.5,48.5))
+ax.plot(zlist,result[:,0],'-',c='darkorchid',label=r'$\rm Global$ $\rm fits$')
+ax.plot(zlist,result[:,1],'-',c='darkorchid')
+ax.plot(zlist,result[:,2],'-',c='darkorchid')
 
 result=np.zeros((len(zpoints),3))
 for i in range(len(zpoints)):
