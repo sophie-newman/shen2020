@@ -84,11 +84,11 @@ x_fit=np.linspace(0,5,1000)
 f_fit=0.0*x_fit
 for i in range(len(x_fit)):
 	f_fit[i]= fraction(43.5, x_fit[i])
-ax.plot(x_fit, f_fit, c='crimson', label=r'$\rm Ueda+$ $\rm 2014$ ($\log{L_{\rm X}}=43.5$)')
+ax.plot(x_fit, f_fit, c='crimson', lw=5, label=r'$\rm Ueda+$ $\rm 2014$ ($\bf fid.$ $\log{L_{\rm X}}=43.5$)')
 
 for i in range(len(x_fit)):
 	f_fit[i]= fraction(44.5, x_fit[i])
-ax.plot(x_fit, f_fit, '--', dashes=(15,9),c='crimson', label=r'$\rm Ueda+$ $\rm 2014$ ($\log{L_{\rm X}}=44.5$)')
+ax.plot(x_fit, f_fit, '--', dashes=(15,9), lw=5, c='crimson', label=r'$\rm Ueda+$ $\rm 2014$ (${\bf fid.}$ $\log{L_{\rm X}}=44.5$)')
 
 
 ax.errorbar( (br12["zmin"]+br12["zmax"])/2., br12["f"]/100., yerr=br12["ferr"]/100., xerr=(br12["zmax"]-br12["zmin"])/2.,
@@ -99,7 +99,7 @@ ax.errorbar( 0.03, 0.20, yerr= ([0.06],[0.09]), marker='o', c='gray', mec='gray'
 			 linestyle='', capsize=8, capthick=3, lw=4, label=r'$\rm Burlon+$ $\rm 2011$ ($\log{L_{\rm X}}=43.6$)')
 
 ax.errorbar( 2, 0.36, yerr= 0.12, xerr=1, marker='o', c='purple', mec='purple',
-			 linestyle='', capsize=8, capthick=3, lw=4, label=r'$\rm Del$ $\rm Moro+$ $\rm 2015$ ($\log{L_{\rm X}}\sim44$)')
+			 linestyle='', capsize=8, capthick=3, lw=4, label=r'$\rm Del$ $\rm Moro+$ $\rm 2016$ ($\log{L_{\rm X}}\sim44$)')
 
 ax.errorbar( 0.055, 0.27, yerr= 0.06, lolims=True, marker='o', c='magenta',
 			 linestyle='', capsize=10, mew=0, lw=4, label=r'$\rm Ricci+$ $\rm 2015$')
@@ -114,7 +114,7 @@ ax.errorbar( (la18["zmin"]+la18["zmax"])/2., la18["f"]/100., yerr=la18["ferr"], 
 
 prop = matplotlib.font_manager.FontProperties(size=18.8)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=2)
-ax.set_xlabel(r'$\rm Redshift$',fontsize=40,labelpad=2.5)
+ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$f_{\rm CTK}$',fontsize=40,labelpad=5)
 ax.set_xlim(-0.05,5)
 ax.set_ylim(0,0.9)

@@ -11,26 +11,29 @@ import sys
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
+fduty=0.08
+
 def lamb_vs_Lbol(Lbol):
 	median = 0.469 * Lbol - 22.46
-	#median = -3.5 
-	sigma = 0.5
+	#median = -1.5 
+	sigma = 0.4
 	return median, sigma
 
 def Lbol_to_mass(Lbol):
 	C = np.log10(1.26e38)
 	median, sigma = lamb_vs_Lbol(Lbol)
 	lamb = np.random.normal(median, sigma, size=nsample)
-	return - lamb - C + Lbol
+	return Lbol - C -lamb
 
-mock_volume = 10. #Mpc^3
+mock_volume = 100. #Mpc^3
 nsample = 30000
 def generate_ensemble(Lbol, LogPhi):
 	Masses = np.array([])
 	Weights = np.array([])
+	binlength = Lbol[5]-Lbol[4]
 	for i in range(len(Lbol)):
 		Masses = np.append(Masses, Lbol_to_mass(Lbol[i]))
-		Weights = np.append(Weights, np.ones(nsample)*10**LogPhi[i]*mock_volume/nsample)
+		Weights = np.append(Weights, np.ones(nsample)*10**LogPhi[i]*mock_volume*binlength/nsample)
 	return Masses, Weights
 	
 def get_mass_function(Masses, Weights):
@@ -56,11 +59,8 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 i=0
-colors=['crimson','royalblue','seagreen','chocolate','darkorchid','black']
-for redshift in [0.]:
-#for redshift in [0.4, 1.6, 3.2, 4.75]:
-#for redshift in [1,2,3,4,5,6]:
-#for redshift in [0.2,0.5,0.8,1.1,1.4,1.7]:
+colors=['royalblue','seagreen']
+for redshift in [0.4]:
 	fit_res=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
 	id=fit_res["z"]==redshift
 	parameters_fix_local=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
@@ -78,36 +78,58 @@ for redshift in [0.]:
 
 	catalog = {"mass":0, "weight":0}
 
-	catalog["mass"], catalog["weight"] = generate_ensemble(L_bol_grid+L_solar, LF(L_bol_grid,parameters_global_2) )
+	L_bol_grid_extended = np.linspace(5,15,100)
+	catalog["mass"], catalog["weight"] = generate_ensemble(L_bol_grid_extended+L_solar, LF(L_bol_grid_extended,parameters_global_2) )
 	x,y = get_mass_function(catalog["mass"],catalog["weight"])
-	ax.plot(x,y,c=colors[i],label=r'$\rm z=$'+str(redshift))
+	ax.plot(x,y-np.log10(fduty),'-',c=colors[i],label=r'$\rm Convolved$ ($\rm total$)')
+	ax.plot(x,y+np.log10(0.2),'--',dashes=(25,15),c=colors[i],label=r'$\rm Convolved$ ($\rm type-I$)')
+	i=i+1
 
-	'''
-	data = np.genfromtxt(datapath + 'BHMF/Kelly2013/table1.dat', names=True)
-	id = data['z']==redshift
-	ax.errorbar( data['logM'][id], data['logPhi'][id], yerr=( data['logPhi'][id]-data['lo'][id], data['up'][id]-data['logPhi'][id]),
-	 c=colors[i], mec=colors[i], linestyle='none' ,marker='o',markersize=15, capthick=4, capsize=9)
-	'''
-	data = np.genfromtxt(datapath + 'BHMF/Vika2009_local.dat', names=True)
-	scale = 1e-4 * (hubble/0.70)**3
-	ax.errorbar( data['logM'], np.log10(data['Phi']*scale), yerr=( np.log10(data['Phi']) - np.log10(data['Phi']-data['loerr'])
-		, np.log10(data['Phi']+data['uperr']) - np.log10(data['Phi']) ), c=colors[i], mec=colors[i], linestyle='none' ,
-		marker='o',markersize=15, capthick=4, capsize=9)
-	
-	i+=1
+def BHMF1(logM, logphi_s, logM_s, alpha, beta):
+	a = 10.**(logM-logM_s)
+	return 10.**logphi_s * a**(1.+alpha) * np.exp(1-a)
+
+def BHMF2(logM, logphi_s, logM_s, alpha, beta):
+	a = 10.**(logM-logM_s)
+	return 10.**logphi_s / (a**alpha + a**beta)
+xfit = np.linspace(5,12,100)
+pfit = np.log10(BHMF2(xfit, -4.391, 8.645, 1.805, 0.5545))
+data = np.genfromtxt(datapath + 'BHMF/Marconi2004_local.dat', names=True)
+ax.plot(xfit , pfit-np.log10(fduty),'-', color='crimson', label=r'$\rm Deconvolved$ ($\rm total$)')
+ax.plot(xfit , pfit+np.log10(0.2),'--', dashes=(25,15), color='crimson', label=r'$\rm Deconvolved$ ($\rm type-I$)')
+
+
+data = np.genfromtxt(datapath + 'BHMF/Kelly2013/table1.dat', names=True)
+id = data['z']==0.4
+ax.errorbar( data['logM'][id], data['logPhi'][id], yerr=( data['logPhi'][id]-data['lo'][id], data['up'][id]-data['logPhi'][id]),
+ c='gray', mec='gray', linestyle='none' ,marker='o',markersize=15, capthick=4, capsize=9, label=r'$\rm Kelly+$ $\rm 2013$')
+
+data = np.genfromtxt(datapath + 'BHMF/Vika2009_local.dat', names=True)
+scale = 1e-4 * (hubble/0.70)**3
+ax.errorbar( data['logM'], np.log10(data['Phi']*scale), yerr=( np.log10(data['Phi']) - np.log10(data['Phi']-data['loerr'])
+	, np.log10(data['Phi']+data['uperr']) - np.log10(data['Phi']) ), c='seagreen', mec='seagreen', linestyle='none' ,
+	marker='o',markersize=15, capthick=4, capsize=9, label=r'$\rm Vika+$ $\rm 2009$')
+
+data = np.genfromtxt(datapath + 'BHMF/Shankar2009_local.dat', names=True)
+ax.fill_between( data['logM'], y1= data['lo'] - data['logM'], y2= data['up'] - data['logM'], color='chocolate', 
+	edgecolor='none',alpha=0.3,label=r'$\rm Shankar+$ $\rm 2009$')
+
+data = np.genfromtxt(datapath + 'BHMF/Marconi2004_local.dat', names=True)
+ax.plot( data['logM'], data['logPhi'], c='darkorchid', mec='darkorchid', linestyle='none' ,
+	marker='o',markersize=15, label=r'$\rm Marconi+$ $\rm 2004$')
 
 prop = matplotlib.font_manager.FontProperties(size=22.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 ax.set_xlabel(r'$\log{(M_{\rm BH}[{\rm M}_{\odot}])}$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\phi[{\rm dex}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
-#ax.text(0.88, 0.92, r'${\rm z\sim'+str(redshift)+'}$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
+ax.text(0.88, 0.92, r'${\rm local}$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
 
-ax.set_xlim(5., 12.)
+ax.set_xlim(5.8, 12.)
 ax.set_ylim(-8,-1)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/BHMF_3.pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/BHMF_local.pdf",fmt='pdf')
+#plt.show()
 

@@ -11,7 +11,7 @@ from scipy.stats import binned_statistic
 
 def returnIR_to_UV(sed2500, slope):
 	data1=np.genfromtxt(datapath+"K13_SED.dat",names=["lognu","logall"],)
-	freq1=data1['lognu']
+	freq1=10**data1['lognu']
 	lamb1=con.c.value/(10**data1['lognu'])*1e10
 	sed1 =data1['logall']
 	
@@ -24,10 +24,10 @@ def returnIR_to_UV(sed2500, slope):
 	lamb2_ir= lamb2[lamb2>IR_end]
 	sed2_ir = sed2[lamb2>IR_end]
 	
-	scale = ((sed1[1]-sed1[0])/(lamb1[1]-lamb1[0]) * (lamb2_ir[-1]-lamb1[0]) + sed1[0])/sed2_ir[-1]
+	scale = ( (sed1[1]-sed1[0])/(np.log10(lamb1[1])-np.log10(lamb1[0])) * (np.log10(lamb2_ir[-1])-np.log10(lamb1[0])) + sed1[0] ) - sed2_ir[-1]
 	
 	lamb1= np.append( lamb2_ir, lamb1)
-	sed1 = np.append( sed2_ir*scale, sed1)
+	sed1 = np.append( sed2_ir + scale, sed1)
 
 	sed1 = sed1[lamb1 > 1e4]
 	lamb1= lamb1[lamb1 > 1e4]
@@ -56,10 +56,10 @@ def returnIR_to_UV(sed2500, slope):
 
 	return lamb1, sed1+totscale
 
-def returnXray(sed2500, gamma, alphaox_k, alphaox_b):
+def returnXray(sed2500, gamma, alphaox_disp):
 	f2500 = np.power(10.,sed2500)/(con.c.value/2500./1e-10)
 
-	alphaox = -alphaox_k*np.log10(f2500) + alphaox_b
+	alphaox = -0.107*np.log10(f2500) + 1.739 + alphaox_disp
 
 	f2kev=10**(alphaox/0.384)*f2500
 	
@@ -70,8 +70,8 @@ def returnXray(sed2500, gamma, alphaox_k, alphaox_b):
 		pup = photon_index_list[-1]
 		plo = photon_index_list[-2]
 	if gamma<photon_index_list.min():
-		pup = photon_index_list[2]
-		plo = photon_index_list[1]
+		pup = photon_index_list[1]
+		plo = photon_index_list[0]
 
 	dataup = np.genfromtxt("xspec_lib/Xspec_"+str(pup).replace('.','_')+".dat",names=["E","f"])
 	datalo = np.genfromtxt("xspec_lib/Xspec_"+str(plo).replace('.','_')+".dat",names=["E","f"])
@@ -91,9 +91,9 @@ def returnXray(sed2500, gamma, alphaox_k, alphaox_b):
 	sed3 = sed3 + scale
 	return lamb3[lamb3<50], sed3[lamb3<50]
 
-def returnall(sed2500, slope, gamma, alphaox_k, alphaox_b):
+def returnall(sed2500, slope, gamma, alphaox_disp):
 	lambNX, sedNX = returnIR_to_UV(sed2500,slope)
-	lambX, sedX = returnXray(sed2500, gamma, alphaox_k, alphaox_b)
+	lambX, sedX = returnXray(sed2500, gamma, alphaox_disp)
 
 	lamball = np.append(lambNX, lambX)
 	sedall  = np.append(sedNX, sedX)
@@ -103,8 +103,8 @@ def returnall(sed2500, slope, gamma, alphaox_k, alphaox_b):
 		idmin= np.arange(0,len(freq),dtype=np.int32)[freq>fmin][0]
 		idmax= np.arange(0,len(freq),dtype=np.int32)[freq<fmax][-1]
 
-		sed_at_fmin= sed[idmin-1] + (fmin-freq[idmin-1]) * (sed[idmin]-sed[idmin-1])/(freq[idmin]-freq[idmin-1])
-		sed_at_fmax= sed[idmax]   + (fmax-freq[idmax])   * (sed[idmax+1]-sed[idmax])/(freq[idmax+1]-freq[idmax])
+		sed_at_fmin= sed[idmin-1] + (np.log10(fmin)-np.log10(freq[idmin-1])) * (sed[idmin]-sed[idmin-1])/(np.log10(freq[idmin])-np.log10(freq[idmin-1]))
+		sed_at_fmax= sed[idmax]   + (np.log10(fmax)-np.log10(freq[idmax]))   * (sed[idmax+1]-sed[idmax])/(np.log10(freq[idmax+1])-np.log10(freq[idmax]))
 
 		freq = np.append(np.append(fmin,freq[idmin:idmax+1]),fmax)
 		sed  = np.append(np.append(sed_at_fmin,sed[idmin:idmax+1]),sed_at_fmax)
@@ -115,8 +115,9 @@ def returnall(sed2500, slope, gamma, alphaox_k, alphaox_b):
 
 	LSX =integrate( sedall, freqall, 0.5*1000.*con.e.value/con.h.value,2.*1000.*con.e.value/con.h.value)
 	
-	logLB  =np.mean(sedall[np.abs(lamball-4450.)<940])
-	logLIR =np.mean(sedall[np.abs(lamball-150000.)<75000])
+	logLB  =np.mean(sedall[np.abs(lamball-4450.)<940./2])
+
+	logLIR =np.mean(sedall[np.abs(lamball-150000.)<15000.])
 
 	Lbol= integrate( sedall, freqall, con.c.value/(30.*1e-6), 500*1000.*con.e.value/con.h.value)
 	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logLIR
@@ -124,18 +125,17 @@ def returnall(sed2500, slope, gamma, alphaox_k, alphaox_b):
 photon_index_list = np.genfromtxt('./xspec_lib/pindex_list.dat')
 
 sigma_sl, sl_best = 0.125, 0.44
-sigma_pi, pi_best = 0.3, 1.9
-sigma_ak, ak_best = 0.00001 * 0.384, 0.107
-sigma_ab, ab_best = 0.075, 1.739
+sigma_pi, pi_best = 0.2, 1.9
+sigma_ox, ox_best = 0.1, 0
 
 np.random.seed(4367)
-Nsamples = 50000
+Nsamples = 100000
 
 par1=np.random.normal(sl_best, sigma_sl, size=Nsamples)
 par2=np.random.normal(pi_best, sigma_pi, size=Nsamples)
-par3=np.random.normal(ak_best, sigma_ak, size=Nsamples)
-par4=np.random.normal(ab_best, sigma_ab, size=Nsamples)
-par5=np.random.uniform(5,15,size=Nsamples)+L_solar
+par3=np.random.normal(ox_best, sigma_ox, size=Nsamples)
+par5=np.random.uniform(-5,15,size=Nsamples)+L_solar
+#par5=np.random.normal(10, 5 ,size=Nsamples)+L_solar
 
 Lbols   = np.zeros( Nsamples )
 HXcorrs = np.zeros( Nsamples )
@@ -145,7 +145,7 @@ IRcorrs = np.zeros( Nsamples )
 
 for i in range(Nsamples):
 	if i%100==0: print i,'/',Nsamples
-	Lbol,LHX,LSX,LB,LIR = returnall(par5[i],par1[i],par2[i],par3[i],par4[i])				
+	Lbol,LHX,LSX,LB,LIR = returnall(par5[i],par1[i],par2[i],par3[i])				
 	Lbols[i]   = Lbol
 	HXcorrs[i] = Lbol-LHX
 	SXcorrs[i] = Lbol-LSX
@@ -153,4 +153,4 @@ for i in range(Nsamples):
 	IRcorrs[i] = Lbol-LIR
 
 np.savetxt('./corr_ensemble/ensemble.dat', np.c_[Lbols, HXcorrs, SXcorrs, Bcorrs, IRcorrs])
-np.savetxt('./corr_ensemble/ensemble_pars.dat', np.c_[par5, par1, par2, par3, par4])
+np.savetxt('./corr_ensemble/ensemble_pars.dat', np.c_[par5, par1, par2, par3])

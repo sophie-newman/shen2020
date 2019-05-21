@@ -68,6 +68,15 @@ def phi(logLx,z):
 def fraction(logLx,z):
 	return phi(logLx,z)
 ###########################################################################
+'''
+Ls=np.linspace(44.0,48.0,20)
+f_fit=0.0*Ls
+for i in range(len(Ls)):
+	f_fit[i]= fraction(Ls[i], 0)
+print Ls
+print f_fit
+exit()
+'''
 
 fig=plt.figure(figsize=(15,10))
 ax  = fig.add_axes([0.11,0.12,0.79,0.83])
@@ -98,11 +107,11 @@ x_fit=np.linspace(0,5,1000)
 f_fit=0.0*x_fit
 for i in range(len(x_fit)):
 	f_fit[i]= fraction(44.5, x_fit[i])
-ax.plot(x_fit, f_fit, c='crimson', label=r'$\rm Ueda+$ $\rm 2014$ ($\log{L_{\rm X}}=44.5$)')
+ax.plot(x_fit, f_fit, lw=5, c='crimson', label=r'$\rm Ueda+$ $\rm 2014$ ($\bf fid.$ $\log{L_{\rm X}}=44.5$)')
 
 for i in range(len(x_fit)):
 	f_fit[i]= fraction(43.5, x_fit[i])
-ax.plot(x_fit, f_fit, '--', dashes=(15,9),c='crimson', label=r'$\rm Ueda+$ $\rm 2014$ ($\log{L_{\rm X}}=43.5$)')
+ax.plot(x_fit, f_fit, '--', dashes=(15,9), lw=5, c='crimson', label=r'$\rm Ueda+$ $\rm 2014$ ($\bf fid.$ $\log{L_{\rm X}}=43.5$)')
 
 ax.errorbar( (ge17["zmin"]+ge17["zmax"])/2., ge17["f"], yerr=np.array([ge17["fup"]-ge17["f"],ge17["f"]-ge17["fdown"]]), 
 			xerr=(ge17["zmax"]-ge17["zmin"])/2., color='seagreen', mec='seagreen', linestyle='', marker='o', 
@@ -134,7 +143,7 @@ ax.errorbar( (la18["zmin"][:-1]+la18["zmax"][:-1])/2., la18["f"][:-1], yerr=la18
 
 prop = matplotlib.font_manager.FontProperties(size=18.8)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=2)
-ax.set_xlabel(r'$\rm Redshift$',fontsize=40,labelpad=2.5)
+ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$f_{\rm abs}$',fontsize=40,labelpad=5)
 ax.set_xlim(-0.05,5)
 ax.set_ylim(0,1.1)
