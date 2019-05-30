@@ -111,16 +111,23 @@ def returnall(sed2500, slope, gamma, alphaox_disp):
 
 		return np.trapz(np.log(10)*10**sed, np.log10(freq))
 
+	def tophat(sed, freq, fmin, fmax):
+		x_target = np.linspace( np.log10(fmin), np.log10(fmax), 100)
+		y_target = interp1d(np.log10(freq), sed)(x_target)
+		return np.mean(y_target)
+
 	LHX =integrate( sedall, freqall, 2.*1000.*con.e.value/con.h.value, 10.*1000.*con.e.value/con.h.value)
 
 	LSX =integrate( sedall, freqall, 0.5*1000.*con.e.value/con.h.value,2.*1000.*con.e.value/con.h.value)
 	
-	logLB  =np.mean(sedall[np.abs(lamball-4450.)<940./2])
+	logLB  = tophat( sedall, freqall, con.c.value/((4450+470)*1e-10), con.c.value/((4450-470)*1e-10))
 
-	logLIR =np.mean(sedall[np.abs(lamball-150000.)<15000.])
+	logL1450 = tophat( sedall, freqall, con.c.value/(1500e-10), con.c.value/(1400e-10))
+
+	logLIR = tophat( sedall, freqall, con.c.value/((15+1.)*1e-6), con.c.value/((15-1)*1e-6))
 
 	Lbol= integrate( sedall, freqall, con.c.value/(30.*1e-6), 500*1000.*con.e.value/con.h.value)
-	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logLIR
+	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logL1450, logLIR
 
 photon_index_list = np.genfromtxt('./xspec_lib/pindex_list.dat')
 
@@ -135,22 +142,23 @@ par1=np.random.normal(sl_best, sigma_sl, size=Nsamples)
 par2=np.random.normal(pi_best, sigma_pi, size=Nsamples)
 par3=np.random.normal(ox_best, sigma_ox, size=Nsamples)
 par5=np.random.uniform(-5,15,size=Nsamples)+L_solar
-#par5=np.random.normal(10, 5 ,size=Nsamples)+L_solar
 
 Lbols   = np.zeros( Nsamples )
 HXcorrs = np.zeros( Nsamples )
 SXcorrs = np.zeros( Nsamples )
 Bcorrs  = np.zeros( Nsamples )
+UVcorrs = np.zeros( Nsamples )
 IRcorrs = np.zeros( Nsamples )
 
 for i in range(Nsamples):
 	if i%100==0: print i,'/',Nsamples
-	Lbol,LHX,LSX,LB,LIR = returnall(par5[i],par1[i],par2[i],par3[i])				
+	Lbol,LHX,LSX,LB,L1450,LIR = returnall(par5[i],par1[i],par2[i],par3[i])				
 	Lbols[i]   = Lbol
 	HXcorrs[i] = Lbol-LHX
 	SXcorrs[i] = Lbol-LSX
 	Bcorrs[i]  = Lbol-LB
+	UVcorrs[i] = Lbol-L1450
 	IRcorrs[i] = Lbol-LIR
 
-np.savetxt('./corr_ensemble/ensemble.dat', np.c_[Lbols, HXcorrs, SXcorrs, Bcorrs, IRcorrs])
+np.savetxt('./corr_ensemble/ensemble.dat', np.c_[Lbols, HXcorrs, SXcorrs, Bcorrs, UVcorrs, IRcorrs])
 np.savetxt('./corr_ensemble/ensemble_pars.dat', np.c_[par5, par1, par2, par3])

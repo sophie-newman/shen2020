@@ -86,7 +86,4 @@ def returnall(sed2500):
 	return lamball, sedall
 
 lamb1, sed1 = returnall(45.55)
-#import matplotlib.pyplot as plt 
-#plt.loglog(lamb1,sed1)
-#plt.show()
 np.savetxt(datapath+"MySED.dat",np.c_[lamb1,sed1])

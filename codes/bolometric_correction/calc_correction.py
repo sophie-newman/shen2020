@@ -146,30 +146,38 @@ def returnall(sed2500):
 
 		return np.trapz(np.log(10)*10**sed, np.log10(freq))
 
+	def tophat(sed, freq, fmin, fmax):
+		x_target = np.linspace( np.log10(fmin), np.log10(fmax), 100)
+		y_target = interp1d(np.log10(freq), sed)(x_target)
+		return np.mean(y_target)
+
 	LHX =integrate( sedall, freqall, 2.*1000.*con.e.value/con.h.value, 10.*1000.*con.e.value/con.h.value)
 
 	LSX =integrate( sedall, freqall, 0.5*1000.*con.e.value/con.h.value,2.*1000.*con.e.value/con.h.value)
 	
-	logLB  =np.mean(sedall[np.abs(lamball-4450.)<940./2])
+	logLB  = tophat( sedall, freqall, con.c.value/((4450+470)*1e-10), con.c.value/((4450-470)*1e-10))
 
-	logLIR =np.mean(sedall[np.abs(lamball-150000.)<15000.])
+	logL1450 = tophat( sedall, freqall, con.c.value/(1500e-10), con.c.value/(1400e-10))
+
+	logLIR = tophat( sedall, freqall, con.c.value/((15+1.)*1e-6), con.c.value/((15-1)*1e-6))
 
 	Lbol= integrate( sedall, freqall, con.c.value/(30.*1e-6), 500*1000.*con.e.value/con.h.value)
 	
 	print 'done'
-	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logLIR
+	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logL1450, logLIR
 
-sed2500s = np.linspace(5,15,100)+L_solar
+sed2500s = np.linspace(5,15,200)+L_solar
 #sed2500s = np.linspace(12,12,1)+L_solar
 Lbols = 0*sed2500s
-LHXs = 0*sed2500s
-LSXs = 0*sed2500s
-LBs  = 0*sed2500s
-LIRs = 0*sed2500s
+LHXs  = 0*sed2500s
+LSXs  = 0*sed2500s
+LBs   = 0*sed2500s
+L1450s= 0*sed2500s
+LIRs  = 0*sed2500s
 for i in range(len(sed2500s)):
-	Lbols[i],LHXs[i],LSXs[i],LBs[i],LIRs[i] = returnall(sed2500s[i])
+	Lbols[i],LHXs[i],LSXs[i],LBs[i],L1450s[i],LIRs[i] = returnall(sed2500s[i])
 
-np.savetxt("bolcorr.dat", np.c_[Lbols,LHXs,LSXs,LBs,LIRs], header='Lbols,LHXs,LSXs,LBs,LIRs')
+np.savetxt("bolcorr.dat", np.c_[Lbols,LHXs,LSXs,LBs,L1450s,LIRs], header='Lbols,LHXs,LSXs,LBs,L1450s,LIRs')
 
 
 
