@@ -272,7 +272,7 @@ double normalCDF(double x, double x0, double sig) // Phi(-∞, x) aka N(x)
     return 0.5 * erfc(-(x-x0)/sqrt(2*sig*sig));
 }
 
-double fit_func_disp(x,P0, P1, P2, P3)
+double fit_func_disp(double x, double P0, double P1, double P2, double P3)
 {
     return P1 + P0 * normalCDF(x,P2,P3);
 }

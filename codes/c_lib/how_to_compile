@@ -1,0 +1,1 @@
+gcc -shared -Wl,-soname,convolve_new -o convolve_new.so -fPIC convolve_new.c
