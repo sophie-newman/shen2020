@@ -13,12 +13,11 @@ def bolometric_correction(L_bol,nu):  #L_bol is in log10
 	x = L_bol - 10.
 	if nu==0.: return L_bol
 	elif nu < 0:
-		if (nu== -1.): P0, P1, P2, P3 =3.75876730, -0.36057087, 9.82954354, -6.29078046e-3
-		if (nu== -2.): P0, P1, P2, P3 =4.36089518, -0.36057086, 11.4041656, -6.29077790e-3
-		if (nu== -3.): P0, P1, P2, P3 =5.71209149, -0.02553868, 17.6679057,     0.27750559
-		if (nu== -4.): P0, P1, P2, P3 =4.07349835, -0.02553868, 12.5996205,     0.27750559
-		if (nu== -5.): P0, P1, P2, P3 =4.86961646, -0.00629077, 1.86211735,    -0.36057082
-		lband = P0 * np.power(10.,P1*x) + P2*np.power(10.,P3*x)
+		if (nu== -1.): P0, P1, P2, P3 =8.99833, 6.24800, -0.370587, -0.0115970
+		if (nu== -2.): P0, P1, P2, P3 =10.6615, 7.40282, -0.370587, -0.0115970
+		if (nu== -3.): P0, P1, P2, P3 =10.0287, 17.8653, 0.276804,  -0.0199558
+		if (nu== -4.): P0, P1, P2, P3 =6.08087, 10.8331, 0.276802,  -0.0199597
+		lband = P0 * np.power(10.,P3*x) + P1*np.power(10.,P2*x)
 		return L_bol - np.log10(lband) 
 	#if not one of the specified bands, then take advantage of the fact that our model 
 	#   spectrum is not l-dependent below 500 angstroms or above 50 angstroms, so 
@@ -27,18 +26,18 @@ def bolometric_correction(L_bol,nu):  #L_bol is in log10
 	nu500 = nu_angstrom/500.
 	nu50 = nu_angstrom/50.
 	if (nu <= nu500): #just take the ratio relative to B-band
-		P = (3.75876730,-0.36057087,9.82954354,-6.29078046e-3)
-		lband = P[0]*np.power(10.,P[1]*x) + P[2]*np.power(10.,P[3]*x)
+		P = (8.99833, 6.24800, -0.370587, -0.0115970)
+		lband = P[0]*np.power(10.,P[3]*x) + P[1]*np.power(10.,P[2]*x)
 		return np.log10(return_ratio_to_b_band(nu)) + L_bol - np.log10(lband)
 	elif (nu >= nu50): #just take the ratio relative to the hard X-rays
-		P = (4.07349835,-0.02553868,12.5996205,0.27750559)
-		lband = P[0]*np.power(10.,P[1]*x) + P[2]*np.power(10.,P[3]*x)
+		P = (6.08087, 10.8331, 0.276802, -0.0199597)
+		lband = P[0]*np.power(10.,P[3]*x) + P[1]*np.power(10.,P[2]*x)
 		return np.log10(return_ratio_to_hard_xray(nu)) + L_bol - np.log10(lband)
 	elif (nu > nu500) and (nu < nu50): #interpolate between both regimes
-		P = (3.75876730,-0.36057087,9.82954354,-6.29078046e-3)
-		L500 = return_ratio_to_b_band(nu500)/(P[0]*np.power(10.,P[1]*x)+P[2]*np.power(10.,P[3]*x))
-		Q = (4.07349835,-0.02553868,12.5996205,0.27750559)
-		L50  = return_ratio_to_hard_xray(nu50)/(Q[0]*np.power(10.,Q[1]*x)+Q[2]*np.power(10.,Q[3]*x))
+		P = (8.99833, 6.24800, -0.370587, -0.0115970)
+		L500 = return_ratio_to_b_band(nu500)/(P[0]*np.power(10.,P[3]*x)+P[1]*np.power(10.,P[2]*x))
+		Q = (6.08087, 10.8331, 0.276802 , -0.0199597)
+		L50  = return_ratio_to_hard_xray(nu50)/(Q[0]*np.power(10.,Q[3]*x)+Q[1]*np.power(10.,Q[2]*x))
 		L00  = np.log10(L500) + np.log10(L50/L500) * (np.log10(nu/nu500)/np.log10(nu50/nu500))
 		return L00 + L_bol
 
@@ -53,37 +52,35 @@ def bolometric_correction_jacobian(L_bol,nu):
 
 	if nu == 0.:  return 1.0
 	elif nu < 0.:
-		if nu == -1.: P0, P1, P2, P3 = 3.75876730, -0.36057087, 9.82954354, -6.29078046e-3
-		if nu == -2.: P0, P1, P2, P3 = 4.36089518, -0.36057086, 11.4041656, -6.29077790e-3
-		if nu == -3.: P0, P1, P2, P3 = 5.71209149, -0.02553868, 17.6679057,     0.27750559
-		if nu == -4.: P0, P1, P2, P3 = 4.07349835, -0.02553868, 12.5996205,     0.27750559
-		if nu == -5.: P0, P1, P2, P3 = 4.86961646, -0.00629077, 1.86211735,    -0.36057082
-
-		D1 = P0*(1.+P1)*np.power(10.,P1*x) + P2*(1.+P3)*np.power(10.,P3*x);
-		D2 = P0*np.power(10.,P1*x) + P2*np.power(10.,P3*x);
+		if nu == -1.: P0, P1, P2, P3 = 8.99833, 6.24800, -0.370587, -0.0115970
+		if nu == -2.: P0, P1, P2, P3 = 10.6615, 7.40282, -0.370587, -0.0115970
+		if nu == -3.: P0, P1, P2, P3 = 10.0287, 17.8653, 0.276804 , -0.0199558
+		if nu == -4.: P0, P1, P2, P3 = 6.08087, 10.8331, 0.276802 , -0.0199597
+		D1 = P0*(1.+P3)*np.power(10.,P3*x) + P1*(1.+P2)*np.power(10.,P2*x);
+		D2 = P0*np.power(10.,P3*x) + P1*np.power(10.,P2*x);
 		return D1/D2
 
 	nu_angstrom = con.c.value/1e-10
 	nu500 = nu_angstrom/500.
 	nu50 = nu_angstrom/50.
 	if (nu <= nu500): #just take the ratio relative to B-band
-		P = (3.75876730,-0.36057087,9.82954354,-6.29078046e-3)
-		D1 = P[0]*(1.+P[1])*np.power(10.,P[1]*x) + P[2]*(1.+P[3])*np.power(10.,P[3]*x);
-		D2 = P[0]*np.power(10.,P[1]*x) + P[2]*np.power(10.,P[3]*x);
+		P = (8.99833, 6.24800, -0.370587, -0.0115970)
+		D1 = P[0]*(1.+P[3])*np.power(10.,P[3]*x) + P[1]*(1.+P[2])*np.power(10.,P[2]*x);
+		D2 = P[0]*np.power(10.,P[3]*x) + P[1]*np.power(10.,P[2]*x);
 		return D1/D2
 	elif (nu >= nu50): #just take the ratio relative to the hard X-rays
-		P = (4.07349835,-0.02553868,12.5996205,0.27750559)
-		D1 = P[0]*(1.+P[1])*np.power(10.,P[1]*x) + P[2]*(1.+P[3])*np.power(10.,P[3]*x);
-		D2 = P[0]*np.power(10.,P[1]*x) + P[2]*np.power(10.,P[3]*x);
+		P = (6.08087, 10.8331, 0.276802, -0.0199597)
+		D1 = P[0]*(1.+P[3])*np.power(10.,P[3]*x) + P[1]*(1.+P[2])*np.power(10.,P[2]*x);
+		D2 = P[0]*np.power(10.,P[3]*x) + P[1]*np.power(10.,P[2]*x);
 		return D1/D2
 	elif (nu > nu500) and (nu < nu50): #interpolate between both regimes
-		P = (3.75876730,-0.36057087,9.82954354,-6.29078046e-3)
-		D1 = P[0]*(1.+P[1])*np.power(10.,P[1]*x) + P[2]*(1.+P[3])*np.power(10.,P[3]*x);
-		D2 = P[0]*np.power(10.,P[1]*x) + P[2]*np.power(10.,P[3]*x);
+		P = (8.99833, 6.24800, -0.370587, -0.0115970)
+		D1 = P[0]*(1.+P[3])*np.power(10.,P[3]*x) + P[1]*(1.+P[2])*np.power(10.,P[2]*x);
+		D2 = P[0]*np.power(10.,P[3]*x) + P[1]*np.power(10.,P[2]*x);
 		L500=D1/D2
-		Q = (4.07349835,-0.02553868,12.5996205,0.27750559)
-		D1 = Q[0]*(1.+Q[1])*np.power(10.,Q[1]*x) + Q[2]*(1.+Q[3])*np.power(10.,Q[3]*x);
-		D2 = Q[0]*np.power(10.,Q[1]*x) + Q[2]*np.power(10.,Q[3]*x);
+		Q = (6.08087, 10.8331, 0.276802 , -0.0199597)
+		D1 = Q[0]*(1.+Q[3])*np.power(10.,Q[3]*x) + Q[1]*(1.+Q[2])*np.power(10.,Q[2]*x);
+		D2 = Q[0]*np.power(10.,Q[3]*x) + Q[1]*np.power(10.,Q[2]*x);
 		L50=D1/D2
 		L00  = np.log10(L500) + np.log10(L50/L500) * (np.log10(nu/nu500)/np.log10(nu50/nu500));	
 		return np.power(10.,L00)
@@ -104,8 +101,8 @@ def uncertainty_correction(Phi_bol,nu):
 		Phi_band[i] += np.sum( prefac*np.exp(expfac*(L_band-L_band[i])**2) )
 	return Phi_band
 
-def extinction_correction(Phi_band, nu, redshift):
-	NHs = np.linspace(20, 26, 601)
+def extinction_correction(Phi_band, nu):
+	NHs = np.linspace(20, 25, 501)
 	dNH = NHs[1]-NHs[0]
 	
 	taus=0.0*NHs
@@ -113,14 +110,9 @@ def extinction_correction(Phi_band, nu, redshift):
 		taus[i] = return_tau(NHs[i], nu)
 
 	eps = 1.7
-	psi_min, psi_max = 0.2, 0.84
-	psi_0=0.43
-	a1=0.48
-	beta_L = 0.24
-	fCTK = 1.0
-
-	if redshift<2.0: psi_43_75 = psi_0 * (1.0+redshift)**a1
-	else: psi_43_75 = psi_0 * (1.0+2.0)**a1
+	psi_44 = 0.47
+	beta_L = 0.10
+	psi_max = (1.+eps)/(3.+eps)
 
 	L_band = bolometric_correction(L_bol_grid,nu)
 	Phi_obs_corrected = Phi_band * 0.
@@ -136,49 +128,32 @@ def extinction_correction(Phi_band, nu, redshift):
 				k = (np.log10(Phi_obs[-1])-np.log10(Phi_obs[-2]))/(L_obs[-1]-L_obs[-2])
 				p0 = np.log10(Phi_obs[-2]) + k*(L_band[j]-L_obs[-2])
 			L_HX = bolometric_correction(L_bol_grid[j],-4)
-			
-			psi = psi_43_75 - beta_L * (L_HX + L_solar - 43.75)
-			
-			if psi < psi_min: psi = psi_min
+			psi = psi_44 - beta_L * (L_HX + L_solar - 44.0)
+			if psi < 0: psi = 0
 			if psi > psi_max: psi = psi_max
 
-			if psi < (1.+eps)/(3.+eps):
-				f_1 = 1.0 - ((2.+eps)/(1.+eps))*psi
-				f_2 = (1./(1.+eps))*psi
-				f_3 = (1./(1.+eps))*psi
-				f_4 = (eps/(1.+eps))*psi
-				f_5 = (fCTK/2.)*psi
-			else:
-				f_1 = 2./3. - ((3.+2.*eps)/(3.+3.*eps))*psi
-				f_2 = 1./3. - (eps/(3.+3.*eps))*psi
-				f_3 = (1./(1.+eps))*psi
-				f_4 = (eps/(1.+eps))*psi
-				f_5 = (fCTK/2.)*psi
-			
-			f_1 = f_1/(1.+fCTK)
-			f_2 = f_2/(1.+fCTK)
-			f_3 = f_3/(1.+fCTK)
-			f_4 = f_4/(1.+fCTK)
-			f_5 = f_5/(1.+fCTK)
-			# the N_H distribution is normalized in 20-24, so we have to rescale here
-			
-			f_NH = 0.0
-			if (NHs[i] <= 21.): f_NH = f_1
-			if (NHs[i] >  21.) and (NHs[i] <= 22.): f_NH = f_2
-			if (NHs[i] >  22.) and (NHs[i] <= 23.): f_NH = f_3
-			if (NHs[i] >  23.) and (NHs[i] <= 24.): f_NH = f_4
-			if (NHs[i] >  24.): f_NH = f_5
+			f_low = 2.0 - ((5.+2.*eps)/(1.+eps))*psi
+			f_med = (1./(1.+eps))*psi
+			f_hig = (eps/(1.+eps))*psi
+			f_compton = f_hig
+			f_low = f_low / (1. + f_compton)
+			f_med = f_med / (1. + f_compton)
+			f_hig = f_hig / (1. + f_compton)
 
+			if NHs[i] <= 20.5: f_NH = f_low
+			elif (NHs[i] > 20.5) and (NHs[i] <= 23.0): f_NH = f_med
+			elif (NHs[i] > 23.0) and (NHs[i] <= 24.0): f_NH = f_hig
+			elif NHs[i] > 24.0: f_NH = f_compton
 			dN_NH = f_NH * dNH
 			Phi_obs_corrected[j] += np.power(10., p0) * dN_NH
 
 	return Phi_obs_corrected
 
-def convolve(Phi_bol,nu,redshift): #input phi is not in log
+def convolve(Phi_bol,nu): #input phi is not in log
 	l_band=bolometric_correction(L_bol_grid,nu)
 	P_1=Phi_bol * bolometric_correction_jacobian(L_bol_grid,nu)
 	P_2=uncertainty_correction(P_1,nu)
-	phi_obs= extinction_correction(P_2,nu,redshift)
+	phi_obs= extinction_correction(P_2,nu)
 	return l_band, phi_obs
 
 def printall(redshift,nu):
@@ -188,10 +163,9 @@ def printall(redshift,nu):
 	if nu == -2.: nu_eff = 1.9986667e13 # 15 micron
 	if nu == -3.: nu_eff = 2.4180000e17 # 'effective' 1 keV
 	if nu == -4.: nu_eff = 1.2090000e18 # 'effective' 5 keV
-	if nu == -5.: nu_eff = 2.998e8/(1450e-10)
 
 	phi_bol= bolometricLF(L_bol_grid,redshift)
-	l_band, phi_obs=convolve(phi_bol,nu,redshift)
+	l_band, phi_obs=convolve(phi_bol,nu)
 
 	m_AB_band=-2.5*l_band+2.5*np.log10(nu_eff)-32.38265724887536
 	m_AB_obs = m_AB_band - distance_modulus(redshift)

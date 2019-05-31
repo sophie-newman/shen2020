@@ -144,11 +144,11 @@ double* convolve(double* phi_bol_grid, double nu, double redshift) {
                 f_4 = (eps/(1.+eps))*psi;
                 f_5 = (fCTK/2.)*psi;
             }
-            f_1 = f_1/(1+fCTK);
-            f_2 = f_2/(1+fCTK);
-            f_3 = f_3/(1+fCTK);
-            f_4 = f_4/(1+fCTK);
-            f_5 = f_5/(1+fCTK);
+            f_1 = f_1/(1.+fCTK);
+            f_2 = f_2/(1.+fCTK);
+            f_3 = f_3/(1.+fCTK);
+            f_4 = f_4/(1.+fCTK);
+            f_5 = f_5/(1.+fCTK);
             // the N_H distribution is normalized in 20-24, so we have to rescale here
             
             f_NH = 0.0;
@@ -282,7 +282,7 @@ double fit_func_disp(double x, double P0, double P1, double P2, double P3)
 //   otherwise nu is the observed frequency 
 double l_band_dispersion(double log_l_bol, double nu)
 {
-	double x = log_l_bol - 9.;
+	double x = log_l_bol + (log10(3.9) + 33.0);
 	double lband = 0.;
     double P0,P1,P2,P3;
     double sf1,sf2,sx,sx_floor;
