@@ -2,7 +2,7 @@ from data import *
 import numpy as np 
 from lf_shape import *
 import scipy.interpolate as inter
-from convolve import *
+from convolve_old import *
 from scipy.optimize import curve_fit
 from scipy.optimize import minimize
 from scipy.optimize import least_squares
@@ -145,6 +145,7 @@ ax.errorbar(x,y,yerr=dy,linestyle='none',c='crimson',mec='crimson',marker='o',ms
 x,y,dy=get_data(parameters_fix_local,dataid=-4)
 ax.errorbar(x,y,yerr=dy,linestyle='none',c='crimson',mec='crimson',marker='o',ms=10,capsize=6,capthick=2,lw=2)
 
+from convolve import *
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve_new.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
