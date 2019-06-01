@@ -163,6 +163,9 @@ def returnall(sed2500):
 
 	Lbol= integrate( sedall, freqall, con.c.value/(30.*1e-6), 500*1000.*con.e.value/con.h.value)
 	
+	#logLNIR = tophat( sedall, freqall, con.c.value/((1.25+0.15)*1e-6), con.c.value/((1.25-0.15)*1e-6))
+	#print logLIR - logLNIR
+
 	print 'done'
 	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logL1450, logLIR
 

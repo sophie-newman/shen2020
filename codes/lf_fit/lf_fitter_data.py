@@ -60,6 +60,8 @@ from newx_load_fiore12_lf_data import *
 from newx_load_khorunzhev18_lf_data import *
 from newx_load_miyaji15_lf_data import *
 
+from newir_load_assef11_lf_data import *
+from newir_load_lacy15_lf_data import *
 
 dset_ids={
 	#Bband
@@ -122,6 +124,9 @@ dset_ids={
 	#INFRARED
 	"BROWN": -2,
 	"MATUTE": -2,
+	#INFRARED New
+	"ASSEF11": -2,
+	"LACY15":  -2,
 	#narrow lines
 	"HAO": -4
 }
@@ -186,6 +191,9 @@ zmins={
 	#INFRARED
 	"BROWN":np.array([1.5]),
 	"MATUTE":np.array([0.0, 0.5]),
+	#INF New
+	"ASSEF11":np.array([0.,0.15,0.25,0.50,0.75,1.00,1.50,2.00,2.50,3.00,4.00,5.00]),
+	"LACY15":np.array([0.05,0.4,0.9,1.6,2.5]),
 	#narrow lines
 	"HAO":np.array([0.00])
 }
@@ -246,8 +254,13 @@ zmaxs={
 	"BARGER":np.array([0.4, 0.8, 1.2, 3.0, 5.0]),
 	"NANDRA":np.array([3.25]),
 	"SAZREV":np.array([0.1]),
+	#INFRARED
 	"BROWN":np.array([2.5]),
 	"MATUTE":np.array([0.2, 2.0]),
+	#INF New
+	"ASSEF11":np.array([0.15,0.25,0.50,0.75,1.00,1.50,2.00,2.50,3.00,4.00,5.00,5.85]),
+	"LACY15":np.array([0.4,0.9,1.6,2.5,3.8]),
+	#Lines
 	"HAO":np.array([0.10])
 }
 load_LF_data={
@@ -307,7 +320,10 @@ load_LF_data={
 	"EBRERO09_HX": load_ebrero09_HX_lf_data,
 	"FIORE12":     load_fiore12_lf_data,
 	"KHORUNZHEV18":load_khorunzhev18_lf_data_vitobins,
-	"MIYAJI15":    load_miyaji15_lf_data
+	"MIYAJI15":    load_miyaji15_lf_data,
+	#INF new
+	"ASSEF11":	   load_assef11_lf_data,
+	"LACY15":	   load_lacy15_lf_data
 }
 return_LF={
 	"DR3":return_sdss_dr3_lf_fitted,
@@ -366,5 +382,8 @@ return_LF={
 	"EBRERO09_HX": return_miyaji15_lf_fitted,
 	"FIORE12":     return_miyaji15_lf_fitted,
 	"KHORUNZHEV18":return_miyaji15_lf_fitted,
-	"MIYAJI15":    return_miyaji15_lf_fitted 
+	"MIYAJI15":    return_miyaji15_lf_fitted,
+	#INF new
+	"ASSEF11":     return_lacy15_lf_fitted,
+	"LACY15":	   return_lacy15_lf_fitted 
 }

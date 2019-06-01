@@ -25,7 +25,8 @@ cosmo        = FlatLambdaCDM(H0=hubble*100, Om0=Omega0)
 
 #CONSTANTS
 M_sun_Bband_AB = 4.77  #4.72
-L_solar=np.log10(3.9e33)  #4e33
+L_solar = np.log10(3.9e33)  #4e33
+Fab = 3631.*1e-23*4*np.pi*(10.*con.pc.value*100)**2 #erg/s/Hz
 #L_solar=np.log10(con.L_sun.value*1e7) #log10 of solar luminosity in erg/s
 
 #KEYS
