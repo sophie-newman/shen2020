@@ -1,6 +1,6 @@
 import numpy as np 
 from data import *
-from utils import *
+from utils_old import *
 import scipy.interpolate as inter
 from scipy.optimize import fsolve
 import astropy.constants as con
