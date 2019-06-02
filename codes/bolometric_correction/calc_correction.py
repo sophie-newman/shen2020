@@ -165,6 +165,7 @@ def returnall(sed2500):
 	
 	#logLNIR = tophat( sedall, freqall, con.c.value/((1.25+0.15)*1e-6), con.c.value/((1.25-0.15)*1e-6))
 	#print logLIR - logLNIR
+	print -2.5*( logLB - np.log10(Fab*con.c.value/4450e-10) ) + 2.5*( logL1450 - np.log10(Fab*con.c.value/1450e-10) )
 
 	print 'done'
 	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logL1450, logLIR
