@@ -39,7 +39,7 @@ Lbreak = doublepower(redshift,p)
 parameters_global_2 = np.array([gamma1,gamma2,logphi,Lbreak])
 
 #load the shared object file
-c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
+c_extenstion = CDLL(homepath+'codes/c_lib/convolve_new.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
@@ -50,37 +50,36 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
         else:
                 return False
 
-        if dset_id==-1.1: L_tmp=bolometric_correction(L_bol_grid,-1)
-        elif dset_id==-1:
-                L_tmp=bolometric_correction(L_bol_grid,dset_id)
-                L_tmp = (M_sun_Bband_AB -2.5*L_tmp) + 0.706
-                L_tmp = np.sort(L_tmp)
+        if dset_id==-5:
+                L_1450 = bolometric_correction(L_bol_grid,dset_id) + L_solar
+                M_1450 = -2.5*( L_1450 - np.log10(Fab*con.c.value/1450e-10) ) 
+                L_tmp  = np.sort(M_1450)
         else: L_tmp=bolometric_correction(L_bol_grid,dset_id)
+
         if return_LF[dset_name]!=None:
-                phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
-                phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
-                PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+		if (dset_id!=-2):
+                	phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
+                	phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+                	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+		
 	#if len(PHI_data)==0:
 	#	print dset_name
-	#if dset_id == -4:
+	#if dset_id == -5:
 	#	print dset_name, L_data
 
         if (len(L_data) > 0):
-                        if dset_id==-1.1:
-                                L_model = bolometric_correction(L_bol_grid,-1)
-                                nu_c = c_double(-1)
-                        else:
-                                L_model = bolometric_correction(L_bol_grid,dset_id)
-                                nu_c = c_double(dset_id)
+                        L_model = bolometric_correction(L_bol_grid,dset_id)
+                        nu_c = c_double(dset_id)
+			redshift_c = c_double(redshift)
                         input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-                        res = convolve_c(input_c,nu_c)
+                        res = convolve_c(input_c,nu_c,redshift_c)
                         res = [i for i in res.contents]
                         PHI_model = np.array(res,dtype=np.float64)
                         #L_model, PHI_model = convolve(np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")), dset_id)
-
-			if dset_id==-1:
-                                L_Bband = (M_sun_Bband_AB-(L_data - 0.706))/2.5
-                                phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+			
+			if dset_id==-5:
+                                L_1450 = (-0.4*L_data) + np.log10(Fab*(con.c.value/1450e-10)) - L_solar
+                                phi_i = np.interp(L_1450, L_model, np.log10(PHI_model))
                                 phi_i = phi_i - np.log10(2.5)
                         else:
                                 phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
@@ -105,21 +104,16 @@ def get_data(parameters,dataid):
         bad = np.invert(np.isfinite(alldata["P_PRED"]))
         if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
-	if (dataid!=-1) and  (dataid!=-1.1):
+	if (dataid!=-5):
 		select = alldata["ID"]==dataid
 		logLbol = 0.0*alldata["L_OBS"][select]
 		for i,Lband in enumerate(alldata["L_OBS"][select]):
 			logLbol[i] = bolometric_correction_inverse(Lband,dataid)
-	elif (dataid==-1.1):
+	elif (dataid==-5):
 		select = alldata["ID"]==dataid
-                logLbol = 0.0*alldata["L_OBS"][select]
-		for i,Lband in enumerate(alldata["L_OBS"][select]):
-                        logLbol[i] = bolometric_correction_inverse(Lband,-1)
-	elif (dataid==-1):
-		select = alldata["ID"]==dataid
-		L_Bband = (M_sun_Bband_AB-(alldata["L_OBS"][select] - 0.706))/2.5
-		logLbol = 0.0*L_Bband
-		for i,Lband in enumerate(L_Bband):
+		L_1450 = -0.4*alldata["L_OBS"][select] + np.log10(Fab*(con.c.value/1450e-10)) - L_solar
+		logLbol = 0.0*L_1450
+		for i,Lband in enumerate(L_1450):
 			logLbol[i] = bolometric_correction_inverse(Lband,dataid)
 
 	x = L_bol_grid
@@ -157,12 +151,12 @@ y = LF_at_z_H07(L_bol_grid,parameters_init,redshift,"Fiducial")
 ax.plot(x,y,':',c='gray',label=r'$\rm Hopkins+$ $\rm 2007$')
 
 xcollect = np.array([])
-x,y,dy=get_data(parameters_fix_local,dataid=-1)
+x,y,dy=get_data(parameters_fix_local,dataid=-5)
 ax.errorbar(x,y,yerr=dy,linestyle='none',c='crimson',mec='crimson',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm UV$ $\rm 1450\AA$')
 xcollect = np.append(xcollect,x)
 
-x,y,dy=get_data(parameters_fix_local,dataid=-1.1)
-ax.errorbar(x,y,yerr=dy,linestyle='none',c='crimson',mec='crimson',marker='o',ms=10,capsize=6,capthick=2,lw=2)
+x,y,dy=get_data(parameters_fix_local,dataid=-1)
+ax.errorbar(x,y,yerr=dy,linestyle='none',c='pink',mec='pink',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm B$ $\rm Band$')
 xcollect = np.append(xcollect,x)
 
 x,y,dy=get_data(parameters_fix_local,dataid=-4)

@@ -385,5 +385,5 @@ return_LF={
 	"MIYAJI15":    return_miyaji15_lf_fitted,
 	#INF new
 	"ASSEF11":     return_lacy15_lf_fitted,
-	"LACY15":	   return_lacy15_lf_fitted 
+	"LACY15":      return_lacy15_lf_fitted 
 }

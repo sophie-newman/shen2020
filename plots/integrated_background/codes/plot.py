@@ -42,7 +42,7 @@ def get_model_lf_global(nu,redshift):
 	p=parameters[paraid==2]
 	logphi = polynomial(redshift,p,1)
 	p=parameters[paraid==3]	
-	Lbreak = doublepower(redshift,p)
+	Lbreak = doublepower(redshift,p) + 0.5
 	parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
 	return get_model_lf(parameters_at_z,nu,redshift)
 
@@ -56,8 +56,8 @@ def cumulative_emissivity(L_nu,Phi_nu,L_limit_low,L_limit_up,nu):
 def to_be_integrate(z, nuobs):
 	nuem = nuobs*(1+z)
         L_nu, PHI_nu = get_model_lf_global(nuem, z)
-        emissivity = cumulative_emissivity(L_nu, PHI_nu, L_nu[3], L_nu[-3], nuem) 
-	return (1+z)**2 * emissivity/4./np.pi/(cosmo.luminosity_distance(z).value*1e6*con.pc.value*1e2)**2  * cosmo.differential_comoving_volume(z).value
+        emissivity = cumulative_emissivity(L_nu, PHI_nu, L_nu[0], L_nu[-1], nuem) 
+	return emissivity/4./np.pi/(cosmo.luminosity_distance(z).value*1e6*con.pc.value*1e2)**2  * cosmo.differential_comoving_volume(z).value
 
 import matplotlib.pyplot as plt 
 import matplotlib
@@ -73,7 +73,7 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
-E_list = np.logspace(-0.5,3,30)
+E_list = np.logspace(-0.5,3,100)
 nu_list = E_list*1000.*con.e.value/con.h.value
 
 zbins = np.linspace(0,7,50)
@@ -117,5 +117,5 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/CXB.pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/CXB_new.pdf",fmt='pdf')
+#plt.show()
