@@ -4,19 +4,19 @@
 from data import *
 import numpy as np 
 
-def load_assef11_lf_data(z): # 5 micron
-	if (z <= 0) or (z > 3.8): return False
+def load_lacy15_lf_data(z): # 5 micron
+	if (z <= 0.05) or (z > 3.8): return False
 	else:	
 		filename = datapath+'Lacy2015.dat'
 		data = np.genfromtxt(filename,names=True)
 
 		id = (data["z_min"]< z) & (data["z_max"]>=z) 
 
-		L_IR = data['nuLnu'] - L_solar
-		PHI_IR  = data['logphi']
-		DPHI_IR = data['dlogphi']
+		L_IR = data['nuLnu'][id] - L_solar
+		PHI_IR  = data['logphi'][id]
+		DPHI_IR = data['dlogphi'][id]
 
-		LIR = LIR - 0.02139
+		L_IR = L_IR - 0.02139
 
 		return L_IR, PHI_IR, DPHI_IR
 

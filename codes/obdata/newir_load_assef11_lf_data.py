@@ -25,7 +25,7 @@ def load_assef11_lf_data(z): # M_J, PHI_J, DPHI_J
 		M_J = M_J - 2.5*np.log10(lum_correct_cosmo_flexible(z_c, 0.73, 0.3))
 		PHI_J = PHI_J + np.log10(phi_correct_cosmo_flexible(z_c, 0.73, 0.3))
 
-		L_J = (10**(-0.4*M_J) * L_AB) * (con.c.value/1.25e-4)
+		L_J = np.log10( (10**(-0.4*M_J) * Fab) * (con.c.value/1.25e-4)) - L_solar
 
 		L_IR = L_J + 0.11928 # convert to 15 micron
 		PHI_IR = PHI_J + np.log10(2.5)
