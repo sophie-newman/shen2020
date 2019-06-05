@@ -19,7 +19,7 @@ parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"])
 parameters_bound=(np.array([-np.inf,-np.inf,-np.inf,-np.inf]),np.array([0,0,np.inf,np.inf]))
 
 #load the shared object file
-c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
+c_extenstion = CDLL(homepath+'codes/c_lib/convolve_new.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
@@ -30,34 +30,31 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 	else:
 		return False
 
-	if dset_id==-1.1: L_tmp=bolometric_correction(L_bol_grid,-1)
-	elif dset_id==-1: 
-		L_tmp=bolometric_correction(L_bol_grid,dset_id)
-		L_tmp = (M_sun_Bband_AB -2.5*L_tmp) + 0.706
-                L_tmp = np.sort(L_tmp)
+	if dset_id==-5: 
+		L_1450 = bolometric_correction(L_bol_grid,dset_id) + L_solar
+                M_1450 = -2.5*( L_1450 - np.log10(Fab*con.c.value/1450e-10) )
+                L_tmp  = np.sort(M_1450)
 	else: L_tmp=bolometric_correction(L_bol_grid,dset_id)
+
 	if return_LF[dset_name]!=None:
 		phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
 		phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
 		PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
 
 	if (len(L_data) > 0):
-			if dset_id==-1.1: 
-				L_model = bolometric_correction(L_bol_grid,-1)
-				nu_c = c_double(-1)
-			else:
-				L_model = bolometric_correction(L_bol_grid,dset_id)
-				nu_c = c_double(dset_id)
+			L_model = bolometric_correction(L_bol_grid,dset_id)
+			nu_c = c_double(dset_id)
+			redshift_c = c_double(redshift)
 			input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-			res = convolve_c(input_c,nu_c)
+			res = convolve_c(input_c,nu_c,redshift_c)
 			res = [i for i in res.contents]
 			PHI_model = np.array(res,dtype=np.float64)
 			#L_model, PHI_model = convolve(np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")), dset_id) 
 			
-			if dset_id==-1:
-				L_Bband = (M_sun_Bband_AB-(L_data - 0.706))/2.5
-				phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
-				phi_i = phi_i - np.log10(2.5)
+			if dset_id==-5:
+				L_1450 = (-0.4*L_data) + np.log10(Fab*(con.c.value/1450e-10)) - L_solar
+                                phi_i = np.interp(L_1450, L_model, np.log10(PHI_model))
+                                phi_i = phi_i - np.log10(2.5)
 			else:
 				phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
 

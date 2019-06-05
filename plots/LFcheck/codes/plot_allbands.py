@@ -57,7 +57,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
         else: L_tmp=bolometric_correction(L_bol_grid,dset_id)
 
         if return_LF[dset_name]!=None:
-		if (dset_id!=-2):
+		if (dset_id!=-2):# and (dset_id==-5):
                 	phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
                 	phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
                 	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
@@ -70,6 +70,9 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
         if (len(L_data) > 0):
                         L_model = bolometric_correction(L_bol_grid,dset_id)
                         nu_c = c_double(dset_id)
+			#if dset_id==-5:
+			#	L_model = bolometric_correction(L_bol_grid,-1)
+                        #	nu_c = c_double(-1)
 			redshift_c = c_double(redshift)
                         input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
                         res = convolve_c(input_c,nu_c,redshift_c)
@@ -78,6 +81,9 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
                         #L_model, PHI_model = convolve(np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")), dset_id)
 			
 			if dset_id==-5:
+				#L_Bband = (M_sun_Bband_AB-(L_data - 0.706))/2.5
+                                #phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
+
                                 L_1450 = (-0.4*L_data) + np.log10(Fab*(con.c.value/1450e-10)) - L_solar
                                 phi_i = np.interp(L_1450, L_model, np.log10(PHI_model))
                                 phi_i = phi_i - np.log10(2.5)
