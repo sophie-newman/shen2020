@@ -500,6 +500,7 @@ double return_tau(double log_NH, double nu)
 	if (nu <= 0.) {
 		if (nu== 0.) return 0.;	// no bolometric attenuation
 		if (nu==-1.) return pow(10.,log_NH)*cross_section(c_light/(4400.0e-10)); // call at nu_B
+		if (nu==-5.) return pow(10.,log_NH)*cross_section(c_light/(1450.0e-10)); // call at UV
 		if (nu==-2.) return pow(10.,log_NH)*cross_section(c_light/(15.0e-6));	 // call at 15microns
 
 if (nu==-3.) {
@@ -594,7 +595,7 @@ double cross_section(double nu)
 	double c_light = 2.998e8;
 	double micron  = 1.0e-6;
 	
-	double k_dust_to_gas = 0.78 * metallicity_over_solar;
+	double k_dust_to_gas = 0.08 * metallicity_over_solar; //0.78
 	double lambda_microns = c_light / nu / micron;
 	if (nu < 0.03*keV_in_Hz) 
 		sigma += pei_dust_extinction(lambda_microns) * k_dust_to_gas * 1.0e-21;
