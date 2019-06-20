@@ -34,3 +34,4 @@ def return_lacy15_lf_fitted(Llist,z):
 
 	PHI=10**logphis / ( 10**((x-logLs)*gamma1) + 10**((x-logLs)*gamma2) )
 	return np.log10(PHI)
+

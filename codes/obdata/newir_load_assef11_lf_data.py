@@ -12,10 +12,11 @@ def load_assef11_lf_data(z): # M_J, PHI_J, DPHI_J
 
 		id = (data["z_min"]< z) & (data["z_max"]>=z) & (data['label']==1) & (data['lf']!=data['lf_sigma'])
 
-		M_J  = data['MJ'][id]
-		P_J  = np.log10(data['lf'][id])
-		P_J_up  = np.log10(data['lf'][id] + data['lf_sigma'][id])
-		P_J_down= np.log10(data['lf'][id] - data['lf_sigma'][id])
+		Vega_to_AB = 0.91
+		M_J  = data['MJ'][id] + Vega_to_AB
+		P_J  = np.log10(data['lf'][id]/hubble**3)
+		P_J_up  = np.log10(data['lf'][id]/hubble**3 + data['lf_sigma'][id]/hubble**3)
+		P_J_down= np.log10(data['lf'][id]/hubble**3 - data['lf_sigma'][id]/hubble**3)
 		D_J = (P_J_up - P_J_down)/2.
 
 		PHI_J = P_J

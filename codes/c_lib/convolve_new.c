@@ -6,15 +6,15 @@
 
 double pei_dust_extinction(double lambda_in_microns);
 double morrison_photoeletric_absorption(double x);
-double cross_section(double nu);
+double cross_section(double nu, double dtg);
 double return_ratio_to_b_band(double nu);
 double return_ratio_to_hard_xray(double nu);
 double l_band(double log_l_bol, double nu);
 double l_band_jacobian(double log_l_bol, double nu);
 double l_band_dispersion(double log_l_bol, double nu);
-double return_tau(double log_NH, double nu);
+double return_tau(double log_NH, double nu, double dtg);
 
-double* convolve(double* phi_bol_grid, double nu, double redshift) {
+double* convolve(double* phi_bol_grid, double nu, double redshift, double dtg) {
 	double log_l_bol_min =  8.0;
 	double log_l_bol_max = 18.0;
 	double d_log_l_bol = 0.1;
@@ -79,7 +79,7 @@ double* convolve(double* phi_bol_grid, double nu, double redshift) {
     tau = calloc(N_NH,sizeof(double));
     for(iNH=0;iNH<N_NH;iNH++) {
         NH[iNH] = NH_MIN + ((double )iNH)*D_NH;
-        tau[iNH] = return_tau(NH[iNH],nu);
+        tau[iNH] = return_tau(NH[iNH],nu,dtg);
     }
     // loop over the LF and attenuate everything appropriately
     double eps, psi_43_75, beta_L, psi_0, psi_min, psi_max, a1, fCTK;     //parameters
@@ -493,15 +493,15 @@ return pow(10.0,nuLnu_obs-L_BB);
 // //          frequency). 
 // //	 otherwise nu is the observed frequency 
 // //
-double return_tau(double log_NH, double nu)
+double return_tau(double log_NH, double nu, double dtg)
 {
 	double c_light = 2.998e8;
 	double tau_f;
 	if (nu <= 0.) {
 		if (nu== 0.) return 0.;	// no bolometric attenuation
-		if (nu==-1.) return pow(10.,log_NH)*cross_section(c_light/(4400.0e-10)); // call at nu_B
-		if (nu==-5.) return pow(10.,log_NH)*cross_section(c_light/(1450.0e-10)); // call at UV
-		if (nu==-2.) return pow(10.,log_NH)*cross_section(c_light/(15.0e-6));	 // call at 15microns
+		if (nu==-1.) return pow(10.,log_NH)*cross_section(c_light/(4400.0e-10), dtg); // call at nu_B
+		if (nu==-5.) return pow(10.,log_NH)*cross_section(c_light/(1450.0e-10), dtg); // call at UV
+		if (nu==-2.) return pow(10.,log_NH)*cross_section(c_light/(15.0e-6)   , dtg);	 // call at 15microns
 
 if (nu==-3.) {
 double NH[101] = {
@@ -583,11 +583,11 @@ if (tau_f >= 0.) tau_f=0.;
 return -tau_f * log(10.);
 }
 }
-return pow(10.,log_NH) * cross_section(nu);
+return pow(10.,log_NH) * cross_section(nu, dtg);
 }
 
 // returns the cross section for absorption for a given nu in Hz
-double cross_section(double nu)
+double cross_section(double nu, double dtg)
 {
 	double sigma = 0.;
 	double metallicity_over_solar = 1.;
@@ -595,7 +595,7 @@ double cross_section(double nu)
 	double c_light = 2.998e8;
 	double micron  = 1.0e-6;
 	
-	double k_dust_to_gas = 0.08 * metallicity_over_solar; //0.78
+	double k_dust_to_gas = dtg * metallicity_over_solar; //H07: dtg = 0.78
 	double lambda_microns = c_light / nu / micron;
 	if (nu < 0.03*keV_in_Hz) 
 		sigma += pei_dust_extinction(lambda_microns) * k_dust_to_gas * 1.0e-21;
