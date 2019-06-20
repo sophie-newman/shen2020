@@ -116,11 +116,12 @@ dset_ids={
 	"AIRD15_SX":   -4,
 	"AIRD15_HX":   -4,
 	"AIRD15_b":    -4,
-	"EBRERO09_SX": -4,
 	"EBRERO09_HX": -4,
 	"FIORE12":     -4,
 	"KHORUNZHEV18":-4,
 	"MIYAJI15":    -4,
+	#soft Xray new
+	"EBRERO09_SX": -3,
 	#INFRARED
 	"BROWN": -2,
 	"MATUTE": -2,
@@ -378,12 +379,13 @@ return_LF={
 	"AIRD15_SX":   return_miyaji15_lf_fitted,
 	"AIRD15_HX":   return_miyaji15_lf_fitted,
 	"AIRD15_b":    return_miyaji15_lf_fitted,
-	"EBRERO09_SX": return_miyaji15_lf_fitted,
 	"EBRERO09_HX": return_miyaji15_lf_fitted,
 	"FIORE12":     return_miyaji15_lf_fitted,
 	"KHORUNZHEV18":return_miyaji15_lf_fitted,
 	"MIYAJI15":    return_miyaji15_lf_fitted,
+	#Xray S
+	"EBRERO09_SX": return_hasinger_lf_fitted,
 	#INF new
-	"ASSEF11":     return_lacy15_lf_fitted,
+	"ASSEF11":     return_assef11_lf_fitted,
 	"LACY15":      return_lacy15_lf_fitted 
 }

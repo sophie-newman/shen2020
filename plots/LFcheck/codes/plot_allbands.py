@@ -50,7 +50,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
                 L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
         else:
                 return False
-
+	
         if dset_id==-5:
                 L_1450 = bolometric_correction(L_bol_grid,dset_id) + L_solar
                 M_1450 = -2.5*( L_1450 - np.log10(Fab*con.c.value/1450e-10) ) 
@@ -58,7 +58,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
         else: L_tmp=bolometric_correction(L_bol_grid,dset_id)
 
         if return_LF[dset_name]!=None:
-		if (dset_id!=-2):# and (dset_id==-5):
+		#if (dset_id!=-2):# and (dset_id==-5):
                 	phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
                 	phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
                 	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
@@ -145,14 +145,14 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 x = L_bol_grid + L_solar 
-y = LF(L_bol_grid,parameters_free_local)
-ax.plot(x,y,'--',dashes=(25,15),c='navy',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\rm free$)')
+#y = LF(L_bol_grid,parameters_free_local)
+#ax.plot(x,y,'--',dashes=(25,15),c='navy',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\rm free$)')
 y = LF(L_bol_grid,parameters_fix_local)
 ax.plot(x,y,'--',dashes=(25,15),c='chocolate',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\phi_{\ast}$ $\rm fixed$)')
-y = LF(L_bol_grid,parameters_global_1)
-ax.plot(x,y,':',c='tan',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
+#y = LF(L_bol_grid,parameters_global_1)
+#ax.plot(x,y,':',c='tan',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
 y = LF(L_bol_grid,parameters_global_2)
-ax.plot(x,y,':',c='darkorchid',label=r'$\rm Global$ $\rm fit$')
+ax.plot(x,y,'--',dashes=(25,15),c='darkorchid',label=r'$\rm Global$ $\rm fit$')
 
 x = L_bol_grid + L_solar 
 y = LF_at_z_H07(L_bol_grid,parameters_init,redshift,"Fiducial")
