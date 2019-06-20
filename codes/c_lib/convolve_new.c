@@ -144,11 +144,12 @@ double* convolve(double* phi_bol_grid, double nu, double redshift, double dtg) {
                 f_4 = (eps/(1.+eps))*psi;
                 f_5 = (fCTK/2.)*psi;
             }
-            f_1 = f_1/(1.+fCTK);
-            f_2 = f_2/(1.+fCTK);
-            f_3 = f_3/(1.+fCTK);
-            f_4 = f_4/(1.+fCTK);
-            f_5 = f_5/(1.+fCTK);
+            f_1 = f_1/(1.+f_5);
+            f_2 = f_2/(1.+f_5);
+            f_3 = f_3/(1.+f_5);
+            f_4 = f_4/(1.+f_5);
+            f_5 = f_5/(1.+f_5);
+            cout<<(f_1+f_2+f_3+f_4+f_5);
             // the N_H distribution is normalized in 20-24, so we have to rescale here
             
             f_NH = 0.0;

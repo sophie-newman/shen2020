@@ -78,7 +78,7 @@ ax.set_xlabel(r'$\log{(L_{\rm bol}[{\rm erg}\,{\rm s}^{-1}])}$',fontsize=40,labe
 ax.set_ylabel(r'$\log{(\phi[{\rm dex}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
 ax.text(0.8, 0.9, r'$\rm Late$ $\rm phase$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
 
-ax.set_xlim(42.5,51.3)
+ax.set_xlim(42.5,48.5)
 ax.set_ylim(-11.2,-2.3)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
