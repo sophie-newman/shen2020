@@ -48,7 +48,7 @@ def returnXray_H07(sed2500):
 	f2kev=10**(alphaox/0.384)*f2500
 	data3=np.genfromtxt(datapath+"XRAY_SED.dat",names=["lognu","logall"])	
 	freq3=10**data3["lognu"]
-	sed3 = data["logall"]
+	sed3 = data3["logall"]
 	lamb3= con.c.value/freq3*1e10
 
 	lamb2kev = con.c.value/ (2.*1000.*con.e.value/con.h.value) *1e10
@@ -116,12 +116,12 @@ def returnXray(sed2500):
 def returnall(sed2500):
 	'''
 	lambNX, sedNX = returnIR_to_UV_H07(sed2500)
-	lambX, sedX = returnXray_H07(sed2500)
+	lambX, sedX = returnXray(sed2500)
 
 	lamball = np.append(lambNX, lambX)
 	sedall  = np.append(sedNX, sedX)
 	freqall = con.c.value/(lamball*1e-10)	
-	plt.loglog(lamball, sedall,'r-')
+	#plt.loglog(lamball, sedall,'r-')
 	'''
 	lambNX, sedNX = returnIR_to_UV(sed2500)
 	lambX, sedX = returnXray(sed2500)
@@ -165,7 +165,10 @@ def returnall(sed2500):
 	
 	#logLNIR = tophat( sedall, freqall, con.c.value/((1.25+0.15)*1e-6), con.c.value/((1.25-0.15)*1e-6))
 	#print logLIR - logLNIR
-	print -2.5*( logLB - np.log10(Fab*con.c.value/4450e-10) ) + 2.5*( logL1450 - np.log10(Fab*con.c.value/1450e-10) )
+	#MB    = -2.5*( logLB - np.log10(Fab*con.c.value/4450e-10) ) 
+	#M1450 = -2.5*( logL1450 - np.log10(Fab*con.c.value/1450e-10) )
+	#print (M1450-MB)
+	#exit()
 
 	print 'done'
 	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logL1450, logLIR
