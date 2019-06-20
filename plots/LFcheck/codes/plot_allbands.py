@@ -13,6 +13,7 @@ import ctypes
 import sys
 
 redshift=float(sys.argv[1])
+dtg=float(sys.argv[2])
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
@@ -74,8 +75,9 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 			#	L_model = bolometric_correction(L_bol_grid,-1)
                         #	nu_c = c_double(-1)
 			redshift_c = c_double(redshift)
+			dtg_c = c_double(dtg)
                         input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-                        res = convolve_c(input_c,nu_c,redshift_c)
+                        res = convolve_c(input_c,nu_c,redshift_c,dtg_c)
                         res = [i for i in res.contents]
                         PHI_model = np.array(res,dtype=np.float64)
                         #L_model, PHI_model = convolve(np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")), dset_id)
