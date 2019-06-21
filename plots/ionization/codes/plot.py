@@ -45,23 +45,27 @@ c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
+dtg = 0.2
+
 def get_model_lf_global(parameters,nu,redshift,magnitude=False):
 	p=parameters[paraid==0]
 	gamma1 = polynomial(redshift,p,2)
 	p=parameters[paraid==1]
 	gamma2 = doublepower(redshift,p)
 	p=parameters[paraid==2]
-	logphi = polynomial(redshift,p,1)
+	logphi = polynomial(redshift,p,1) + 0.25
 	p=parameters[paraid==3]	
 	Lbreak = doublepower(redshift,p)
 	parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
-	return get_model_lf(parameters_at_z,nu,magnitude=magnitude)
+	return get_model_lf(parameters_at_z,nu,redshift,magnitude=magnitude)
 
-def get_model_lf(parameters,nu,magnitude=False):
+def get_model_lf(parameters,nu,redshift,magnitude=False):
         L_band = bolometric_correction(L_bol_grid,nu)
         nu_c = c_double(nu)
+	redshift_c = c_double(redshift)
+	dtg_c = c_double(dtg)
         input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-        res = convolve_c(input_c,nu_c)
+        res = convolve_c(input_c,nu_c,redshift_c,dtg_c)
         res = [i for i in res.contents]
         PHI_band = np.array(res,dtype=np.float64)
         if magnitude==False:
@@ -85,7 +89,7 @@ def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift,global_fit=False):
 	delta = 1e-6
 	if global_fit==False:
 		def fobjective(parameters):
-			M_1450, PHI_1450 = get_model_lf(parameters, -1, magnitude=True)
+			M_1450, PHI_1450 = get_model_lf(parameters, -1, redshift, magnitude=True)
         		return Gamma(cumulative_emissivity(M_1450, PHI_1450, L_limit_low, L_limit_up),redshift)
 		for i in range(len(parameters)):
 			parameters_add = parameters.copy()
@@ -153,7 +157,7 @@ result=np.zeros((len(zpoints_free),2))
 uncertainty=np.zeros((len(zpoints_free),2))
 for i in range(len(zpoints_free)):
         id = pz_free==zpoints_free[i]
-        M_1450, PHI_1450 = get_model_lf([pgamma1_free[id],pgamma2_free[id],plogphis_free[id],pLbreak_free[id]], -1, magnitude=True)
+        M_1450, PHI_1450 = get_model_lf([pgamma1_free[id],pgamma2_free[id],plogphis_free[id],pLbreak_free[id]], -1, zpoints_free[i], magnitude=True)
         result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zpoints_free[i])
         uncertainty[i,0]= Gamma_err(np.array([pgamma1_free[id],pgamma2_free[id],plogphis_free[id],pLbreak_free[id]]), [pgamma1_err_free[id],pgamma2_err_free[id],plogphis_err_free[id],pLbreak_err_free[id]], lowlimit, -18, zpoints_free[i])
         result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zpoints_free[i])
@@ -167,7 +171,7 @@ result=np.zeros((len(zpoints_fix),2))
 uncertainty=np.zeros((len(zpoints_fix),2))
 for i in range(len(zpoints_fix)):
         id= pz_fix==zpoints_fix[i]
-        M_1450, PHI_1450 = get_model_lf([pgamma1_fix[id],pgamma2_fix[id],plogphis_fix[id],pLbreak_fix[id]], -1, magnitude=True)
+        M_1450, PHI_1450 = get_model_lf([pgamma1_fix[id],pgamma2_fix[id],plogphis_fix[id],pLbreak_fix[id]], -1, zpoints_fix[i], magnitude=True)
         result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zpoints_fix[i])
 	uncertainty[i,0]= Gamma_err(np.array([pgamma1_fix[id],pgamma2_fix[id],plogphis_fix[id],pLbreak_fix[id]]), [pgamma1_err_fix[id],pgamma2_err_fix[id],plogphis_err_fix[id],pLbreak_err_fix[id]], lowlimit, -18, zpoints_fix[i])
 	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zpoints_fix[i])

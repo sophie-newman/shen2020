@@ -13,7 +13,9 @@ import ctypes
 import sys
 
 redshift=float(sys.argv[1])
-dtg=float(sys.argv[2])
+#dtg=float(sys.argv[2])
+dtg=return_dtg(redshift)
+print dtg
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 

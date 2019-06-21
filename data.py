@@ -5,8 +5,8 @@ import sys
 from astropy.cosmology import FlatLambdaCDM
 import astropy.constants as con
 
-homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
-#homepath="/home/xuejian/works/quasarLF/git/"
+#homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
+homepath="/home/xuejian/works/quasarLF/git/"
 sys.path.append(homepath+"codes/bolometric_correction/")
 sys.path.append(homepath+"codes/convolution/")
 sys.path.append(homepath+"codes/lf_fit/")
@@ -99,3 +99,11 @@ def phi_correct_cosmo_flexible(redshift,h_old,Om0_old):
     vol_new = cosmo.differential_comoving_volume(redshift).value
     volume_corr_factor = vol_old/vol_new
     return volume_corr_factor
+
+def return_dtg(z):
+	if z<=0.2: return 0.78
+	elif z<=1.0: return 0.4
+	elif z<=1.6: return 0.2
+	elif z<=3.0: return 0.1
+	elif z<=4.0: return 0.1
+	else: return 0.1
