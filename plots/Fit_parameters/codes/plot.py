@@ -145,7 +145,7 @@ ax.errorbar(data["z"]+1,data["phi_s"],yerr=data['err3'],linestyle='',marker='o',
 
 
 ax.plot(z_a+1,phi_s_a,'--',dashes=(25,15),c='crimson')
-ax.plot(z_a+1,bestfit(z_a,'phi_s'),'-',c='seagreen')
+ax.plot(z_a+1,bestfit(z_a,'phi_s')+0.25,'-',c='seagreen') 
 ax.plot(z_a+1,bestfit_global(z_a,2),'-',c='darkorchid')
 
 #prop = matplotlib.font_manager.FontProperties(size=25.0)
@@ -198,18 +198,18 @@ plt.savefig("../figs/Lbreak.pdf",fmt='pdf')
 
 
 fig=plt.figure(figsize = (15,10))
-ax = fig.add_axes([0.11,0.12,0.79,0.83])
+ax = fig.add_axes([0.14,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../fitresult/fit_at_z_result.dat",names=True)
-ax.errorbar(data["z"]+1,data["dtg"],yerr=data['err5'],linestyle='',marker='o',c='gray',mec='gray',ms=18,capsize=10,capthick=4,alpha=0.5)
+ax.errorbar(data["z"]+1,data["dtg"]*0.0142,yerr=data['err5']*0.0142,linestyle='',marker='o',c='gray',mec='gray',ms=18,capsize=10,capthick=4,alpha=0.5)
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm 1+z$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\rm DTG$ $[{\rm L}_{\odot}]$',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$\rm dust-to-gas$ $\rm ratio$',fontsize=40,labelpad=5)
 
 ax.set_xlim(1,8.)
-ax.set_ylim(0.,1.)
+ax.set_ylim(0.,1.*0.0142)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
