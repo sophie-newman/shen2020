@@ -40,7 +40,7 @@ Lbreak = doublepower(redshift,p)
 parameters_global_2 = np.array([gamma1,gamma2,logphi,Lbreak])
 
 #load the shared object file
-c_extenstion = CDLL(homepath+'codes/c_lib/convolve_new.so')
+c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 

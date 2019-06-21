@@ -2,17 +2,19 @@
 #include<stdlib.h>
 #include<math.h>
 
+//originally written by Phil Hopkins in 2007; adapted by Xuejian Shen in 2019
+
 double pei_dust_extinction(double lambda_in_microns);
 double morrison_photoeletric_absorption(double x);
-double cross_section(double nu);
+double cross_section(double nu, double dtg);
 double return_ratio_to_b_band(double nu);
 double return_ratio_to_hard_xray(double nu);
 double l_band(double log_l_bol, double nu);
 double l_band_jacobian(double log_l_bol, double nu);
 double l_band_dispersion(double log_l_bol, double nu);
-double return_tau(double log_NH, double nu);
+double return_tau(double log_NH, double nu, double dtg);
 
-double* convolve(double* phi_bol_grid, double nu) {
+double* convolve(double* phi_bol_grid, double nu, double redshift, double dtg) {
 	double log_l_bol_min =  8.0;
 	double log_l_bol_max = 18.0;
 	double d_log_l_bol = 0.1;
@@ -26,11 +28,12 @@ double* convolve(double* phi_bol_grid, double nu) {
 	double nu_eff;
 	nu_eff = nu;
 	if (nu ==  0.) {nu_eff = 1.1992000e15;} // 2500 angstrom
-	if (nu == -1.) {nu_eff = 6.8136364e14;} // 4400 angstrom
+	if (nu == -1.) {nu_eff = 6.8136364e14;} // 4400 angstrom, B band
 	if (nu == -2.) {nu_eff = 1.9986667e13;} // 15 micron
 	if (nu == -3.) {nu_eff = 2.4180000e17;} // 'effective' 1 keV
 	if (nu == -4.) {nu_eff = 1.2090000e18;} // 'effective' 5 keV
-
+    if (nu == -5.) {nu_eff = 2.998e8/(1450e-10);} // 1450 angstrom
+    
 	int i_lbol,j_lbol;
 	// first, load up the bolometric QLF
 	for(i_lbol=0;i_lbol<n_l_bol_pts;i_lbol++) {
@@ -59,88 +62,114 @@ double* convolve(double* phi_bol_grid, double nu) {
 
 	/* now, convolve over the distribution of column densities to get the 
   	//   post-obscuration bolometric QLF, adopting the observed distribution from 
-  	//   Ueda et al. (2003)
+  	//   Ueda et al. (2014)
   	//
   	// this considers a flat NH function in each of several bins
   	//;;   need to define a "lower limit" NH --> Ueda et al. use 20, our optical 
   	//;;   calculations seem to suggest that's about right, so fine
  	*/
-	double NH_MIN  = 20.0;
-	double NH_MAX  = 25.0;
-	double D_NH    = 0.01;
-	int    N_NH    = (int )((NH_MAX-NH_MIN)/D_NH + 1.0);
-	int iNH;
-	double *NH;
-	NH = calloc(N_NH,sizeof(double));
-	double *tau;
-	tau = calloc(N_NH,sizeof(double));
-	for(iNH=0;iNH<N_NH;iNH++) {
-		NH[iNH] = NH_MIN + ((double )iNH)*D_NH;
-		tau[iNH] = return_tau(NH[iNH],nu);
-	}
-	// loop over the LF and attenuate everything appropriately
-	double eps,psi_44,beta_L,psi,psi_max,f_low,f_med,f_hig,f_compton,L_HX,NH_0,f_NH,dN_NH;
-	double li,lo,p2,p1,p0;
-	int n0 = 0;
-	eps = 1.7;
-	psi_44 = 0.47;
-	beta_L = 0.10;
-	psi_max = (1.+eps)/(3.+eps);
-	double *l_obs_grid;
-	l_obs_grid = calloc(n_l_bol_pts,sizeof(double));
-	double *phi_obs_grid;
-	phi_obs_grid = calloc(n_l_bol_pts,sizeof(double));
-	for(iNH=0;iNH<N_NH;iNH++){
-		NH_0 = NH[iNH];	
-		// need to interpolate to lay this over the grid already set up
-		for(i_lbol=0;i_lbol<n_l_bol_pts;i_lbol++){
-                	l_obs_grid[i_lbol] = l_band_grid[i_lbol] - tau[iNH]/log(10.);
-                	phi_obs_grid[i_lbol] = phi_bol_grid[i_lbol];
-            	}
-        	n0 = 0;
-        	for(i_lbol=0;i_lbol<n_l_bol_pts;i_lbol++){
-            		li = l_band_grid[i_lbol];
-            		while((li >= l_obs_grid[n0+1]) && (n0+1 < n_l_bol_pts)) n0+=1;
-            		if (n0+1 < n_l_bol_pts){
-				p1 = log10(phi_obs_grid[n0]);
-                		p2 = log10(phi_obs_grid[n0+1]);
-                		p0 = p1 + (p2-p1) * ((li - l_obs_grid[n0])/(l_obs_grid[n0+1] - l_obs_grid[n0]));
-            		}
-            		else
-            		{
-				p1 = log10(phi_obs_grid[n_l_bol_pts-2]);
-                		p2 = log10(phi_obs_grid[n_l_bol_pts-1]);
-                		p0 = p1 + (p2-p1) * ((li - l_obs_grid[n_l_bol_pts-2])/(l_obs_grid[n_l_bol_pts-1] - l_obs_grid[n_l_bol_pts-2]));
-            		}
-			L_HX  = log10(l_band(l_bol_grid[i_lbol],-4.0));
-			psi = psi_44 - beta_L * (L_HX + log10(3.9) + 33.0 - 44.0);
-            		if (psi < 0.) psi = 0.;
-            		if (psi > psi_max) psi = psi_max;
-            		f_low = 2.0 - ((5.+2.*eps)/(1.+eps))*psi;
-			f_med = (1./(1.+eps))*psi;
-			f_hig = (eps/(1.+eps))*psi;
-			f_compton = f_hig;
-            		f_low = f_low / (1. + f_compton);
-            		f_med = f_med / (1. + f_compton);
-            		f_hig = f_hig / (1. + f_compton);	
-			f_NH = 0.0;
-			if ((NH_0 <= 20.5)) f_NH = f_low;
-			if ((NH_0 > 20.5) && (NH_0 <= 23.0)) f_NH = f_med;
-			if ((NH_0 > 23.0) && (NH_0 <= 24.0)) f_NH = f_hig;
-			if ((NH_0 > 24.0)) f_NH = f_compton;
-			dN_NH = f_NH * D_NH;
-            		phi_grid_out[i_lbol] += pow(10.,p0) * dN_NH ;
-        	}
-	}
-	for(i_lbol=0;i_lbol<n_l_bol_pts;i_lbol++) {
-		phi_bol_grid[i_lbol] = phi_grid_out[i_lbol];
-		phi_grid_out[i_lbol] = 0.;
-	}
-	return phi_bol_grid;
+    double NH_MIN  = 20.0;
+    double NH_MAX  = 26.0;
+    double D_NH    = 0.01;
+    int    N_NH    = (int )((NH_MAX-NH_MIN)/D_NH + 1.0);
+    int iNH;
+    double *NH;
+    NH = calloc(N_NH,sizeof(double));
+    double *tau;
+    tau = calloc(N_NH,sizeof(double));
+    for(iNH=0;iNH<N_NH;iNH++) {
+        NH[iNH] = NH_MIN + ((double )iNH)*D_NH;
+        tau[iNH] = return_tau(NH[iNH],nu,dtg);
+    }
+    // loop over the LF and attenuate everything appropriately
+    double eps, psi_43_75, beta_L, psi_0, psi_min, psi_max, a1, fCTK;     //parameters
+    double psi, f_1, f_2, f_3, f_4, f_5;       //used in characterizing the distribution
+    double L_HX, NH_0, f_NH, dN_NH;      //used in convolve the LF
+    double li,lo,p2,p1,p0;
+    int n0 = 0;
+    eps = 1.7;
+    
+    psi_min=0.2;  psi_max=0.84;
+    psi_0=0.43;  a1=0.48;
+    beta_L = 0.24;
+    fCTK = 1.0;
+    
+    if (redshift<2.0) psi_43_75 = psi_0 * pow(1.0+redshift,a1);
+    else psi_43_75 = psi_0 * pow(1.0+2.0,a1);
+    
+    double *l_obs_grid;
+    l_obs_grid = calloc(n_l_bol_pts,sizeof(double));
+    double *phi_obs_grid;
+    phi_obs_grid = calloc(n_l_bol_pts,sizeof(double));
+    for(iNH=0;iNH<N_NH;iNH++){
+        NH_0 = NH[iNH];
+        // need to interpolate to lay this over the grid already set up
+        for(i_lbol=0;i_lbol<n_l_bol_pts;i_lbol++){
+            l_obs_grid[i_lbol] = l_band_grid[i_lbol] - tau[iNH]/log(10.);
+            phi_obs_grid[i_lbol] = phi_bol_grid[i_lbol];
+        }
+        n0 = 0;
+        for(i_lbol=0;i_lbol<n_l_bol_pts;i_lbol++){
+            li = l_band_grid[i_lbol];
+            while((li >= l_obs_grid[n0+1]) && (n0+1 < n_l_bol_pts)) n0+=1;
+            if (n0+1 < n_l_bol_pts){
+                p1 = log10(phi_obs_grid[n0]);
+                p2 = log10(phi_obs_grid[n0+1]);
+                p0 = p1 + (p2-p1) * ((li - l_obs_grid[n0])/(l_obs_grid[n0+1] - l_obs_grid[n0]));
+            }
+            else
+            {
+                p1 = log10(phi_obs_grid[n_l_bol_pts-2]);
+                p2 = log10(phi_obs_grid[n_l_bol_pts-1]);
+                p0 = p1 + (p2-p1) * ((li - l_obs_grid[n_l_bol_pts-2])/(l_obs_grid[n_l_bol_pts-1] - l_obs_grid[n_l_bol_pts-2]));
+            }
+            L_HX  = log10(l_band(l_bol_grid[i_lbol],-4.0));
+            
+            psi = psi_43_75 - beta_L * (L_HX + log10(3.9) + 33.0 - 43.75);
+            
+            if (psi < psi_min) psi = psi_min;
+            if (psi > psi_max) psi = psi_max;
+            
+            if (psi < (1.+eps)/(3.+eps)){
+                f_1 = 1.0 - ((2.+eps)/(1.+eps))*psi;
+                f_2 = (1./(1.+eps))*psi;
+                f_3 = (1./(1.+eps))*psi;
+                f_4 = (eps/(1.+eps))*psi;
+                f_5 = (fCTK/2.)*psi;
+            }
+            else{
+                f_1 = 2./3. - ((3.+2.*eps)/(3.+3.*eps))*psi;
+                f_2 = 1./3. - (eps/(3.+3.*eps))*psi;
+                f_3 = (1./(1.+eps))*psi;
+                f_4 = (eps/(1.+eps))*psi;
+                f_5 = (fCTK/2.)*psi;
+            }
+            f_1 = f_1/(1.+f_5*2);
+            f_2 = f_2/(1.+f_5*2);
+            f_3 = f_3/(1.+f_5*2);
+            f_4 = f_4/(1.+f_5*2);
+            f_5 = f_5/(1.+f_5*2);
+            // the N_H distribution is normalized in 20-24, so we have to rescale here
+            
+            f_NH = 0.0;
+            if ((NH_0 <= 21.)) f_NH = f_1;
+            if ((NH_0 >  21.) && (NH_0 <= 22.)) f_NH = f_2;
+            if ((NH_0 >  22.) && (NH_0 <= 23.)) f_NH = f_3;
+            if ((NH_0 >  23.) && (NH_0 <= 24.)) f_NH = f_4;
+            if ((NH_0 >  24.)) f_NH = f_5;
+            dN_NH = f_NH * D_NH;
+            phi_grid_out[i_lbol] += pow(10.,p0) * dN_NH ;
+        }
+    }
+    for(i_lbol=0;i_lbol<n_l_bol_pts;i_lbol++) {
+        phi_bol_grid[i_lbol] = phi_grid_out[i_lbol];
+        phi_grid_out[i_lbol] = 0.;
+    }
+    return phi_bol_grid;
 }
 
 // return the intrinsic band luminosity for some bolometric luminosity and frequency; 
-// //   nu = 0 (l_bol), -1 (B-band), -2 (15 microns), -3 (0.5-2 keV), -4 (2-10 keV), 
+// //   nu = 0 (l_bol), -1 (B-band), -2 (15 microns), -3 (0.5-2 keV), -4 (2-10 keV), -5 (FUV 1450 angstrom)
 // //   otherwise nu is the observed frequency and the return is nu*L_nu
 double l_band(double log_l_bol, double nu)
 {
@@ -149,12 +178,13 @@ double l_band(double log_l_bol, double nu)
 	double P0,P1,P2,P3;
 	if (nu==(0.))  return pow(10.,log_l_bol);
 	if (nu < 0.) {
-		if (nu==(-1.)) {P0=8.99833; P1=6.24800; P2=-0.370587; P3=-0.0115970;}
-		if (nu==(-2.)) {P0=10.6615; P1=7.40282; P2=-0.370587; P3=-0.0115970;}
-		if (nu==(-3.)) {P0=10.0287; P1=17.8653; P2=0.276804;  P3=-0.0199558;}
-		if (nu==(-4.)) {P0=6.08087; P1=10.8331; P2=0.276802;  P3=-0.0199597;}
-		lband = P0*pow(10.,P3*x) + P1*pow(10.,P2*x);
-		return pow(10.,log_l_bol)/lband;
+        if (nu==(-1.)) {P0=3.75876730; P1=-0.36057087; P2=9.82954354; P3=-6.29078046e-3;}
+        if (nu==(-2.)) {P0=4.36089518; P1=-0.36057086; P2=11.4041656; P3=-6.29077790e-3;}
+        if (nu==(-3.)) {P0=5.71209149; P1=-0.02553868; P2=17.6679057; P3=    0.27750559;}
+        if (nu==(-4.)) {P0=4.07349835; P1=-0.02553868; P2=12.5996205; P3=    0.27750559;}
+        if (nu==(-5.)) {P0=4.86961646; P1=-0.00629077; P2=1.86211735; P3=   -0.36057082;}
+        lband = P0*pow(10.,P1*x) + P2*pow(10.,P3*x);
+        return pow(10.,log_l_bol)/lband;
 	}
 	// if not one of the specified bands, then take advantage of the fact that our model 
 	// 	//   spectrum is not l-dependent below 500 angstroms or above 50 angstroms, so 
@@ -164,22 +194,22 @@ double l_band(double log_l_bol, double nu)
 	double nu50  = nu_angstrom/50.;
 	if (nu <= nu500) {
 	// just take the ratio relative to B-band
-		double P[4] = {8.99833   ,   6.24800  ,  -0.370587  , -0.0115970};
-		lband = P[0]*pow(10.,P[3]*x) + P[1]*pow(10.,P[2]*x);
+		double P[4] = {3.75876730,-0.36057087,9.82954354,-6.29078046e-3};
+		lband = P[0]*pow(10.,P[1]*x) + P[2]*pow(10.,P[3]*x);
 		return return_ratio_to_b_band(nu)*pow(10.,log_l_bol)/lband;
 	}
 	if (nu >= nu50) {
 	// just take the ratio relative to the hard X-rays
-		double P[4] = {6.08087   ,   10.8331  ,   0.276802  , -0.0199597};
-		lband = P[0]*pow(10.,P[3]*x) + P[1]*pow(10.,P[2]*x);
+		double P[4] = {4.07349835,-0.02553868,12.5996205,0.27750559};
+		lband = P[0]*pow(10.,P[1]*x) + P[2]*pow(10.,P[3]*x);
 		return return_ratio_to_hard_xray(nu)*pow(10.,log_l_bol)/lband;
 	}
 	if ((nu>nu500)&&(nu<nu50)) {
 	// interpolate between both regimes
-	double P[4] = {8.99833   ,   6.24800  ,  -0.370587  , -0.0115970};
-		double L500 = return_ratio_to_b_band(nu500)/(P[0]*pow(10.,P[3]*x)+P[1]*pow(10.,P[2]*x));
-		double Q[4] = {6.08087   ,   10.8331  ,   0.276802  , -0.0199597};
-		double L50  = return_ratio_to_hard_xray(nu50)/(Q[0]*pow(10.,Q[3]*x)+Q[1]*pow(10.,Q[2]*x));
+        double P[4] = {3.75876730,-0.36057087,9.82954354,-6.29078046e-3};
+        double L500 = return_ratio_to_b_band(nu500)/(P[0]*pow(10.,P[1]*x)+P[2]*pow(10.,P[3]*x));
+		double Q[4] = {4.07349835,-0.02553868,12.5996205,0.27750559};
+		double L50  = return_ratio_to_hard_xray(nu50)/(Q[0]*pow(10.,Q[1]*x)+Q[2]*pow(10.,Q[3]*x));
 		double L00  = log10(L500) + log10(L50/L500) * (log10(nu/nu500)/log10(nu50/nu500));	
 		return pow(10.,L00)*pow(10.,log_l_bol);
 	}
@@ -196,12 +226,13 @@ double l_band_jacobian(double log_l_bol, double nu)
 	double D1,D2;
 	if (nu==(0.))  return 1.0;
 	if (nu < 0.) {
-		if (nu==(-1.)) {P0=8.99833; P1=6.24800; P2=-0.370587; P3=-0.0115970;}
-		if (nu==(-2.)) {P0=10.6615; P1=7.40282; P2=-0.370587; P3=-0.0115970;}
-		if (nu==(-3.)) {P0=10.0287; P1=17.8653; P2=0.276804;  P3=-0.0199558;}
-		if (nu==(-4.)) {P0=6.08087; P1=10.8331; P2=0.276802;  P3=-0.0199597;}
-			D1 = P0*(1.+P3)*pow(10.,P3*x) + P1*(1.+P2)*pow(10.,P2*x);
-			D2 = P0*pow(10.,P3*x) + P1*pow(10.,P2*x);
+        if (nu==(-1.)) {P0=3.75876730; P1=-0.36057087; P2=9.82954354; P3=-6.29078046e-3;}
+        if (nu==(-2.)) {P0=4.36089518; P1=-0.36057086; P2=11.4041656; P3=-6.29077790e-3;}
+        if (nu==(-3.)) {P0=5.71209149; P1=-0.02553868; P2=17.6679057; P3=    0.27750559;}
+        if (nu==(-4.)) {P0=4.07349835; P1=-0.02553868; P2=12.5996205; P3=    0.27750559;}
+        if (nu==(-5.)) {P0=4.86961646; P1=-0.00629077; P2=1.86211735; P3=   -0.36057082;}
+        D1 = P0*(1.+P1)*pow(10.,P1*x) + P2*(1.+P3)*pow(10.,P3*x);
+        D2 = P0*pow(10.,P1*x) + P2*pow(10.,P3*x);
 		return D1/D2;
 	}
 	// if not one of the specified bands, then take advantage of the fact that our model 
@@ -211,47 +242,60 @@ double l_band_jacobian(double log_l_bol, double nu)
 	double nu500 = nu_angstrom/500.;
 	double nu50  = nu_angstrom/50.;
 	if (nu <= nu500) {
-		double P[4] = {8.99833   ,   6.24800  ,  -0.370587  , -0.0115970};
-			D1 = P[0]*(1.+P[3])*pow(10.,P[3]*x) + P[1]*(1.+P[2])*pow(10.,P[2]*x);
-			D2 = P[0]*pow(10.,P[3]*x) + P[1]*pow(10.,P[2]*x);
+		double P[4] = {3.75876730,-0.36057087,9.82954354,-6.29078046e-3};
+        D1 = P[0]*(1.+P[1])*pow(10.,P[1]*x) + P[2]*(1.+P[3])*pow(10.,P[3]*x);
+        D2 = P[0]*pow(10.,P[1]*x) + P[2]*pow(10.,P[3]*x);
 		return D1/D2;
 	}
 	if (nu >= nu50) {
-		double P[4] = {6.08087   ,   10.8331  ,   0.276802  , -0.0199597};
-			D1 = P[0]*(1.+P[3])*pow(10.,P[3]*x) + P[1]*(1.+P[2])*pow(10.,P[2]*x);
-			D2 = P[0]*pow(10.,P[3]*x) + P[1]*pow(10.,P[2]*x);
+		double P[4] = {4.07349835,-0.02553868,12.5996205,0.27750559};
+        D1 = P[0]*(1.+P[1])*pow(10.,P[1]*x) + P[2]*(1.+P[3])*pow(10.,P[3]*x);
+        D2 = P[0]*pow(10.,P[1]*x) + P[2]*pow(10.,P[3]*x);
 		return D1/D2;
 	}
 	if ((nu>nu500)&&(nu<nu50)) {
-		double P[4] = {8.99833   ,   6.24800  ,  -0.370587  , -0.0115970};
-			D1 = P[0]*(1.+P[3])*pow(10.,P[3]*x) + P[1]*(1.+P[2])*pow(10.,P[2]*x);
-			D2 = P[0]*pow(10.,P[3]*x) + P[1]*pow(10.,P[2]*x);
+		double P[4] = {3.75876730,-0.36057087,9.82954354,-6.29078046e-3};
+        D1 = P[0]*(1.+P[1])*pow(10.,P[1]*x) + P[2]*(1.+P[3])*pow(10.,P[3]*x);
+        D2 = P[0]*pow(10.,P[1]*x) + P[2]*pow(10.,P[3]*x);
 		double L500=D1/D2;
-		double Q[4] = {6.08087   ,   10.8331  ,   0.276802  , -0.0199597};
-			D1 = Q[0]*(1.+Q[3])*pow(10.,Q[3]*x) + Q[1]*(1.+Q[2])*pow(10.,Q[2]*x);
-			D2 = Q[0]*pow(10.,Q[3]*x) + Q[1]*pow(10.,Q[2]*x);
+		double Q[4] = {4.07349835,-0.02553868,12.5996205,0.27750559};
+        D1 = Q[0]*(1.+Q[1])*pow(10.,Q[1]*x) + Q[2]*(1.+Q[3])*pow(10.,Q[3]*x);
+        D2 = Q[0]*pow(10.,Q[1]*x) + Q[2]*pow(10.,Q[3]*x);
 		double L50=D1/D2;
 		double L00  = log10(L500) + log10(L50/L500) * (log10(nu/nu500)/log10(nu50/nu500));	
 		return pow(10.,L00);
 	}
 }
 
+double normalCDF(double x, double x0, double sig) // Phi(-∞, x) aka N(x)
+{
+    return 0.5 * erfc(-(x-x0)/sqrt(2*sig*sig));
+}
+
+double fit_func_disp(double x, double P0, double P1, double P2, double P3)
+{
+    return P1 + P0 * normalCDF(x,P2,P3);
+}
+
 // return the lognormal dispersion in bolometric corrections for a given band and luminosity; 
-// //   nu = 0 (l_bol), -1 (B-band), -2 (15 microns), -3 (0.5-2 keV), -4 (2-10 keV),
+// //   nu = 0 (l_bol), -1 (B-band), -2 (15 microns), -3 (0.5-2 keV), -4 (2-10 keV), -5 (FUV 1450 angstrom)
 //   otherwise nu is the observed frequency 
 double l_band_dispersion(double log_l_bol, double nu)
 {
-	double x = log_l_bol - 9.;
+	double x = log_l_bol + (log10(3.9) + 33.0);
 	double lband = 0.;
-	double s0,s1,beta,sf1,sf2,sx,sx_floor;
-	sx_floor = 0.050; // minimum value of dispersion to enforce
+    double P0,P1,P2,P3;
+    double sf1,sf2,sx,sx_floor;
+	sx_floor = 0.010; // minimum value of dispersion to enforce
 	if (nu==(0.))  return 0.01;
 	if (nu < 0.) {
-		if (nu==(-1.)) {s0 = 0.08; beta = -0.20; s1 = 0.065;}
-		if (nu==(-2.)) {s0 = 0.03; beta = -0.10; s1 = 0.095;}
-		if (nu==(-3.)) {s0 = 0.01; beta =  0.10; s1 = 0.060;}
-		if (nu==(-4.)) {s0 = 0.04; beta =  0.05; s1 = 0.080;}
-		return s0 * pow(10.,beta*x) + s1;
+        if (nu==(-1.)) {P0=-0.3826995; P1=0.4052673; P2=42.3866639; P3=2.3775969;}
+        if (nu==(-2.)) {P0=-0.3380714; P1=0.4071626; P2=42.1588292; P3=2.1928345;}
+        if (nu==(-3.)) {P0=0.07969176; P1=0.1803728; P2=44.1641156; P3=1.4964823;}
+        if (nu==(-4.)) {P0=0.19262562; P1=0.0659231; P2=42.9876632; P3=1.8829639;}
+        if (nu==(-5.)) {P0=-0.3719955; P1=0.4048693; P2=42.3073116; P3=2.3097825;}
+        return fit_func_disp(x, P0, P1, P2, P3);
+        //return s0 * pow(10.,beta*x) + s1;
 	}
 	// interpolate between the known ranges, and (conservatively) hold constant 
 	//   outside of them. roughly consistent with Richards et al. 2006 dispersions, 
@@ -264,43 +308,44 @@ double l_band_dispersion(double log_l_bol, double nu)
 	double nuBB = 6.81818e14;
 	double nuSX = 0.5 * 2.418e17;
 	double nuHX = 10. * 2.418e17;
-	if (nu < nu15) {s0 = 0.03; beta = -0.10; s1 = 0.095; return s0*pow(10.,beta*x)+s1;}
-	if (nu >=nuHX) {s0 = 0.04; beta =  0.05; s1 = 0.080; return s0*pow(10.,beta*x)+s1;}
+	if (nu < nu15) { P0=-0.3380714; P1=0.4071626; P2=42.1588292; P3=2.1928345;
+        return fit_func_disp(x, P0, P1, P2, P3); }
+    if (nu >=nuHX) { P0=0.19262562; P1=0.0659231; P2=42.9876632; P3=1.8829639;
+        return fit_func_disp(x, P0, P1, P2, P3); }
 	if ((nu >= nu15)&&(nu< nuBB)) {
-		s0 = 0.03; beta = -0.10; s1 = 0.095;
-			sf1 = s0 * pow(10.,beta*x) + s1;
-		s0 = 0.08; beta = -0.20; s1 = 0.065;
-			sf2 = s0 * pow(10.,beta*x) + s1;
+		P0=-0.3380714; P1=0.4071626; P2=42.1588292; P3=2.1928345;
+        sf1 = fit_func_disp(x, P0, P1, P2, P3);
+		P0=-0.3826995; P1=0.4052673; P2=42.3866639; P3=2.3775969;
+        sf2 = fit_func_disp(x, P0, P1, P2, P3);
 		sx = sf1 + (sf2-sf1) * (log10(nu/nu15)/log10(nuBB/nu15));
 		if (sx<=sx_floor) {sx=sx_floor;}
 		return sx;
 	}
 	if ((nu >= nuBB)&&(nu< nuSX)) {
-		s0 = 0.08; beta = -0.20; s1 = 0.065;
-			sf1 = s0 * pow(10.,beta*x) + s1;
-		s0 = 0.01; beta =  0.10; s1 = 0.060;
-			sf2 = s0 * pow(10.,beta*x) + s1;
-		sx = sf1 + (sf2-sf1) * (log10(nu/nu15)/log10(nuBB/nu15));
+		P0=-0.3826995; P1=0.4052673; P2=42.3866639; P3=2.3775969;
+        sf1 = fit_func_disp(x, P0, P1, P2, P3);
+		P0=0.07969176; P1=0.1803728; P2=44.1641156; P3=1.4964823;
+        sf2 = fit_func_disp(x, P0, P1, P2, P3);
+		sx = sf1 + (sf2-sf1) * (log10(nu/nuBB)/log10(nuSX/nuBB));
 		if (sx<=sx_floor) {sx=sx_floor;}
 		return sx;
 	}
 	if ((nu >= nuSX)&&(nu< nuHX)) {
-		s0 = 0.01; beta =  0.10; s1 = 0.060;
-			sf1 = s0 * pow(10.,beta*x) + s1;
-		s0 = 0.04; beta =  0.05; s1 = 0.080;
-			sf2 = s0 * pow(10.,beta*x) + s1;
-		sx = sf1 + (sf2-sf1) * (log10(nu/nu15)/log10(nuBB/nu15));
+		P0=0.07969176; P1=0.1803728; P2=44.1641156; P3=1.4964823;
+        sf1 = fit_func_disp(x, P0, P1, P2, P3);
+		P0=0.19262562; P1=0.0659231; P2=42.9876632; P3=1.8829639;
+        sf2 = fit_func_disp(x, P0, P1, P2, P3);
+		sx = sf1 + (sf2-sf1) * (log10(nu/nuSX)/log10(nuHX/nuSX));
 		if (sx<=sx_floor) {sx=sx_floor;}
 		return sx;
 	}
 }
 
 // load the x-ray template, based on the observations in text and 
-// //     specifically the Magdziarz & Zdziarski 1995 PEXRAV model with Gamma=1.8 
-// //     (Tozzi et al., George et al.), theta=2pi, solar abundances
+// specifically the Magdziarz & Zdziarski 1995 PEXRAV model with Gamma=1.9, Ecut=300keV, theta=2pi, solar abundances
 double return_ratio_to_hard_xray(double nu)
 {
-double log_nu[275]={
+double log_nu[235]={
 16.00, 16.02, 16.04, 16.06, 16.08, 16.10, 16.12, 16.14, 16.16, 16.18, 16.20, 16.22, 16.24,
 16.26, 16.28, 16.30, 16.32, 16.34, 16.36, 16.38, 16.40, 16.42, 16.44, 16.46, 16.48, 16.50,
 16.52, 16.54, 16.56, 16.58, 16.60, 16.62, 16.64, 16.66, 16.68, 16.70, 16.72, 16.74, 16.76,
@@ -319,45 +364,56 @@ double log_nu[275]={
 19.90, 19.92, 19.94, 19.96, 19.98, 20.00, 20.02, 20.04, 20.06, 20.08, 20.10, 20.12, 20.14,
 20.16, 20.18, 20.20, 20.22, 20.24, 20.26, 20.28, 20.30, 20.32, 20.34, 20.36, 20.38, 20.40,
 20.42, 20.44, 20.46, 20.48, 20.50, 20.52, 20.54, 20.56, 20.58, 20.60, 20.62, 20.64, 20.66,
-20.68, 20.70, 20.72, 20.74, 20.76, 20.78, 20.80, 20.82, 20.84, 20.86, 20.88, 20.90, 20.92,
-20.94, 20.96, 20.98, 21.00, 21.02, 21.04, 21.06, 21.08, 21.10, 21.12, 21.14, 21.16, 21.18,
-21.20, 21.22, 21.24, 21.26, 21.28, 21.30, 21.32, 21.34, 21.36, 21.38, 21.40, 21.42, 21.44,
-21.46, 21.48 
-};
-double log_nuLnu[275]={
--2.1132, -2.1092, -2.1052, -2.1012, -2.0972, -2.0932, -2.0892, -2.0852, -2.0812, -2.0772, -2.0732, 
--2.0692, -2.0652, -2.0612, -2.0572, -2.0532, -2.0492, -2.0452, -2.0412, -2.0372, -2.0332, -2.0292, 
--2.0252, -2.0212, -2.0172, -2.0132, -2.0092, -2.0052, -2.0012, -1.9972, -1.9932, -1.9892, -1.9852, 
--1.9812, -1.9772, -1.9732, -1.9692, -1.9652, -1.9611, -1.9571, -1.9531, -1.9491, -1.9452, -1.9412, 
--1.9372, -1.9332, -1.9292, -1.9252, -1.9212, -1.9172, -1.9132, -1.9092, -1.9052, -1.9012, -1.8971, 
--1.8931, -1.8894, -1.8854, -1.8814, -1.8774, -1.8734, -1.8694, -1.8654, -1.8614, -1.8574, -1.8534, 
--1.8495, -1.8455, -1.8415, -1.8374, -1.8334, -1.8294, -1.8253, -1.8213, -1.8172, -1.8132, -1.8091, 
--1.8050, -1.8009, -1.7968, -1.7927, -1.7885, -1.7843, -1.7803, -1.7761, -1.7718, -1.7675, -1.7631, 
--1.7587, -1.7547, -1.7502, -1.7457, -1.7410, -1.7363, -1.7314, -1.7266, -1.7215, -1.7163, -1.7109, 
--1.7053, -1.6999, -1.6940, -1.6878, -1.6814, -1.6747, -1.6677, -1.6604, -1.6527, -1.6451, -1.6369, 
--1.6283, -1.6194, -1.6342, -1.6266, -1.6188, -1.6113, -1.6036, -1.5950, -1.5861, -1.5763, -1.5655, 
--1.5530, -1.5391, -1.5253, -1.5116, -1.4968, -1.4808, -1.4635, -1.4451, -1.4259, -1.4062, -1.3867, 
--1.3676, -1.3494, -1.3323, -1.3165, -1.3021, -1.2891, -1.2775, -1.2671, -1.2580, -1.2501, -1.2432, 
--1.2372, -1.2320, -1.2277, -1.2240, -1.2210, -1.2185, -1.2166, -1.2152, -1.2143, -1.2141, -1.2144, 
--1.2150, -1.2160, -1.2172, -1.2188, -1.2207, -1.2229, -1.2253, -1.2280, -1.2310, -1.2342, -1.2376, 
--1.2413, -1.2453, -1.2495, -1.2540, -1.2588, -1.2640, -1.2694, -1.2752, -1.2814, -1.2881, -1.2952, 
--1.3028, -1.3109, -1.3196, -1.3289, -1.3389, -1.3496, -1.3609, -1.3731, -1.3861, -1.4000, -1.4148, 
--1.4302, -1.4456, -1.4602, -1.4741, -1.4877, -1.5012, -1.5147, -1.5284, -1.5424, -1.5567, -1.5714, 
--1.5866, -1.6023, -1.6186, -1.6354, -1.6529, -1.6711, -1.6901, -1.7098, -1.7304, -1.7518, -1.7742, 
--1.7975, -1.8219, -1.8474, -1.8740, -1.9018, -1.9308, -1.9612, -1.9930, -2.0263, -2.0611, -2.0975, 
--2.1356, -2.1755, -2.2173, -2.2611, -2.3070, -2.3551, -2.4055, -2.4584, -2.5138, -2.5720, -2.6331, 
--2.6971, -2.7642, -2.8347, -2.9087, -2.9864, -3.0678, -3.1533, -3.2430, -3.3371, -3.4358, -3.5394, 
--3.6481, -3.7620, -3.8814, -4.0067, -4.1382, -4.2760, -4.4205, -4.5719, -4.7306, -4.8971, -5.0716, 
--5.2545, -5.4462, -5.6471, -5.8576, -6.0783, -6.3096, -6.5520, -6.8059, -7.0719, -7.3506, -7.6428, 
--7.9489, -8.2696, -8.6055, -8.9574, -9.3260, -9.7124, -10.1171, -10.5410, 
--10.9850, -11.4499, -11.9371};
-double L_HX  = -1.47406;
+20.68};
+
+double log_nuLnu[235]={
+    -2.74939131, -2.74739413, -2.74539709, -2.74340018, -2.74140342, -2.73940681,
+    -2.73741036, -2.73541408, -2.73341798, -2.73142206, -2.72942633, -2.7274308,
+    -2.72543548, -2.72344039, -2.72144552, -2.7194509 , -2.71745653, -2.71546242,
+    -2.71346859, -2.71147506, -2.7094454 , -2.70745174, -2.70545624, -2.70346077,
+    -2.7014653 , -2.69946985, -2.6974743 , -2.69547866, -2.69348287, -2.6914878,
+    -2.68949174, -2.68750083, -2.68550492, -2.68350866, -2.68151196, -2.67951473,
+    -2.67751709, -2.67551846, -2.67352042, -2.67152358, -2.66952363, -2.66752107,
+    -2.66551696, -2.6636271 , -2.66163263, -2.65963756, -2.65764114, -2.65564594,
+    -2.65364697, -2.65164616, -2.64969349, -2.64769452, -2.64569387, -2.64369023,
+    -2.64168355, -2.63967332, -2.63796538, -2.63598591, -2.63400629, -2.63202579,
+    -2.63004439, -2.62806182, -2.62607781, -2.6241433 , -2.62216231, -2.62017952,
+    -2.61820464, -2.61627485, -2.61429314, -2.61230851, -2.61032092, -2.60833013,
+    -2.60633277, -2.60432924, -2.60231836, -2.60029877, -2.598342  , -2.59631062,
+    -2.59426667, -2.59221777, -2.59014345, -2.58804943, -2.58593255, -2.58401065,
+    -2.58187108, -2.57970127, -2.57749662, -2.57525192, -2.5729613 , -2.57089434,
+    -2.56853542, -2.56611432, -2.56363137, -2.56106065, -2.55839924, -2.55581044,
+    -2.55295952, -2.5499831 , -2.5468665 , -2.54359394, -2.54045238, -2.53685751,
+    -2.53305847, -2.52903697, -2.52477475, -2.5202541 , -2.5154584 , -2.51037271,
+    -2.50498444, -2.49957472, -2.49358518, -2.48727727, -2.50652787, -2.50182404,
+    -2.49688929, -2.4916512 , -2.48704376, -2.48131374, -2.47530115, -2.46900978,
+    -2.46227256, -2.45457069, -2.44587192, -2.43683407, -2.4279416 , -2.41861232,
+    -2.4088512 , -2.39869916, -2.38823149, -2.37756327, -2.36684647, -2.356258,
+    -2.34598238, -2.33619325, -2.32703954, -2.31863564, -2.31105856, -2.30435147,
+    -2.29852705, -2.29357469, -2.28946706, -2.28616685, -2.28362848, -2.28183508,
+    -2.28065493, -2.28012685, -2.28018964, -2.28079596, -2.28192021, -2.28353073,
+    -2.28560207, -2.28815593, -2.29141688, -2.29517505, -2.2993112 , -2.30373525,
+    -2.30850268, -2.31360901, -2.31904672, -2.32480665, -2.33088227, -2.33727774,
+    -2.34398137, -2.35099821, -2.35834983, -2.3660201 , -2.37402266, -2.38238033,
+    -2.39109627, -2.40018981, -2.40967808, -2.4195798 , -2.42991527, -2.44070295,
+    -2.45196133, -2.46370772, -2.47595515, -2.48871404, -2.50198767, -2.51577489,
+    -2.53006444, -2.54483747, -2.56007119, -2.57574201, -2.59181393, -2.60824627,
+    -2.62498894, -2.6420264 , -2.65939661, -2.67719703, -2.69552368, -2.7144625,
+    -2.7340816 , -2.75444141, -2.77559822, -2.79760606, -2.82051882, -2.84439044,
+    -2.86927444, -2.89522802, -2.92230641, -2.95056818, -2.98007363, -3.0108852,
+    -3.04306818, -3.07669046, -3.11182348, -3.14854185, -3.18692377, -3.22705108,
+    -3.2690096 , -3.31288966, -3.3587862 , -3.40679894, -3.45703294, -3.50959924,
+    -3.56461313, -3.6221968 , -3.68247863, -3.7455936 , -3.81168349, -3.88089752,
+    -3.95339231, -4.029332  , -4.10888702, -4.19223682, -4.27956845, -4.37107723,
+    -4.46696723, -4.56745129, -4.67275142, -4.7830977 , -4.89873117, -5.0199034,
+    -5.14687719};
+double L_HX  = -2.322773;
 double log_nu_obs = log10(nu);
 double nuLnu_obs = 0.;
 
 if (log_nu_obs < log_nu[0])   nuLnu_obs = log_nuLnu[0];
-if (log_nu_obs > log_nu[273]) nuLnu_obs = -2.0 - pow(10.0,log_nu_obs-20.1204)*(0.43429448);
-if ((log_nu_obs>=log_nu[0])&&(log_nu_obs<=log_nu[273])) {
+if (log_nu_obs > log_nu[234]) nuLnu_obs = log_nuLnu[234];
+if ((log_nu_obs>=log_nu[0])&&(log_nu_obs<=log_nu[234])) {
 	int n0 = (int )((log_nu_obs-log_nu[0])/0.02);
 	nuLnu_obs = log_nuLnu[n0] + (log_nuLnu[n0+1]-log_nuLnu[n0]) * 
 									((log_nu_obs-log_nu[n0])/(log_nu[n0+1]-log_nu[n0]));
@@ -369,7 +425,7 @@ return pow(10.0,nuLnu_obs-L_HX);
 // //		 the Richards et al. 2006 mean blue SED 
 double return_ratio_to_b_band(double nu)
 {
-double log_nu[226]={
+double log_nu[160]={
 12.50, 12.52, 12.54, 12.56, 12.58, 12.60, 12.62, 12.64, 12.66, 12.68, 12.70, 12.72, 12.74,
 12.76, 12.78, 12.80, 12.82, 12.84, 12.86, 12.88, 12.90, 12.92, 12.94, 12.96, 12.98, 13.00,
 13.02, 13.04, 13.06, 13.08, 13.10, 13.12, 13.14, 13.16, 13.18, 13.20, 13.22, 13.24, 13.26,
@@ -382,44 +438,47 @@ double log_nu[226]={
 14.84, 14.86, 14.88, 14.90, 14.92, 14.94, 14.96, 14.98, 15.00, 15.02, 15.04, 15.06, 15.08,
 15.10, 15.12, 15.14, 15.16, 15.18, 15.20, 15.22, 15.24, 15.26, 15.28, 15.30, 15.32, 15.34,
 15.36, 15.38, 15.40, 15.42, 15.44, 15.46, 15.48, 15.50, 15.52, 15.54, 15.56, 15.58, 15.60,
-15.62, 15.64, 15.66, 15.68, 15.70, 15.72, 15.74, 15.76, 15.78, 15.80, 15.82, 15.84, 15.86,
-15.88, 15.90, 15.92, 15.94, 15.96, 15.98, 16.00, 16.02, 16.04, 16.06, 16.08, 16.10, 16.12,
-16.14, 16.16, 16.18, 16.20, 16.22, 16.24, 16.26, 16.28, 16.30, 16.32, 16.34, 16.36, 16.38,
-16.40, 16.42, 16.44, 16.46, 16.48, 16.50, 16.52, 16.54, 16.56, 16.58, 16.60, 16.62, 16.64,
-16.66, 16.68, 16.70, 16.72, 16.74, 16.76, 16.78, 16.80, 16.82, 16.84, 16.86, 16.88, 16.90,
-16.92, 16.94, 16.96, 16.98, 17.00
-};
-double log_nuLnu[226]={
-44.39, 44.44, 44.50, 44.55, 44.60, 44.65, 44.70, 44.74, 44.78, 44.82, 44.86, 44.89, 44.92,
-44.95, 44.97, 45.00, 45.02, 45.04, 45.06, 45.08, 45.10, 45.12, 45.14, 45.16, 45.17, 45.19,
-45.20, 45.22, 45.23, 45.24, 45.25, 45.26, 45.27, 45.28, 45.29, 45.30, 45.31, 45.31, 45.32,
-45.33, 45.34, 45.34, 45.35, 45.35, 45.36, 45.36, 45.37, 45.38, 45.38, 45.38, 45.39, 45.39,
-45.39, 45.40, 45.40, 45.40, 45.40, 45.41, 45.41, 45.41, 45.41, 45.41, 45.41, 45.41, 45.41,
-45.41, 45.40, 45.40, 45.40, 45.40, 45.40, 45.40, 45.39, 45.39, 45.38, 45.38, 45.37, 45.36,
-45.35, 45.34, 45.33, 45.31, 45.30, 45.28, 45.26, 45.24, 45.22, 45.19, 45.17, 45.15, 45.13,
-45.12, 45.11, 45.11, 45.11, 45.11, 45.12, 45.12, 45.13, 45.14, 45.15, 45.16, 45.18, 45.19,
-45.20, 45.22, 45.23, 45.25, 45.26, 45.27, 45.28, 45.30, 45.32, 45.34, 45.36, 45.38, 45.40,
-45.42, 45.44, 45.47, 45.49, 45.52, 45.55, 45.58, 45.60, 45.62, 45.64, 45.65, 45.65, 45.66,
-45.66, 45.67, 45.68, 45.69, 45.71, 45.72, 45.74, 45.75, 45.77, 45.78, 45.79, 45.80, 45.80,
-45.80, 45.80, 45.79, 45.77, 45.74, 45.71, 45.68, 45.64, 45.60, 45.57, 45.55, 45.52, 45.51,
-45.49, 45.47, 45.46, 45.44, 45.42, 45.40, 45.38, 45.36, 45.34, 45.32, 45.29, 45.27, 45.25,
-45.22, 45.20, 45.18, 45.15, 45.13, 45.11, 45.08, 45.06, 45.04, 45.02, 44.99, 44.97, 44.95,
-44.92, 44.90, 44.88, 44.86, 44.83, 44.81, 44.79, 44.77, 44.74, 44.72, 44.70, 44.67, 44.65,
-44.63, 44.61, 44.58, 44.56, 44.54, 44.52, 44.50, 44.47, 44.45, 44.43, 44.41, 44.40, 44.38,
-44.36, 44.35, 44.33, 44.32, 44.30, 44.29, 44.28, 44.27, 44.27, 44.26, 44.26, 44.26, 44.26,
-44.26, 44.25, 44.25, 44.25, 44.25
+15.62, 15.64, 15.66, 15.68};
+    
+double log_nuLnu[160]={
+    43.77927983, 43.82927983, 43.88927983, 43.93927983, 43.98927983, 44.03927983,
+    44.08927983, 44.12927983, 44.16927983, 44.20927983, 44.24927983, 44.27927983,
+    44.30927983, 44.33927983, 44.35927983, 44.38927983, 44.40927983, 44.42927983,
+    44.44927983, 44.46927983, 44.48927983, 44.50927983, 44.52927983, 44.54927983,
+    44.55927983, 44.57927983, 44.59927983, 44.60927983, 44.61927983, 44.62927983,
+    44.64927983, 44.65927983, 44.66927983, 44.67927983, 44.67927983, 44.68927983,
+    44.69927983, 44.70927983, 44.71927983, 44.71927983, 44.72827983, 44.73727983,
+    44.73727983, 44.74527983, 44.74527983, 44.75227983, 44.75227983, 44.75827983,
+    44.75727983, 44.76227983, 44.76127983, 44.76527983, 44.76327983, 44.76127983,
+    44.75927983, 44.76027983, 44.75727983, 44.75527983, 44.75427983, 44.75227983,
+    44.75127983, 44.75027983, 44.74927983, 44.74927983, 44.75027983, 44.75127983,
+    44.75327983, 44.75627983, 44.75827983, 44.76127983, 44.76427983, 44.76727983,
+    44.76927983, 44.77127983, 44.77327983, 44.77327983, 44.77227983, 44.77027983,
+    44.76627983, 44.76127983, 44.75527983, 44.74727983, 44.73827983, 44.72627983,
+    44.71427983, 44.70027983, 44.68627983, 44.67127983, 44.65727983, 44.64427983,
+    44.63227983, 44.62327983, 44.61527983, 44.61027983, 44.60727983, 44.60627983,
+    44.60727983, 44.61027983, 44.61427983, 44.61927983, 44.62627983, 44.63327983,
+    44.64227983, 44.65127983, 44.66227983, 44.67427983, 44.68727983, 44.70027983,
+    44.71127983, 44.71927983, 44.72527983, 44.73027983, 44.73727983, 44.74727983,
+    44.75927983, 44.77227983, 44.78627983, 44.79927983, 44.81227983, 44.82827983,
+    44.84727983, 44.86827983, 44.89127983, 44.91427983, 44.93627983, 44.95727983,
+    44.97427983, 44.98727983, 44.99527983, 45.00027983, 45.00227983, 45.00427983,
+    45.00927983, 45.01627983, 45.02627983, 45.03827983, 45.05027983, 45.06227983,
+    45.07327983, 45.08327983, 45.09227983, 45.10027983, 45.10627983, 45.10927983,
+    45.11927983, 45.12327983, 45.12527983, 45.12627983, 45.12927983, 45.13727983,
+    45.14727983, 45.13327983, 45.11927983, 45.10527983, 45.09127983, 45.07727983,
+    45.06327983, 45.04927983, 45.03527983, 45.02127983
 };
 
 // want the ratio with respect to the intrinsic B-band:
 double nu_BB = 14.833657;
-double L_BB  = 45.413656;
+double L_BB  = 44.793331;
 double log_nu_obs = log10(nu);
 double nuLnu_obs = 0.;
 //
-if (log_nu_obs < log_nu[0])   nuLnu_obs = log_nuLnu[0] + 2.0*(log_nu_obs - log_nu[0]);
-if (log_nu_obs > log_nu[224]) nuLnu_obs = log_nuLnu[224];
-// assumes Gamma=2.0; the calling code will actually use X-ray template for this case
-if ((log_nu_obs>=log_nu[0])&&(log_nu_obs<=log_nu[224])) {
+if (log_nu_obs < log_nu[0])   nuLnu_obs = log_nuLnu[0];
+if (log_nu_obs > log_nu[159]) nuLnu_obs = log_nuLnu[159];
+if ((log_nu_obs>=log_nu[0])&&(log_nu_obs<=log_nu[159])) {
 	int n0 = (int )((log_nu_obs-log_nu[0])/0.02);
 	nuLnu_obs = log_nuLnu[n0] + (log_nuLnu[n0+1]-log_nuLnu[n0]) * ((log_nu_obs-log_nu[n0])/(log_nu[n0+1]-log_nu[n0]));
 }
@@ -434,14 +493,15 @@ return pow(10.0,nuLnu_obs-L_BB);
 // //          frequency). 
 // //	 otherwise nu is the observed frequency 
 // //
-double return_tau(double log_NH, double nu)
+double return_tau(double log_NH, double nu, double dtg)
 {
 	double c_light = 2.998e8;
 	double tau_f;
 	if (nu <= 0.) {
 		if (nu== 0.) return 0.;	// no bolometric attenuation
-		if (nu==-1.) return pow(10.,log_NH)*cross_section(c_light/(4400.0e-10)); // call at nu_B
-		if (nu==-2.) return pow(10.,log_NH)*cross_section(c_light/(15.0e-6));	 // call at 15microns
+		if (nu==-1.) return pow(10.,log_NH)*cross_section(c_light/(4400.0e-10), dtg); // call at nu_B
+		if (nu==-5.) return pow(10.,log_NH)*cross_section(c_light/(1450.0e-10), dtg); // call at UV
+		if (nu==-2.) return pow(10.,log_NH)*cross_section(c_light/(15.0e-6)   , dtg);	 // call at 15microns
 
 if (nu==-3.) {
 double NH[101] = {
@@ -523,11 +583,11 @@ if (tau_f >= 0.) tau_f=0.;
 return -tau_f * log(10.);
 }
 }
-return pow(10.,log_NH) * cross_section(nu);
+return pow(10.,log_NH) * cross_section(nu, dtg);
 }
 
 // returns the cross section for absorption for a given nu in Hz
-double cross_section(double nu)
+double cross_section(double nu, double dtg)
 {
 	double sigma = 0.;
 	double metallicity_over_solar = 1.;
@@ -535,7 +595,7 @@ double cross_section(double nu)
 	double c_light = 2.998e8;
 	double micron  = 1.0e-6;
 	
-	double k_dust_to_gas = 0.78 * metallicity_over_solar;
+	double k_dust_to_gas = dtg * metallicity_over_solar; //H07: dtg = 0.78
 	double lambda_microns = c_light / nu / micron;
 	if (nu < 0.03*keV_in_Hz) 
 		sigma += pei_dust_extinction(lambda_microns) * k_dust_to_gas * 1.0e-21;
@@ -680,6 +740,3 @@ double morrison_photoeletric_absorption(double x)	// x is nu in keV
 	}
 	return (1.0e-24)*(c0+c1*x+c2*x*x)/(x*x*x); //cm^2
 }
-
-
-

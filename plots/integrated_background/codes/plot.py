@@ -19,32 +19,33 @@ fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
 
 #load the shared object file
-c_extenstion = CDLL(homepath+'codes/c_lib/convolve_new.so')
+c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
-def get_model_lf(parameters,nu,redshift):
+def get_model_lf(parameters,nu,redshift,dtg):
         L_band = bolometric_correction(L_bol_grid,nu)
         nu_c = c_double(nu)
 	redshift_c = c_double(redshift)
+	dtg = c_double(dtg)
         input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         res = convolve_c(input_c,nu_c,redshift_c)
         res = [i for i in res.contents]
         PHI_band = np.array(res,dtype=np.float64)
 	return L_band, np.log10(PHI_band)
 
-def get_model_lf_global(nu,redshift):
+def get_model_lf_global(nu,redshift,dtg):
 	parameters=pglobal
 	p=parameters[paraid==0]
 	gamma1 = polynomial(redshift,p,2)
 	p=parameters[paraid==1]
 	gamma2 = doublepower(redshift,p)
 	p=parameters[paraid==2]
-	logphi = polynomial(redshift,p,1)
+	logphi = polynomial(redshift,p,1) + 0.1
 	p=parameters[paraid==3]	
-	Lbreak = doublepower(redshift,p) + 0.5
+	Lbreak = doublepower(redshift,p)
 	parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
-	return get_model_lf(parameters_at_z,nu,redshift)
+	return get_model_lf(parameters_at_z,nu,redshift,dtg)
 
 def cumulative_emissivity(L_nu,Phi_nu,L_limit_low,L_limit_up,nu):
 	logphi=inter.interp1d(L_nu, Phi_nu)
@@ -54,8 +55,9 @@ def cumulative_emissivity(L_nu,Phi_nu,L_limit_low,L_limit_up,nu):
 	return quad(emis, L_limit_low, L_limit_up)[0]*np.power(10.,L_solar)
 
 def to_be_integrate(z, nuobs):
+	dtg = 0.4
 	nuem = nuobs*(1+z)
-        L_nu, PHI_nu = get_model_lf_global(nuem, z)
+        L_nu, PHI_nu = get_model_lf_global(nuem, z, dtg)
         emissivity = cumulative_emissivity(L_nu, PHI_nu, L_nu[0], L_nu[-1], nuem) 
 	return emissivity/4./np.pi/(cosmo.luminosity_distance(z).value*1e6*con.pc.value*1e2)**2  * cosmo.differential_comoving_volume(z).value
 

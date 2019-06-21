@@ -19,7 +19,7 @@ parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0", "dtg
 parameters_bound=(np.array([-np.inf,-np.inf,-np.inf,-np.inf,0]),np.array([0,0,np.inf,np.inf,np.inf]))
 
 #load the shared object file
-c_extenstion = CDLL(homepath+'codes/c_lib/convolve_new.so')
+c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
@@ -126,13 +126,13 @@ if (redshift>0.2):# and (redshift<=2.8):
                         ('gamma2' , parameters_init[1], True, None, None, None, None),
                         ('logphis', parameters_init[2], True, None, None, None, None),
                         ('Lbreak' , parameters_init[3], True, None, None, None, None),
-			('dtg'    , parameters_init[4], True, None, None, None, None))
+			('dtg'    , parameters_init[4], True, 0   , None, None, None))
 else:
 	params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                         ('gamma2' , parameters_init[1], True, None, None, None, None),
                         ('logphis', parameters_init[2], True, None, None, None, None),
                         ('Lbreak' , parameters_init[3], True, None, None, None, None),
-                        ('dtg'    , 0.78	      ,False, None, None, None, None))
+                        ('dtg'    , 0.78	      ,False, 0   , None, None, None))
 '''
 elif (redshift<5.8):
 	logphis_fixed=-4.0296096-0.27116524*(1+redshift)
