@@ -16,9 +16,6 @@ import ctypes
 import resource
 import time
 
-#parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
-#parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"  , "k1"      , "k2"        , "k3"        , "k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
-#parameters_init = np.array([0.05,0.20,-0.004,  2.4,1.0,-1.7,0.8,  -3.85,-0.6,   12.0,0.5,-0.6,0.16])
 parameters_init = np.array([0.780732305  ,-0.219809805 ,0.01901827   ,2.13867979   ,0.61875941   ,-2.1876942   ,0.72638008   ,-3.716400325 ,-0.44067309  ,12.629287985 ,  1.00815347  ,  -0.677230985,  0.34795411])
 
 parameters_info = np.array(["gamma1", "gamma2", "logphis"  , "logLs"])
@@ -37,11 +34,10 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 		redshift = z_lis[iz]
 		L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
 		
-		if dset_id==-1.1: L_tmp=bolometric_correction(L_bol_grid,-1)
-        	elif dset_id==-1:
-                	L_tmp=bolometric_correction(L_bol_grid,dset_id)
-                	L_tmp = (M_sun_Bband_AB -2.5*L_tmp) + 0.706
-                	L_tmp = np.sort(L_tmp)
+        	if dset_id==-5:
+                	L_1450 = bolometric_correction(L_bol_grid,dset_id) + L_solar
+                	M_1450 = -2.5*( L_1450 - np.log10(Fab*con.c.value/1450e-10) )
+                	L_tmp  = np.sort(M_1450)
         	else: L_tmp=bolometric_correction(L_bol_grid,dset_id)
         
 		if return_LF[dset_name]!=None:
@@ -50,18 +46,17 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
                 	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
 
 		if (len(L_data) > 0):
-			if dset_id==-1.1: 
-				L_model = bolometric_correction(L_bol_grid,-1)
-				nu_c = c_double(-1)
-			else:
-				L_model = bolometric_correction(L_bol_grid,dset_id)
-				nu_c = c_double(dset_id)
+			L_model = bolometric_correction(L_bol_grid,dset_id)
+			nu_c = c_double(dset_id)
+
 			bolLF_model = LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")
 			if len(bolLF_model[np.invert(np.isfinite(bolLF_model))])!=0:
                                 alldata_tem = None
                                 return False
 			input_c= np.power(10., bolLF_model).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-			res = convolve_c(input_c,nu_c)
+			redshift_c = c_double(redshift)
+			dtg_c = c_double(return_dtg(redshift))
+			res = convolve_c(input_c,nu_c,redshift_c,dtg_c)
 			res = [i for i in res.contents]
 			PHI_model = np.array(res,dtype=np.float64)
 			#L_model, PHI_model = convolve(np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")), dset_id) 
@@ -69,10 +64,10 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 				alldata_tem = None
 				return False
 			
-			if dset_id==-1:
-				L_Bband = (M_sun_Bband_AB-(L_data - 0.706))/2.5
-				phi_i = np.interp(L_Bband, L_model, np.log10(PHI_model))
-				phi_i = phi_i - np.log10(2.5)
+			if dset_id==-5:
+				L_1450 = (-0.4*L_data) + np.log10(Fab*(con.c.value/1450e-10)) - L_solar
+                                phi_i = np.interp(L_1450, L_model, np.log10(PHI_model))
+                                phi_i = phi_i - np.log10(2.5)
 			else:
 				phi_i = np.interp(L_data, L_model, np.log10(PHI_model))
 

@@ -13,8 +13,8 @@ from ctypes import *
 import ctypes
 import sys
 redshift=float(sys.argv[1])
-
-FIX=True
+FIX = int(sys.argv[2])
+FIX = bool(FIX)
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.4])
 parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0", "dtg"])
@@ -136,24 +136,22 @@ if FIX==False:
                         	('Lbreak' , parameters_init[3], True, None, None, None, None),
                         	('dtg'    , 0.78	      ,False, 0   , None, None, None))
 else:
-	if (redshift<=2.8):
-		dtg_fixed = return_dtg(redshift)
+	dtg_fixed = return_dtg(redshift)
+	if (redshift>=0.4) and (redshift<=2.8):
                 params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                                 ('gamma2' , parameters_init[1], True, None, None, None, None),
                                 ('logphis', parameters_init[2], True, None, None, None, None),
                                 ('Lbreak' , parameters_init[3], True, None, None, None, None),
                                 ('dtg'    , dtg_fixed	      ,False, 0   , None, None, None))
 	elif (redshift<5.8):
-		logphis_fixed=-4.0296096-0.27116524*(1+redshift)
-		dtg_fixed = return_dtg(redshift)
+		logphis_fixed=-3.90168138-0.23981768*(1+redshift)
 		params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                 	        ('gamma2' , parameters_init[1], True, None, None, None, None),
                 	        ('logphis', logphis_fixed     ,False, None, None, None, None),
                 	        ('Lbreak' , parameters_init[3], True, None, None, None, None),
 				('dtg'    , dtg_fixed         ,False, 0   , None, None, None))
 	else:
-		logphis_fixed=-4.0296096-0.27116524*(1+redshift)
-		dtg_fixed = return_dtg(redshift)
+		logphis_fixed=-3.90168138-0.23981768*(1+redshift)
 		params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                 	        ('gamma2' , parameters_init[1], True, None, None, "gamma1", None),
                 	        ('logphis', logphis_fixed     ,False, None, None, None, None),
