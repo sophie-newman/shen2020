@@ -41,7 +41,7 @@ def get_model_lf_global(nu,redshift,dtg):
 	p=parameters[paraid==1]
 	gamma2 = doublepower(redshift,p)
 	p=parameters[paraid==2]
-	logphi = polynomial(redshift,p,1) + 0.25
+	logphi = polynomial(redshift,p,1)
 	p=parameters[paraid==3]	
 	Lbreak = doublepower(redshift,p)
 	parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])

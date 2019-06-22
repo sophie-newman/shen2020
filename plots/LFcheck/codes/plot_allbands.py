@@ -19,11 +19,11 @@ print dtg
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
-fit_res=np.genfromtxt("../../fitresult/fit_at_z_nofix.dat",names=True)
+fit_res=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_nofix.dat",names=True)
 id=fit_res["z"]==redshift
 parameters_free_local=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
 
-fit_res=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
+fit_res=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 id=fit_res["z"]==redshift
 parameters_fix_local=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
 
@@ -147,12 +147,12 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 x = L_bol_grid + L_solar 
-#y = LF(L_bol_grid,parameters_free_local)
-#ax.plot(x,y,'--',dashes=(25,15),c='navy',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\rm free$)')
+y = LF(L_bol_grid,parameters_free_local)
+ax.plot(x,y,'--',dashes=(25,15),c='navy',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\rm free$)')
 y = LF(L_bol_grid,parameters_fix_local)
 ax.plot(x,y,'--',dashes=(25,15),c='chocolate',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\phi_{\ast}$ $\rm fixed$)')
-#y = LF(L_bol_grid,parameters_global_1)
-#ax.plot(x,y,':',c='tan',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
+y = LF(L_bol_grid,parameters_global_1)
+ax.plot(x,y,':',c='tan',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
 y = LF(L_bol_grid,parameters_global_2)
 ax.plot(x,y,'--',dashes=(25,15),c='darkorchid',label=r'$\rm Global$ $\rm fit$')
 

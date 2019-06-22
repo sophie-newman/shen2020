@@ -9,4 +9,5 @@
 #SBATCH --mem-per-cpu=4000
 #SBATCH -t 1-00:00           # Runtime in D-HH:MM
 
-mpirun -n 96 python lf_fitter.py > main_log.txt
+cd ..
+mpirun -n 96 python lf_fitter.py > gfit.log

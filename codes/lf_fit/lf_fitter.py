@@ -102,7 +102,7 @@ def residual(pars):
 	if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
 	chitot = np.sum( ((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
-	#print chitot, len(alldata["L_OBS"])
+	print chitot, len(alldata["L_OBS"])
 	residuals, sigmas = alldata["WEIGHT"]*(alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"],alldata["D_OBS"]
 	alldata=None	
 
@@ -150,9 +150,9 @@ start_time = time.time()
 ndim, nwalkers = 13, 100
 pos = np.array([np.random.randn(ndim) for i in range(nwalkers)])
 for i in range(pos.shape[0]):
-	pos[i,:] = pos[i,:] * 0.2 * parameters_init + parameters_init + pos[i,:] * 0.1
+	pos[i,:] = pos[i,:] * 0.5 * parameters_init + parameters_init + pos[i,:] * 0.5
 
-f = open("output/chain2.dat", "w")
+f = open("output/chain.dat", "w")
 f.close()
 with MPIPool() as pool:
 	if not pool.is_master():
@@ -173,7 +173,7 @@ with MPIPool() as pool:
 			print "memory: ", mem		
 
 		position = result[0]
-		f = open("output/chain2.dat", "a")
+		f = open("output/chain.dat", "a")
 		for k in range(position.shape[0]):
 			f.write("{0:3d} {1:7d} {2:s}\n".format(k, i, np.array2string(position[k]).strip('[').strip(']').replace('\n',' ') ))
 		f.close()
