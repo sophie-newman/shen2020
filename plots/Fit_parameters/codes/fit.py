@@ -6,7 +6,7 @@ T1 = np.polynomial.chebyshev.Chebyshev((0,1,0,0))
 T2 = np.polynomial.chebyshev.Chebyshev((0,0,1,0))
 T3 = np.polynomial.chebyshev.Chebyshev((0,0,0,1))
 
-data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
+data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 
 def func1(z,*p):
 	xsi=1.+z
@@ -31,7 +31,7 @@ id= (data["z"]!=100)
 fit2, cov2=cfit(doublepower,data["z"][id],data["gamma2"][id],sigma=data["err2"][id],p0=np.array([2.5,1.1,-1.5,0.8]))
 id= (data["z"]>=0.4) & (data['z']<=2.8)
 fit3, cov3=cfit(func1,data["z"][id],data["phi_s"][id],sigma=data["err3"][id],p0=np.array([-3.5,-0.45,0.,0.]))
-fit3 = [-3.90168138 -0.23981768  0.          0.        ]
+fit3 = [-3.90168138, -0.23981768,  0.,          0.        ]
 
 id= (data["z"]!=100)
 fit4, cov4=cfit(doublepower,data["z"][id],data["L_s"][id],sigma=data["err4"][id],p0=np.array([9.59,-0.0516,-1.30,0.19]))
