@@ -191,7 +191,12 @@ ax.errorbar(data["z"]+1,data["dtg"]/0.78,yerr=data['err5']/0.78,linestyle='',mar
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 ax.plot(data["z"]+1,data["dtg"]/0.78,linestyle='',marker='o',c='royalblue',mec='royalblue',ms=18)
 
-ax.plot(z_a+1, (1+z_a)**(-1.4) ,'-', c='cyan', alpha=0.5)
+def MZR_Ma2016(z):
+	logM = 11
+	logZ = 0.35*(logM-10) + 0.93*np.exp(-0.43*z)  - 1.05
+	return 10**logZ
+
+ax.plot(z_a+1, MZR_Ma2016(z_a)/MZR_Ma2016(0) ,'-', c='cyan', alpha=0.5)
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
