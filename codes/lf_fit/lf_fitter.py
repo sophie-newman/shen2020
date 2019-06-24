@@ -103,18 +103,20 @@ def residual(pars):
 	if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
 	chitot = np.sum( ((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
-	print chitot, len(alldata["L_OBS"])
+	#print chitot, len(alldata["L_OBS"])
 	residuals, sigmas = alldata["WEIGHT"]*(alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"],alldata["D_OBS"]
 	alldata=None	
 
 	return residuals, sigmas, True
 
 '''
-ptrial = np.array([0.83691542, -0.25284731, 0.02012548,  2.00024558,  0.55533203, -2.68877347,
- 0.60159866, -3.77676405, -0.40248141, 12.9239114,   1.45773985, -0.63119067, 0.40561221])
-sigmas,_ = residual(ptrial)
+ptrial = np.array([0.87107343, -0.2864248, 0.02397246, 1.84911667, 0.3119274, -2.84387238,
+ 0.40649539, -3.64630159, -0.35917434, 11.84799586, 0.52389883, -0.7580811, 0.29921619])
+#ptrial = np.array([0.83691542, -0.25284731, 0.02012548,  2.00024558,  0.55533203, -2.68877347,
+# 0.60159866, -3.77676405, -0.40248141, 12.9239114,   1.45773985, -0.63119067, 0.40561221])
+sigmas,_,_ = residual(ptrial)
 print np.sum(sigmas**2)
-sigmas,_ = residual(parameters_init)
+sigmas,_,_ = residual(parameters_init)
 print np.sum(sigmas**2)
 exit()
 '''
@@ -161,7 +163,7 @@ with MPIPool() as pool:
         	sys.exit(0)
 
 	sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, pool=pool)
-	nsteps = 5000
+	nsteps = 4000
 	#sampler.run_mcmc(pos, nsteps)
 	print "begin sampling"
 	mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
@@ -178,4 +180,10 @@ with MPIPool() as pool:
 		for k in range(position.shape[0]):
 			f.write("{0:3d} {1:7d} {2:s}\n".format(k, i, np.array2string(position[k]).strip('[').strip(']').replace('\n',' ') ))
 		f.close()
+
+	# save final position for future use
+	f = open("output/final_pos.dat", "w")
+	for k in range(position.shape[0]):
+                        f.write("{0:3d} {1:7d} {2:s}\n".format(k, i, np.array2string(position[k]).strip('[').strip(']').replace('\n',' ') ))
+	f.close()
 

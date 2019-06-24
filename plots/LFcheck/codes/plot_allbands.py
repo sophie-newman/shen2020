@@ -36,7 +36,7 @@ gamma1 = polynomial(redshift,p,2)
 p=source['value'][ source['paraid']==1 ]
 gamma2 = doublepower(redshift,p)
 p=source['value'][ source['paraid']==2 ]
-logphi = polynomial(redshift,p,1)
+logphi = polynomial(redshift,p,1) 
 p=source['value'][ source['paraid']==3 ]
 Lbreak = doublepower(redshift,p)
 parameters_global_2 = np.array([gamma1,gamma2,logphi,Lbreak])

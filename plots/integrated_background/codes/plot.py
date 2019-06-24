@@ -27,9 +27,9 @@ def get_model_lf(parameters,nu,redshift,dtg):
         L_band = bolometric_correction(L_bol_grid,nu)
         nu_c = c_double(nu)
 	redshift_c = c_double(redshift)
-	dtg = c_double(dtg)
+	dtg_c = c_double(dtg)
         input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-        res = convolve_c(input_c,nu_c,redshift_c)
+        res = convolve_c(input_c,nu_c,redshift_c, dtg_c)
         res = [i for i in res.contents]
         PHI_band = np.array(res,dtype=np.float64)
 	return L_band, np.log10(PHI_band)
@@ -55,7 +55,7 @@ def cumulative_emissivity(L_nu,Phi_nu,L_limit_low,L_limit_up,nu):
 	return quad(emis, L_limit_low, L_limit_up)[0]*np.power(10.,L_solar)
 
 def to_be_integrate(z, nuobs):
-	dtg = 0.4
+	dtg = 0.8
 	nuem = nuobs*(1+z)
         L_nu, PHI_nu = get_model_lf_global(nuem, z, dtg)
         emissivity = cumulative_emissivity(L_nu, PHI_nu, L_nu[0], L_nu[-1], nuem) 
@@ -75,7 +75,7 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
-E_list = np.logspace(-0.5,3,100)
+E_list = np.logspace(-0.5,3,30)
 nu_list = E_list*1000.*con.e.value/con.h.value
 
 zbins = np.linspace(0,7,50)
@@ -90,7 +90,7 @@ for i in range(len(E_list)):
 	for j in range(len(zcenters)):
 		Intensity[i] += to_be_integrate(zcenters[j],nu_list[i])*deltaz
 
-	#Intensity[i]=quad( to_be_integrate, 0, 7, args=(nu_list[i]) )[0]/(con.pc.value*1e6*1e2)**2
+	#Intensity[i]=quad( to_be_integrate, 0, 7, args=(nu_list[i]) )[0]
 	print i
 
 #data=np.genfromtxt("ajello2008.dat",names=True)

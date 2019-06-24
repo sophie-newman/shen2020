@@ -940,3 +940,4 @@ Traceback (most recent call last):
   File "/home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/numpy/lib/npyio.py", line 2116, in genfromtxt
     rows = np.array(data, dtype=[('', _) for _ in dtype_flat])
 MemoryError
+slurmstepd: error: *** JOB 181431 ON wheeler070 CANCELLED AT 2019-06-22T16:26:33 DUE TO TIME LIMIT ***
