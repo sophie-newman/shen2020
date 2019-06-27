@@ -5,8 +5,8 @@ import sys
 from astropy.cosmology import FlatLambdaCDM
 import astropy.constants as con
 
-homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
-#homepath="/home/xuejian/works/quasarLF/git/"
+#homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
+homepath="/home/xuejian/works/quasarLF/git/"
 sys.path.append(homepath+"codes/bolometric_correction/")
 sys.path.append(homepath+"codes/convolution/")
 sys.path.append(homepath+"codes/lf_fit/")
@@ -100,10 +100,19 @@ def phi_correct_cosmo_flexible(redshift,h_old,Om0_old):
     volume_corr_factor = vol_old/vol_new
     return volume_corr_factor
 
+# return the dust-to-gas ratio
 def return_dtg(z):
+	'''
 	if z<=0.2: return 0.78
 	elif z<=1.0: return 0.4
 	elif z<=1.6: return 0.2
-	elif z<=3.0: return 0.1
-	elif z<=4.0: return 0.1
 	else: return 0.1
+	'''
+	dtg_mw=0.78
+	def MZR_Ma2016(z):
+		logM = 11
+		logZ = 0.35*(logM-10) + 0.93*np.exp(-0.43*z)  - 1.05
+		return 10**logZ
+
+	return MZR_Ma2016(z)/MZR_Ma2016(0) * dtg_mw
+

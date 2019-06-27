@@ -15,10 +15,8 @@ import sys
 redshift=float(sys.argv[1])
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
-#parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"  , "k1"      , "k2"        , "k3"        , "k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
-#parameters_bound= (np.array([0,0,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf,-np.inf]),np.array([np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,np.inf]))
 
-fit_res=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
+fit_res=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 id=fit_res["z"]==redshift
 parameters=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
 
@@ -86,23 +84,15 @@ ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 L_HX = bolometric_correction(L_bol_grid,-4)
 nu_c = c_double(-4)
+redshift_c = c_double(redshift)
+dtg_c = c_double(return_dtg(redshift))
 input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-res = convolve_c(input_c,nu_c)
+res = convolve_c(input_c,nu_c,redshift_c,dtg_c)
 res = [i for i in res.contents]
 PHI_HX = np.array(res,dtype=np.float64)
 x = L_HX + L_solar
 y = np.log10(PHI_HX)
 ax.plot(x,y,'--',dashes=(25,15),c='black',label=r'$\rm new$ $\rm fit$')
-
-L_HX = bolometric_correction(L_bol_grid,-4)
-nu_c = c_double(-4)
-input_c= np.power(10.,LF_at_z_H07(L_bol_grid,parameters_init,redshift,"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-res = convolve_c(input_c,nu_c)
-res = [i for i in res.contents]
-PHI_HX = np.array(res,dtype=np.float64)
-x = L_HX + L_solar
-y = np.log10(PHI_HX)
-ax.plot(x,y,'--',dashes=(25,15),c='gray',label=r'$\rm old$ $\rm fit$')
 
 x,y,dy,yfit=get_data(newdata=True)
 x = x + L_solar

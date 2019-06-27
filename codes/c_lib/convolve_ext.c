@@ -68,105 +68,78 @@ double* convolve(double* phi_bol_grid, double nu, double redshift, double dtg) {
   	//;;   need to define a "lower limit" NH --> Ueda et al. use 20, our optical 
   	//;;   calculations seem to suggest that's about right, so fine
  	*/
-    double NH_MIN  = 20.0;
-    double NH_MAX  = 26.0;
-    double D_NH    = 0.01;
-    int    N_NH    = (int )((NH_MAX-NH_MIN)/D_NH + 1.0);
-    int iNH;
-    double *NH;
-    NH = calloc(N_NH,sizeof(double));
-    double *tau;
-    tau = calloc(N_NH,sizeof(double));
-    for(iNH=0;iNH<N_NH;iNH++) {
-        NH[iNH] = NH_MIN + ((double )iNH)*D_NH;
-        tau[iNH] = return_tau(NH[iNH],nu,dtg);
-    }
-    // loop over the LF and attenuate everything appropriately
-    double eps, psi_43_75, beta_L, psi_0, psi_min, psi_max, a1, fCTK;     //parameters
-    double psi, f_1, f_2, f_3, f_4, f_5;       //used in characterizing the distribution
-    double L_HX, NH_0, f_NH, dN_NH;      //used in convolve the LF
-    double li,lo,p2,p1,p0;
-    int n0 = 0;
-    eps = 1.7;
-    
-    psi_min=0.2;  psi_max=0.84;
-    psi_0=0.43;  a1=0.48;
-    beta_L = 0.24;
-    fCTK = 1.0;
-    
-    if (redshift<2.0) psi_43_75 = psi_0 * pow(1.0+redshift,a1);
-    else psi_43_75 = psi_0 * pow(1.0+2.0,a1);
-    
-    double *l_obs_grid;
-    l_obs_grid = calloc(n_l_bol_pts,sizeof(double));
-    double *phi_obs_grid;
-    phi_obs_grid = calloc(n_l_bol_pts,sizeof(double));
-    for(iNH=0;iNH<N_NH;iNH++){
-        NH_0 = NH[iNH];
-        // need to interpolate to lay this over the grid already set up
-        for(i_lbol=0;i_lbol<n_l_bol_pts;i_lbol++){
-            l_obs_grid[i_lbol] = l_band_grid[i_lbol] - tau[iNH]/log(10.);
-            phi_obs_grid[i_lbol] = phi_bol_grid[i_lbol];
+        double NH_MIN  = 20.0;
+        double NH_MAX  = 25.0;
+        double D_NH    = 0.01;
+        int    N_NH    = (int )((NH_MAX-NH_MIN)/D_NH + 1.0);
+        int iNH;
+        double *NH;
+        NH = calloc(N_NH,sizeof(double));
+        double *tau;
+        tau = calloc(N_NH,sizeof(double));
+        for(iNH=0;iNH<N_NH;iNH++) {
+                NH[iNH] = NH_MIN + ((double )iNH)*D_NH;
+                tau[iNH] = return_tau(NH[iNH],nu,dtg);
         }
-        n0 = 0;
-        for(i_lbol=0;i_lbol<n_l_bol_pts;i_lbol++){
-            li = l_band_grid[i_lbol];
-            while((li >= l_obs_grid[n0+1]) && (n0+1 < n_l_bol_pts)) n0+=1;
-            if (n0+1 < n_l_bol_pts){
-                p1 = log10(phi_obs_grid[n0]);
-                p2 = log10(phi_obs_grid[n0+1]);
-                p0 = p1 + (p2-p1) * ((li - l_obs_grid[n0])/(l_obs_grid[n0+1] - l_obs_grid[n0]));
-            }
-            else
-            {
-                p1 = log10(phi_obs_grid[n_l_bol_pts-2]);
-                p2 = log10(phi_obs_grid[n_l_bol_pts-1]);
-                p0 = p1 + (p2-p1) * ((li - l_obs_grid[n_l_bol_pts-2])/(l_obs_grid[n_l_bol_pts-1] - l_obs_grid[n_l_bol_pts-2]));
-            }
-            L_HX  = log10(l_band(l_bol_grid[i_lbol],-4.0));
-            
-            psi = psi_43_75 - beta_L * (L_HX + log10(3.9) + 33.0 - 43.75);
-            
-            if (psi < psi_min) psi = psi_min;
-            if (psi > psi_max) psi = psi_max;
-            
-            if (psi < (1.+eps)/(3.+eps)){
-                f_1 = 1.0 - ((2.+eps)/(1.+eps))*psi;
-                f_2 = (1./(1.+eps))*psi;
-                f_3 = (1./(1.+eps))*psi;
-                f_4 = (eps/(1.+eps))*psi;
-                f_5 = (fCTK/2.)*psi;
-            }
-            else{
-                f_1 = 2./3. - ((3.+2.*eps)/(3.+3.*eps))*psi;
-                f_2 = 1./3. - (eps/(3.+3.*eps))*psi;
-                f_3 = (1./(1.+eps))*psi;
-                f_4 = (eps/(1.+eps))*psi;
-                f_5 = (fCTK/2.)*psi;
-            }
-            f_1 = f_1/(1.+f_5*2);
-            f_2 = f_2/(1.+f_5*2);
-            f_3 = f_3/(1.+f_5*2);
-            f_4 = f_4/(1.+f_5*2);
-            f_5 = f_5/(1.+f_5*2);
-            // the N_H distribution is normalized in 20-24, so we have to rescale here
-            
-            f_NH = 0.0;
-            if ((NH_0 <= 21.)) f_NH = f_1;
-            if ((NH_0 >  21.) && (NH_0 <= 22.)) f_NH = f_2;
-            if ((NH_0 >  22.) && (NH_0 <= 23.)) f_NH = f_3;
-            if ((NH_0 >  23.) && (NH_0 <= 24.)) f_NH = f_4;
-            if ((NH_0 >  24.)) f_NH = f_5;
-            dN_NH = f_NH * D_NH;
-            phi_grid_out[i_lbol] += pow(10.,p0) * dN_NH ;
+        double eps,psi_44,beta_L,psi,psi_max,f_low,f_med,f_hig,f_compton,L_HX,NH_0,f_NH,dN_NH;
+        double li,lo,p2,p1,p0;
+        int n0 = 0;
+        eps = 1.7;
+        psi_44 = 0.47;
+        beta_L = 0.10;
+        psi_max = (1.+eps)/(3.+eps);
+        double *l_obs_grid;
+        l_obs_grid = calloc(n_l_bol_pts,sizeof(double));
+        double *phi_obs_grid;
+        phi_obs_grid = calloc(n_l_bol_pts,sizeof(double));
+        for(iNH=0;iNH<N_NH;iNH++){
+                NH_0 = NH[iNH];
+                for(i_lbol=0;i_lbol<n_l_bol_pts;i_lbol++){
+                        l_obs_grid[i_lbol] = l_band_grid[i_lbol] - tau[iNH]/log(10.);
+                        phi_obs_grid[i_lbol] = phi_bol_grid[i_lbol];
+                }
+                n0 = 0;
+                for(i_lbol=0;i_lbol<n_l_bol_pts;i_lbol++){
+                        li = l_band_grid[i_lbol];
+                        while((li >= l_obs_grid[n0+1]) && (n0+1 < n_l_bol_pts)) n0+=1;
+                        if (n0+1 < n_l_bol_pts){
+                                p1 = log10(phi_obs_grid[n0]);
+                                p2 = log10(phi_obs_grid[n0+1]);
+                                p0 = p1 + (p2-p1) * ((li - l_obs_grid[n0])/(l_obs_grid[n0+1] - l_obs_grid[n0]));
+                        }
+                        else
+                        {
+                                p1 = log10(phi_obs_grid[n_l_bol_pts-2]);
+                                p2 = log10(phi_obs_grid[n_l_bol_pts-1]);
+                                p0 = p1 + (p2-p1) * ((li - l_obs_grid[n_l_bol_pts-2])/(l_obs_grid[n_l_bol_pts-1] - l_obs_grid[n_l_bol_pts-2]));
+                        }
+                        L_HX  = log10(l_band(l_bol_grid[i_lbol],-4.0));
+                        psi = psi_44 - beta_L * (L_HX + log10(3.9) + 33.0 - 44.0);
+                        if (psi < 0.) psi = 0.;
+                        if (psi > psi_max) psi = psi_max;
+                        f_low = 2.0 - ((5.+2.*eps)/(1.+eps))*psi;
+                        f_med = (1./(1.+eps))*psi;
+                        f_hig = (eps/(1.+eps))*psi;
+                        f_compton = f_hig;
+                        f_low = f_low / (1. + f_compton);
+                        f_med = f_med / (1. + f_compton);
+                        f_hig = f_hig / (1. + f_compton);
+                        f_NH = 0.0;
+                        if ((NH_0 <= 20.5)) f_NH = f_low;
+                        if ((NH_0 > 20.5) && (NH_0 <= 23.0)) f_NH = f_med;
+                        if ((NH_0 > 23.0) && (NH_0 <= 24.0)) f_NH = f_hig;
+                        if ((NH_0 > 24.0)) f_NH = f_compton;
+                        dN_NH = f_NH * D_NH;
+                        phi_grid_out[i_lbol] += pow(10.,p0) * dN_NH ;
+                }
         }
-    }
-    for(i_lbol=0;i_lbol<n_l_bol_pts;i_lbol++) {
-        phi_bol_grid[i_lbol] = phi_grid_out[i_lbol];
-        phi_grid_out[i_lbol] = 0.;
-    }
-    return phi_bol_grid;
+        for(i_lbol=0;i_lbol<n_l_bol_pts;i_lbol++) {
+                phi_bol_grid[i_lbol] = phi_grid_out[i_lbol];
+                phi_grid_out[i_lbol] = 0.;
+        }
+        return phi_bol_grid;
 }
+
 
 // return the intrinsic band luminosity for some bolometric luminosity and frequency; 
 // //   nu = 0 (l_bol), -1 (B-band), -2 (15 microns), -3 (0.5-2 keV), -4 (2-10 keV), -5 (FUV 1450 angstrom)
@@ -594,7 +567,8 @@ double cross_section(double nu, double dtg)
 	double keV_in_Hz = 2.418e17;
 	double c_light = 2.998e8;
 	double micron  = 1.0e-6;
-	
+
+	dtg = 0.78;	
 	double k_dust_to_gas = dtg * metallicity_over_solar; //H07: dtg = 0.78
 	double lambda_microns = c_light / nu / micron;
 	if (nu < 0.03*keV_in_Hz) 
@@ -607,9 +581,9 @@ double cross_section(double nu, double dtg)
 
 double pei_dust_extinction(double lambda_in_microns)
 {
-int MW_key =1;
+int MW_key=0;
 int LMC_key=0;
-int SMC_key=0;
+int SMC_key=1;
 int i;
 double xsi = 0.0*lambda_in_microns;
 if (MW_key==1) {

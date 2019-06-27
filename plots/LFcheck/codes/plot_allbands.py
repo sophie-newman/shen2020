@@ -147,12 +147,12 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 x = L_bol_grid + L_solar 
-y = LF(L_bol_grid,parameters_free_local)
-ax.plot(x,y,'--',dashes=(25,15),c='navy',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\rm free$)')
-y = LF(L_bol_grid,parameters_fix_local)
-ax.plot(x,y,'--',dashes=(25,15),c='chocolate',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\phi_{\ast}$ $\rm fixed$)')
-y = LF(L_bol_grid,parameters_global_1)
-ax.plot(x,y,':',c='tan',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
+#y = LF(L_bol_grid,parameters_free_local)
+#ax.plot(x,y,'--',dashes=(25,15),c='navy',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\rm free$)')
+#y = LF(L_bol_grid,parameters_fix_local)
+#ax.plot(x,y,'--',dashes=(25,15),c='chocolate',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\phi_{\ast}$ $\rm fixed$)')
+#y = LF(L_bol_grid,parameters_global_1)
+#ax.plot(x,y,':',c='tan',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
 y = LF(L_bol_grid,parameters_global_2)
 ax.plot(x,y,'--',dashes=(25,15),c='darkorchid',label=r'$\rm Global$ $\rm fit$')
 
@@ -161,6 +161,7 @@ y = LF_at_z_H07(L_bol_grid,parameters_init,redshift,"Fiducial")
 ax.plot(x,y,':',c='gray',label=r'$\rm Hopkins+$ $\rm 2007$')
 
 xcollect = np.array([])
+
 x,y,dy=get_data(parameters_fix_local,dataid=-5)
 ax.errorbar(x,y,yerr=dy,linestyle='none',c='crimson',mec='crimson',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm UV$ $\rm 1450\AA$')
 xcollect = np.append(xcollect,x)

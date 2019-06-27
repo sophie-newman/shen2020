@@ -15,6 +15,7 @@ import ctypes
 
 import resource
 import time
+import os
 
 #parameters_init = np.array([0.780732305  ,-0.219809805 ,0.01901827   ,2.13867979   ,0.61875941   ,-2.1876942   ,0.72638008   ,-3.716400325 ,-0.44067309  ,12.629287985 ,  1.00815347  ,  -0.677230985,  0.34795411])
 parameters_init = np.array([1.14436675, -0.42658811, 0.03168118, 1.95402727, 0.33739503, -2.22178968, 0.52685532, -3.90168138, -0.23981768, 10.35465428, -0.06446249, -0.98029392, 0.21807449])
@@ -153,17 +154,21 @@ start_time = time.time()
 ndim, nwalkers = 13, 100
 pos = np.array([np.random.randn(ndim) for i in range(nwalkers)])
 for i in range(pos.shape[0]):
-	pos[i,:] = pos[i,:] * 0.2 * parameters_init + parameters_init + pos[i,:] * 0.2
+	pos[i,:] = pos[i,:] * 0.3 * parameters_init + parameters_init + pos[i,:] * 0.2
 
-f = open("output/chain.dat", "w")
-f.close()
+#pos = np.genfromtxt("output/chain_end.dat")[:,2:]
+
+if os.path.isfile("output/chain.dat")==False:
+	f = open("output/chain.dat", "w")
+	f.close()
+
 with MPIPool() as pool:
 	if not pool.is_master():
         	pool.wait()
         	sys.exit(0)
 
 	sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, pool=pool)
-	nsteps = 4000
+	nsteps = 1900
 	#sampler.run_mcmc(pos, nsteps)
 	print "begin sampling"
 	mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
@@ -182,7 +187,7 @@ with MPIPool() as pool:
 		f.close()
 
 	# save final position for future use
-	f = open("output/final_pos.dat", "w")
+	f = open("output/chain_end.dat", "w")
 	for k in range(position.shape[0]):
                         f.write("{0:3d} {1:7d} {2:s}\n".format(k, i, np.array2string(position[k]).strip('[').strip(']').replace('\n',' ') ))
 	f.close()
