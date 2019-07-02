@@ -48,18 +48,25 @@ def get_model_lf_global(nu,redshift,dtg):
 	return get_model_lf(parameters_at_z,nu,redshift,dtg)
 
 def cumulative_emissivity(L_nu,Phi_nu,L_limit_low,L_limit_up,nu):
-	logphi=inter.interp1d(L_nu, Phi_nu)
+	def logphi(x):
+		if (x>=np.min(L_nu)) and (x<=np.max(L_nu)):
+			return np.interp(x, L_nu, Phi_nu)
+		elif (x<np.min(L_nu)):
+			return Phi_nu[0] + (x-L_nu[0])*(Phi_nu[1]-Phi_nu[0])/(L_nu[1]-L_nu[0])
+		elif (x>np.max(L_nu)):
+			return Phi_nu[-1] + (x-L_nu[-1])*(Phi_nu[-1]-Phi_nu[-2])/(L_nu[-1]-L_nu[-2])
+
 	def emis(x):
 		return np.power(10.,logphi(x))*np.power(10.,x)/nu
 
 	return quad(emis, L_limit_low, L_limit_up)[0]*np.power(10.,L_solar)
 
 def to_be_integrate(z, nuobs):
-	dtg = 0.8
+	dtg = 0.4
 	nuem = nuobs*(1+z)
         L_nu, PHI_nu = get_model_lf_global(nuem, z, dtg)
-        emissivity = cumulative_emissivity(L_nu, PHI_nu, L_nu[0], L_nu[-1], nuem) 
-	return emissivity/4./np.pi/(cosmo.luminosity_distance(z).value*1e6*con.pc.value*1e2)**2  * cosmo.differential_comoving_volume(z).value
+        emissivity = cumulative_emissivity(L_nu, PHI_nu, 8, 18, nuem) 
+	return emissivity/4./np.pi/(cosmo.luminosity_distance(z).value*1e6*con.pc.value*1e2)**2  * cosmo.differential_comoving_volume(z).value 
 
 import matplotlib.pyplot as plt 
 import matplotlib
@@ -112,7 +119,7 @@ ax.set_ylabel(r'$\nu I_{\rm XRB,\nu}$ [$\rm keV\,s^{-1}\,cm^{-2}\,sr^{-1}$]',fon
 #ax.text(0.25, 0.64, r'$\rm <-21$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
 ax.set_xlim(np.min(E_list),np.max(E_list))
-#ax.set_ylim(-2.5,2)
+ax.set_ylim(2.,100.)
 ax.set_yscale('log')
 ax.set_xscale('log')
 ax.tick_params(labelsize=30)

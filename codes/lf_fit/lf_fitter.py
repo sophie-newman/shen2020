@@ -19,7 +19,7 @@ import os
 
 #parameters_init = np.array([0.780732305  ,-0.219809805 ,0.01901827   ,2.13867979   ,0.61875941   ,-2.1876942   ,0.72638008   ,-3.716400325 ,-0.44067309  ,12.629287985 ,  1.00815347  ,  -0.677230985,  0.34795411])
 parameters_init = np.array([1.14436675, -0.42658811, 0.03168118, 1.95402727, 0.33739503, -2.22178968, 0.52685532, -3.90168138, -0.23981768, 10.35465428, -0.06446249, -0.98029392, 0.21807449])
-
+parameters_vary = np.array([0.3, 0.2, 0.1, 0.6, 0.15, 0.6, 0.2, 1.2, 0.2, 3., 0.2, 0.3, 0.2])
 parameters_info = np.array(["gamma1", "gamma2", "logphis"  , "logLs"])
 
 #load the shared object file
@@ -150,11 +150,12 @@ def lnprob(pars):
 	return lp + llike
 
 start_time = time.time()
+np.random.seed(4367)
 
 ndim, nwalkers = 13, 100
 pos = np.array([np.random.randn(ndim) for i in range(nwalkers)])
 for i in range(pos.shape[0]):
-	pos[i,:] = pos[i,:] * 0.3 * parameters_init + parameters_init + pos[i,:] * 0.2
+	pos[i,:] = pos[i,:] * parameters_vary + parameters_init
 
 #pos = np.genfromtxt("output/chain_end.dat")[:,2:]
 

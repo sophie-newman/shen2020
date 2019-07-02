@@ -60,6 +60,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
         else: L_tmp=bolometric_correction(L_bol_grid,dset_id)
 
         if return_LF[dset_name]!=None:
+		#if (redshift!=0.4) or (dset_id!=-2):
 		#if (dset_id!=-2):# and (dset_id==-5):
                 	phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
                 	phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
@@ -200,6 +201,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
+#plt.show()
 

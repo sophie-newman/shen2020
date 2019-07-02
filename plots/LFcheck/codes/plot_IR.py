@@ -13,6 +13,7 @@ import ctypes
 import sys
 
 redshift=float(sys.argv[1])
+dtg = return_dtg(redshift)
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 #parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0"  , "k1"      , "k2"        , "k3"        , "k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
@@ -81,14 +82,17 @@ ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 L_IR = bolometric_correction(L_bol_grid,-2)
 nu_c = c_double(-2)
+redshift_c = c_double(redshift)
+dtg_c = c_double(dtg)
 input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-res = convolve_c(input_c,nu_c)
+res = convolve_c(input_c,nu_c,redshift_c,dtg_c)
 res = [i for i in res.contents]
 PHI_IR = np.array(res,dtype=np.float64)
 x = L_IR + L_solar 
 y = np.log10(PHI_IR)
 ax.plot(x,y,'--',dashes=(25,15),c='black',label=r'$\rm new$ $\rm fit$')
 
+'''
 L_IR = bolometric_correction(L_bol_grid,-2)
 nu_c = c_double(-2)
 input_c= np.power(10.,LF_at_z_H07(L_bol_grid,parameters_init,redshift,"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
@@ -98,9 +102,10 @@ PHI_IR = np.array(res,dtype=np.float64)
 x = L_IR + L_solar
 y = np.log10(PHI_IR)
 ax.plot(x,y,'--',dashes=(25,15),c='gray',label=r'$\rm old$ $\rm fit$')
+'''
 
-#x,y,dy,yfit=get_data(newdata=True)
-#ax.errorbar(x,y,yerr=dy,capsize=10,linestyle='',c='crimson',marker='o',markeredgewidth=0, ms=10,alpha=0.6,label=r'$\rm new$ $\rm data$')
+x,y,dy,yfit=get_data(newdata=True)
+ax.errorbar(x,y,yerr=dy,capsize=10,linestyle='',c='crimson',marker='o',markeredgewidth=0, ms=10,alpha=0.6,label=r'$\rm new$ $\rm data$')
 
 x,y,dy,yfit=get_data()
 x = x + L_solar

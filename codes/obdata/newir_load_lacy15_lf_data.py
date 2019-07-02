@@ -10,7 +10,7 @@ def load_lacy15_lf_data(z): # 5 micron
 		filename = datapath+'Lacy2015.dat'
 		data = np.genfromtxt(filename,names=True)
 
-		id = (data["z_min"]< z) & (data["z_max"]>=z) 
+		id = (data["z_min"] < z) & (data["z_max"] >= z) 
 
 		L_IR = data['nuLnu'][id] - L_solar
 		PHI_IR  = data['logphi'][id]
