@@ -96,7 +96,7 @@ double* convolve(double* phi_bol_grid, double nu, double redshift, double dtg) {
     
     if (redshift<2.0) psi_43_75 = psi_0 * pow(1.0+redshift,a1);
     else psi_43_75 = psi_0 * pow(1.0+2.0,a1);
-    
+
     double *l_obs_grid;
     l_obs_grid = calloc(n_l_bol_pts,sizeof(double));
     double *phi_obs_grid;
