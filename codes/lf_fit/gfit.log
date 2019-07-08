@@ -1,2 +1,14 @@
 begin sampling
-initial memory consumption:  128496
+initial memory consumption:  128580
+ 0.5%   t: 169.075783968
+memory:  143476
+ 1.1%   t: 319.05646801
+memory:  143640
+ 1.6%   t: 468.987135172
+memory:  143672
+ 2.2%   t: 619.063680172
+memory:  143676
+ 2.7%   t: 769.094654083
+memory:  143680
+ 3.3%   t: 919.255182028
+memory:  143680

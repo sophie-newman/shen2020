@@ -81,7 +81,7 @@ def cumulative_emissivity(L_band,Phi_band,L_limit_low,L_limit_up):
 	def emis(x):
 		fnu = np.power(10.,-0.4*x)*3631*1e-23*4*np.pi*(10*con.pc.value*100)**2
 		fnu912 = fnu * (912./1450.)**(0.61)
-		return np.power(10.,logphi(x))*fnu
+		return np.power(10.,logphi(x))*fnu912
 	return quad(emis,Mlow,Mup)[0]
 
 def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift,global_fit=False):
