@@ -2,16 +2,12 @@
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
   P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:54: RuntimeWarning: invalid value encountered in power
   return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:54: RuntimeWarning: invalid value encountered in power
+  return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:54: RuntimeWarning: invalid value encountered in power
+  return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
 /home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/ensemble.py:335: RuntimeWarning: invalid value encountered in subtract
   lnpdiff = (self.dim - 1.) * np.log(zz) + newlnprob - lnprob0
 /home/xuejian/.conda/envs/customenv/lib/python2.7/site-packages/emcee/ensemble.py:336: RuntimeWarning: invalid value encountered in greater
@@ -28,6 +24,12 @@
   return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:54: RuntimeWarning: invalid value encountered in power
   return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:54: RuntimeWarning: invalid value encountered in power
   return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:54: RuntimeWarning: invalid value encountered in power
@@ -38,54 +40,6 @@
   P_temp = np.log10(P_temp)
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:54: RuntimeWarning: invalid value encountered in power
   return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:54: RuntimeWarning: invalid value encountered in power
-  return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:54: RuntimeWarning: invalid value encountered in power
-  return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
@@ -104,18 +58,6 @@
   P_temp = np.log10(P_temp)
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
@@ -162,6 +104,12 @@
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
   P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
@@ -170,40 +118,18 @@
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
   P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
   P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
   P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
   P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
@@ -218,22 +144,18 @@
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
   P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
   P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
@@ -250,6 +172,80 @@
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
   P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
@@ -270,6 +266,24 @@
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
+  P_temp = np.log10(P_temp)
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
+/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
+  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
@@ -280,24 +294,6 @@
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
   P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: overflow encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:11: RuntimeWarning: divide by zero encountered in log10
-  P_temp = np.log10(P_temp)
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
-/home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
-  P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power
   P_temp = np.power(10.,P0) / ( np.power(x,gamma1) + np.power(x,gamma2) )
 /home/xuejian/works/quasarLF/git/codes/lf_fit/lf_shape.py:10: RuntimeWarning: divide by zero encountered in power

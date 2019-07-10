@@ -6,9 +6,9 @@ import sys
 fname=sys.argv[1]
 
 data = np.genfromtxt(fname+".dat")
-nburn = 2000
+nburn = 7700
 nwalker = 100
-samples = data[nburn*nwalker+1:-1800*nwalker,2:]
+samples = data[nburn*nwalker+1:,2:]
 print samples.shape
 
 best_fit = map(lambda v: (v[1], v[2]-v[1], v[1]-v[0]),
