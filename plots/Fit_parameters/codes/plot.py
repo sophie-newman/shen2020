@@ -183,35 +183,6 @@ plt.savefig("../figs/Lbreak.pdf",fmt='pdf')
 
 
 fig=plt.figure(figsize = (15,10))
-ax = fig.add_axes([0.14,0.12,0.79,0.83])
-
-data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_nofix.dat",names=True)
-ax.errorbar(data["z"]+1,data["dtg"]/0.78,yerr=data['err5']/0.78,linestyle='',marker='o',c='gray',mec='gray',ms=18,capsize=10,capthick=4,alpha=0.5)
-
-data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
-ax.plot(data["z"]+1,data["dtg"]/0.78,linestyle='',marker='o',c='royalblue',mec='royalblue',ms=18)
-
-def MZR_Ma2016(z):
-	logM = 11
-	logZ = 0.35*(logM-10) + 0.93*np.exp(-0.43*z)  - 1.05
-	return 10**logZ
-
-ax.plot(z_a+1, MZR_Ma2016(z_a)/MZR_Ma2016(0) ,'-', c='cyan', alpha=0.5)
-
-prop = matplotlib.font_manager.FontProperties(size=25.0)
-ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
-ax.set_xlabel(r'$\rm 1+z$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'${\rm DTG}/{\rm DTG}_{\rm MW}$',fontsize=40,labelpad=5)
-
-ax.set_xlim(1,8.)
-ax.set_ylim(0.,1.1)
-ax.tick_params(labelsize=30)
-ax.tick_params(axis='x', pad=7.5)
-ax.tick_params(axis='y', pad=2.5)
-ax.minorticks_on()
-plt.savefig("../figs/dtg.pdf",fmt='pdf')
-
-fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_nofix.dat",names=True)
