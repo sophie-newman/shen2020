@@ -80,9 +80,9 @@ freq_xray=np.array([ 16.00, 16.02, 16.04, 16.06, 16.08, 16.10, 16.12, 16.14, 16.
 20.68])
 freq_temp, sed_temp = returnXray()
 print np.log10(integrate( sed_temp, freq_temp, 2.*1000.*con.e.value/con.h.value, 10.*1000.*con.e.value/con.h.value))
-print len(freq_xray)
-print interp1d(np.log10(freq_temp), sed_temp)(freq_xray)
-
+#print len(freq_xray)
+#print interp1d(np.log10(freq_temp), sed_temp)(freq_xray)
+'''
 freq_bband=np.array([12.50, 12.52, 12.54, 12.56, 12.58, 12.60, 12.62, 12.64, 12.66, 12.68, 12.70, 12.72, 12.74, 12.76, 12.78, 12.80, 12.82, 12.84, 12.86, 12.88, 12.90, 12.92, 12.94, 12.96, 12.98, 13.00,
 13.02, 13.04, 13.06, 13.08, 13.10, 13.12, 13.14, 13.16, 13.18, 13.20, 13.22, 13.24, 13.26, 13.28, 13.30, 13.32, 13.34, 13.36, 13.38, 13.40, 13.42, 13.44, 13.46, 13.48, 13.50, 13.52,
 13.54, 13.56, 13.58, 13.60, 13.62, 13.64, 13.66, 13.68, 13.70, 13.72, 13.74, 13.76, 13.78, 13.80, 13.82, 13.84, 13.86, 13.88, 13.90, 13.92, 13.94, 13.96, 13.98, 14.00, 14.02, 14.04,
@@ -94,4 +94,4 @@ freq_temp, sed_temp = returnIR_to_UV(45.)
 print tophat( sed_temp, freq_temp, con.c.value/((4450+470)*1e-10), con.c.value/((4450-470)*1e-10))
 print len(freq_bband)
 print interp1d(np.log10(freq_temp), sed_temp)(freq_bband)
-
+'''

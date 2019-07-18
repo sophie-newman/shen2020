@@ -113,15 +113,15 @@ for i in range(len(x_fit)):
 	f_fit[i]= fraction(43.5, x_fit[i])
 ax.plot(x_fit, f_fit, '--', dashes=(15,9), lw=5, c='crimson', label=r'$\rm Ueda+$ $\rm 2014$ ($\bf fid.$ $\log{L_{\rm X}}=43.5$)')
 
-ax.errorbar( (ge17["zmin"]+ge17["zmax"])/2., ge17["f"], yerr=np.array([ge17["fup"]-ge17["f"],ge17["f"]-ge17["fdown"]]), 
+ax.errorbar( (ge17["zmin"]+ge17["zmax"])/2., ge17["f"], yerr=np.array([ge17["f"]-ge17["fdown"],ge17["fup"]-ge17["f"]]), 
 			xerr=(ge17["zmax"]-ge17["zmin"])/2., color='seagreen', mec='seagreen', linestyle='', marker='o', 
 			capsize=8, capthick=3, lw=4, label=r'$\rm Georgakakis+$ $\rm 2017$ ($\log{L_{\rm X}}=44-45$)' )
 
-ax.errorbar( (ml14["zmin"]+ml14["zmax"])/2., ml14["f"], yerr=np.array([ml14["fup"]-ml14["f"],ml14["f"]-ml14["fdown"]]), 
+ax.errorbar( (ml14["zmin"]+ml14["zmax"])/2., ml14["f"], yerr=np.array([ml14["f"]-ml14["fdown"],ml14["fup"]-ml14["f"]]), 
 			xerr=(ml14["zmax"]-ml14["zmin"])/2., color='gray', mec='gray', linestyle='', marker='o', capsize=8, capthick=3, lw=4,
 			label=r'$\rm Merloni+$ $\rm 2014$ ($\log{L_{\rm X}}=44.3-44.7$)' )
 
-ax.errorbar( (ud03["zmin"]+ud03["zmax"])/2., ud03["f"], yerr=np.array([ud03["fup"]-ud03["f"],ud03["f"]-ud03["fdown"]]), 
+ax.errorbar( (ud03["zmin"]+ud03["zmax"])/2., ud03["f"], yerr=np.array([ud03["f"]-ud03["fdown"],ud03["fup"]-ud03["f"]]), 
 			xerr=(ud03["zmax"]-ud03["zmin"])/2., color='magenta', mec='magenta', linestyle='', marker='o', capsize=8, capthick=3, lw=4,
 			label=r'$\rm Ueda+$ $\rm 2003$ ($\log{L_{\rm X}}=43-44.5$)' )
 
