@@ -17,9 +17,13 @@ import resource
 import time
 import os
 
-#parameters_init = np.array([0.780732305  ,-0.219809805 ,0.01901827   ,2.13867979   ,0.61875941   ,-2.1876942   ,0.72638008   ,-3.716400325 ,-0.44067309  ,12.629287985 ,  1.00815347  ,  -0.677230985,  0.34795411])
-parameters_init = np.array([1.14436675, -0.42658811, 0.03168118, 1.95402727, 0.33739503, -2.22178968, 0.52685532, -3.90168138, -0.23981768, 10.35465428, -0.06446249, -0.98029392, 0.21807449])
-parameters_vary = np.array([0.3, 0.2, 0.1, 0.6, 0.15, 0.6, 0.2, 1.2, 0.2, 3., 0.2, 0.3, 0.2])
+def weightfunc(z):
+	if z<3.: return 1.
+	else: return (1.+z)/(1.+3.)
+
+parameters_init = np.array([0.79847831 ,-0.25102297,0.02265792 ,1.846936805,0.316915805,-2.80025713,0.4003701  ,-3.5469101 ,-0.39856649,11.32661766,0.27481868 ,-0.82451577,0.25281821])
+#parameters_init = np.array([1.14436675, -0.42658811, 0.03168118, 1.95402727, 0.33739503, -2.22178968, 0.52685532, -3.90168138, -0.23981768, 10.35465428, -0.06446249, -0.98029392, 0.21807449])
+parameters_vary = np.array([0.4, 0.2, 0.2, 0.9, 0.3, 1.4, 0.3, 1.7, 0.3, 3., 0.2, 0.4, 0.3])
 parameters_info = np.array(["gamma1", "gamma2", "logphis"  , "logLs"])
 
 #load the shared object file
@@ -78,7 +82,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_data)
 			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_data + 0.01)
 			alldata["Z"]  = np.append(alldata["Z"]  , np.ones(len(L_data)) * redshift)
-			alldata["WEIGHT"]  = np.append(alldata["WEIGHT"]  , np.ones(len(L_data)) * np.sqrt(1+redshift))
+			alldata["WEIGHT"]  = np.append(alldata["WEIGHT"]  , np.ones(len(L_data)) * weightfunc(redshift))
 			alldata["ID"] = np.append(alldata["ID"] , np.ones(len(L_data)) * dset_id)
 			
 			alldata_tem["P_PRED"] = np.append(alldata_tem["P_PRED"] , phi_i)
@@ -110,18 +114,6 @@ def residual(pars):
 
 	return residuals, sigmas, True
 
-'''
-ptrial = np.array([0.87107343, -0.2864248, 0.02397246, 1.84911667, 0.3119274, -2.84387238,
- 0.40649539, -3.64630159, -0.35917434, 11.84799586, 0.52389883, -0.7580811, 0.29921619])
-#ptrial = np.array([0.83691542, -0.25284731, 0.02012548,  2.00024558,  0.55533203, -2.68877347,
-# 0.60159866, -3.77676405, -0.40248141, 12.9239114,   1.45773985, -0.63119067, 0.40561221])
-sigmas,_,_ = residual(ptrial)
-print np.sum(sigmas**2)
-sigmas,_,_ = residual(parameters_init)
-print np.sum(sigmas**2)
-exit()
-'''
-
 def lnlike(pars):
         res, sigma, success = residual(pars)
 	if success==True:
@@ -150,7 +142,7 @@ def lnprob(pars):
 	return lp + llike
 
 start_time = time.time()
-np.random.seed(4367)
+np.random.seed(4267)
 
 ndim, nwalkers = 13, 100
 pos = np.array([np.random.randn(ndim) for i in range(nwalkers)])

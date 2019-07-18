@@ -41,7 +41,7 @@ def get_model_lf_global(nu,redshift,dtg):
 	p=parameters[paraid==1]
 	gamma2 = doublepower(redshift,p)
 	p=parameters[paraid==2]
-	logphi = polynomial(redshift,p,1)
+	logphi = polynomial(redshift,p,1)# + 0.15
 	p=parameters[paraid==3]	
 	Lbreak = doublepower(redshift,p)
 	parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
@@ -62,10 +62,10 @@ def cumulative_emissivity(L_nu,Phi_nu,L_limit_low,L_limit_up,nu):
 	return quad(emis, L_limit_low, L_limit_up)[0]*np.power(10.,L_solar)
 
 def to_be_integrate(z, nuobs):
-	dtg = 0.4
+	dtg = 0.78
 	nuem = nuobs*(1+z)
         L_nu, PHI_nu = get_model_lf_global(nuem, z, dtg)
-        emissivity = cumulative_emissivity(L_nu, PHI_nu, 8, 18, nuem) 
+        emissivity = cumulative_emissivity(L_nu, PHI_nu, L_nu[0], L_nu[-1], nuem) 
 	return emissivity/4./np.pi/(cosmo.luminosity_distance(z).value*1e6*con.pc.value*1e2)**2  * cosmo.differential_comoving_volume(z).value 
 
 import matplotlib.pyplot as plt 

@@ -102,12 +102,6 @@ def phi_correct_cosmo_flexible(redshift,h_old,Om0_old):
 
 # return the dust-to-gas ratio
 def return_dtg(z):
-	'''
-	if z<=0.2: return 0.78
-	elif z<=1.0: return 0.4
-	elif z<=1.6: return 0.2
-	else: return 0.1
-	'''
 	dtg_mw=0.78
 	def MZR_Ma2016(z):
 		logM = 11

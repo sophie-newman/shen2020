@@ -27,12 +27,12 @@ double* convolve(double* phi_bol_grid, double nu, double redshift, double dtg) {
 	phi_grid_out = calloc(n_l_bol_pts,sizeof(double));
 	double nu_eff;
 	nu_eff = nu;
-	if (nu ==  0.) {nu_eff = 1.1992000e15;} // 2500 angstrom
-	if (nu == -1.) {nu_eff = 6.8136364e14;} // 4400 angstrom, B band
+	if (nu ==  0.) {nu_eff = 2.998e8/(2500e-10);} // 2500 angstrom
+	if (nu == -1.) {nu_eff = 2.998e8/(4400e-10);} // 4400 angstrom, B band
 	if (nu == -2.) {nu_eff = 1.9986667e13;} // 15 micron
 	if (nu == -3.) {nu_eff = 2.4180000e17;} // 'effective' 1 keV
 	if (nu == -4.) {nu_eff = 1.2090000e18;} // 'effective' 5 keV
-    if (nu == -5.) {nu_eff = 2.998e8/(1450e-10);} // 1450 angstrom
+	if (nu == -5.) {nu_eff = 2.998e8/(1450e-10);} // 1450 angstrom
     
 	int i_lbol,j_lbol;
 	// first, load up the bolometric QLF
@@ -68,40 +68,41 @@ double* convolve(double* phi_bol_grid, double nu, double redshift, double dtg) {
   	//;;   need to define a "lower limit" NH --> Ueda et al. use 20, our optical 
   	//;;   calculations seem to suggest that's about right, so fine
  	*/
-    double NH_MIN  = 20.0;
-    double NH_MAX  = 26.0;
-    double D_NH    = 0.01;
-    int    N_NH    = (int )((NH_MAX-NH_MIN)/D_NH + 1.0);
-    int iNH;
-    double *NH;
-    NH = calloc(N_NH,sizeof(double));
-    double *tau;
-    tau = calloc(N_NH,sizeof(double));
-    for(iNH=0;iNH<N_NH;iNH++) {
-        NH[iNH] = NH_MIN + ((double )iNH)*D_NH;
-        tau[iNH] = return_tau(NH[iNH],nu,dtg);
-    }
-    // loop over the LF and attenuate everything appropriately
-    double eps, psi_43_75, beta_L, psi_0, psi_min, psi_max, a1, fCTK;     //parameters
-    double psi, f_1, f_2, f_3, f_4, f_5;       //used in characterizing the distribution
-    double L_HX, NH_0, f_NH, dN_NH;      //used in convolve the LF
-    double li,lo,p2,p1,p0;
-    int n0 = 0;
-    eps = 1.7;
-    
-    psi_min=0.2;  psi_max=0.84;
-    psi_0=0.43;  a1=0.48;
-    beta_L = 0.24;
-    fCTK = 1.0;
-    
-    if (redshift<2.0) psi_43_75 = psi_0 * pow(1.0+redshift,a1);
-    else psi_43_75 = psi_0 * pow(1.0+2.0,a1);
+	double NH_MIN  = 20.0;
+	double NH_MAX  = 26.0;
+	double D_NH    = 0.01;
+	int    N_NH    = (int )((NH_MAX-NH_MIN)/D_NH + 1.0);
+	int iNH;
+	double *NH;
+	NH = calloc(N_NH,sizeof(double));
+	double *tau;
+	tau = calloc(N_NH,sizeof(double));
+	for(iNH=0;iNH<N_NH;iNH++) {
+		NH[iNH] = NH_MIN + ((double )iNH)*D_NH;
+		tau[iNH] = return_tau(NH[iNH],nu,dtg);
+	}
+	// loop over the LF and attenuate everything appropriately
+	double eps, psi_43_75, beta_L, psi_0, psi_min, psi_max, a1, fCTK;     //parameters
+	double psi, f_1, f_2, f_3, f_4, f_5;       //used in characterizing the distribution
+	double L_HX, NH_0, f_NH, dN_NH;      //used in convolve the LF
+	double li,lo,p2,p1,p0;
+	int n0 = 0;
+	eps = 1.7;
+	
+	psi_min=0.2;  psi_max=0.84;
+	psi_0=0.43; 
+	a1=0.48;
+	beta_L = 0.24;
+	fCTK = 1.0;
+	
+	if (redshift<2.0) psi_43_75 = psi_0 * pow(1.0+redshift,a1);
+	else psi_43_75 = psi_0 * pow(1.0+2.0,a1);
 
-    double *l_obs_grid;
-    l_obs_grid = calloc(n_l_bol_pts,sizeof(double));
-    double *phi_obs_grid;
-    phi_obs_grid = calloc(n_l_bol_pts,sizeof(double));
-    for(iNH=0;iNH<N_NH;iNH++){
+	double *l_obs_grid;
+	l_obs_grid = calloc(n_l_bol_pts,sizeof(double));
+	double *phi_obs_grid;
+	phi_obs_grid = calloc(n_l_bol_pts,sizeof(double));
+	for(iNH=0;iNH<N_NH;iNH++){
         NH_0 = NH[iNH];
         // need to interpolate to lay this over the grid already set up
         for(i_lbol=0;i_lbol<n_l_bol_pts;i_lbol++){
@@ -310,7 +311,7 @@ double l_band_dispersion(double log_l_bol, double nu)
 	double nuHX = 10. * 2.418e17;
 	if (nu < nu15) { P0=-0.3380714; P1=0.4071626; P2=42.1588292; P3=2.1928345;
         return fit_func_disp(x, P0, P1, P2, P3); }
-    if (nu >=nuHX) { P0=0.19262562; P1=0.0659231; P2=42.9876632; P3=1.8829639;
+        if (nu >=nuHX) { P0=0.19262562; P1=0.0659231; P2=42.9876632; P3=1.8829639;
         return fit_func_disp(x, P0, P1, P2, P3); }
 	if ((nu >= nu15)&&(nu< nuBB)) {
 		P0=-0.3380714; P1=0.4071626; P2=42.1588292; P3=2.1928345;

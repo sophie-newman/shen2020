@@ -6,7 +6,7 @@ import sys
 fname=sys.argv[1]
 
 data = np.genfromtxt(fname+".dat")
-nburn = 7700
+nburn = 8700
 nwalker = 100
 samples = data[nburn*nwalker+1:,2:]
 print samples.shape

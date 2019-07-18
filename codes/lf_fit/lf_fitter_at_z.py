@@ -13,6 +13,7 @@ from ctypes import *
 import ctypes
 import sys
 redshift=float(sys.argv[1])
+dtg = return_dtg(redshift)
 FIX = int(sys.argv[2])
 FIX = bool(FIX)
 
@@ -26,8 +27,6 @@ convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
 def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
-	dtg = parameters[-1]
-	parameters = parameters[:-1]
 
 	alldata_tem={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([])}
 	if load_LF_data[dset_name](redshift)!=False:
@@ -86,8 +85,7 @@ def chisq(pars):
     	gamma2 = parvals['gamma2']
     	logphis= parvals['logphis']
 	Lbreak = parvals['Lbreak']
-	dtg    = parvals['dtg']
-	parameters=np.array([gamma1,gamma2,logphis,Lbreak,dtg])
+	parameters=np.array([gamma1,gamma2,logphis,Lbreak])
 
         alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
         for key in dset_ids.keys():
@@ -106,8 +104,7 @@ def residual(pars):
         gamma2 = parvals['gamma2']
         logphis= parvals['logphis']
         Lbreak = parvals['Lbreak']
-	dtg    = parvals['dtg']
-        parameters=np.array([gamma1,gamma2,logphis,Lbreak,dtg])
+        parameters=np.array([gamma1,gamma2,logphis,Lbreak])
 
 	alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
 	for key in dset_ids.keys():
@@ -123,44 +120,32 @@ def residual(pars):
 params = lmfit.Parameters()
 # add with tuples: (NAME VALUE VARY MIN  MAX  EXPR  BRUTE_STEP)
 if FIX==False:
-	if (redshift>0.2):
-		params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
-                	        ('gamma2' , parameters_init[1], True, None, None, None, None),
-                        	('logphis', parameters_init[2], True, None, None, None, None),
-                        	('Lbreak' , parameters_init[3], True, None, None, None, None),
-				('dtg'    , parameters_init[4], True, 0   , None, None, None))
-	else:
-		params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
-                	        ('gamma2' , parameters_init[1], True, None, None, None, None),
-                        	('logphis', parameters_init[2], True, None, None, None, None),
-                        	('Lbreak' , parameters_init[3], True, None, None, None, None),
-                        	('dtg'    , 0.78	      ,False, 0   , None, None, None))
+	params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
+                	('gamma2' , parameters_init[1], True, None, None, None, None),
+                        ('logphis', parameters_init[2], True, None, None, None, None),
+                        ('Lbreak' , parameters_init[3], True, None, None, None, None))
 else:
-	dtg_fixed = return_dtg(redshift)
 	if (redshift>=0.4) and (redshift<=2.8):
                 params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                                 ('gamma2' , parameters_init[1], True, None, None, None, None),
                                 ('logphis', parameters_init[2], True, None, None, None, None),
-                                ('Lbreak' , parameters_init[3], True, None, None, None, None),
-                                ('dtg'    , dtg_fixed	      ,False, 0   , None, None, None))
+                                ('Lbreak' , parameters_init[3], True, None, None, None, None))
 	elif (redshift<5.8):
 		logphis_fixed=-3.90168138-0.23981768*(1+redshift)
 		params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                 	        ('gamma2' , parameters_init[1], True, None, None, None, None),
                 	        ('logphis', logphis_fixed     ,False, None, None, None, None),
-                	        ('Lbreak' , parameters_init[3], True, None, None, None, None),
-				('dtg'    , dtg_fixed         ,False, 0   , None, None, None))
-	else:
+                	        ('Lbreak' , parameters_init[3], True, None, None, None, None))
+	else: # at z>5.8, use single power law to do te fit
 		logphis_fixed=-3.90168138-0.23981768*(1+redshift)
 		params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                 	        ('gamma2' , parameters_init[1], True, None, None, "gamma1", None),
                 	        ('logphis', logphis_fixed     ,False, None, None, None, None),
-                	        ('Lbreak' , parameters_init[3], True, None, None, None, None),
-				('dtg'    , dtg_fixed         ,False, 0   , None, None, None))
+                	        ('Lbreak' , parameters_init[3], True, None, None, None, None))
 
 fitter = lmfit.Minimizer(residual, params, scale_covar=True,nan_policy='raise',calc_covar=True)
 result=fitter.minimize(method='leastsq')
 #print "bestfit:"
 #result.params.pretty_print()
 
-print redshift, result.params['gamma1'].value, result.params['gamma1'].stderr, result.params['gamma2'].value, result.params['gamma2'].stderr, result.params['logphis'].value, result.params['logphis'].stderr, result.params['Lbreak'].value, result.params['Lbreak'].stderr, result.params['dtg'].value, result.params['dtg'].stderr, result.nfree, result.redchi
+print redshift, result.params['gamma1'].value, result.params['gamma1'].stderr, result.params['gamma2'].value, result.params['gamma2'].stderr, result.params['logphis'].value, result.params['logphis'].stderr, result.params['Lbreak'].value, result.params['Lbreak'].stderr, result.nfree, result.redchi
