@@ -131,13 +131,13 @@ else:
                                 ('logphis', parameters_init[2], True, None, None, None, None),
                                 ('Lbreak' , parameters_init[3], True, None, None, None, None))
 	elif (redshift<5.8):
-		logphis_fixed=-3.90168138-0.23981768*(1+redshift)
+		logphis_fixed=-3.94340268-0.21766248*(1+redshift)
 		params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                 	        ('gamma2' , parameters_init[1], True, None, None, None, None),
                 	        ('logphis', logphis_fixed     ,False, None, None, None, None),
                 	        ('Lbreak' , parameters_init[3], True, None, None, None, None))
 	else: # at z>5.8, use single power law to do te fit
-		logphis_fixed=-3.90168138-0.23981768*(1+redshift)
+		logphis_fixed=-3.94340268-0.21766248*(1+redshift)
 		params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                 	        ('gamma2' , parameters_init[1], True, None, None, "gamma1", None),
                 	        ('logphis', logphis_fixed     ,False, None, None, None, None),
