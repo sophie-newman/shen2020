@@ -148,8 +148,8 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 x = L_bol_grid + L_solar 
-#y = LF(L_bol_grid,parameters_free_local)
-#ax.plot(x,y,'--',dashes=(25,15),c='navy',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\rm free$)')
+y = LF(L_bol_grid,parameters_free_local)
+ax.plot(x,y,'--',dashes=(25,15),c='navy',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\rm free$)')
 #y = LF(L_bol_grid,parameters_fix_local)
 #ax.plot(x,y,'--',dashes=(25,15),c='chocolate',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\phi_{\ast}$ $\rm fixed$)')
 #y = LF(L_bol_grid,parameters_global_1)
@@ -184,7 +184,7 @@ ax.errorbar(x,y,yerr=dy,linestyle='none',c='olive',mec='olive',marker='o',ms=10,
 xcollect = np.append(xcollect,x)
 
 xcollect = np.sort(xcollect-L_solar)
-print redshift, xcollect[2], xcollect[4]
+print redshift, xcollect[2], xcollect[4], len(xcollect)
 
 ax.axvline(parameters_fix_local[3]+L_solar,color='cyan',lw=2)
 ax.axhline(parameters_fix_local[2]-np.log10(2.),color='cyan',lw=2)

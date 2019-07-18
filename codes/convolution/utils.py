@@ -8,37 +8,6 @@ import astropy.constants as con
 #	m_AB_obs = M_AB + 2.5*np.log10(cosmo.luminosity_distance(redshift).value*1e6/10.)
 #	return m_AB_obs
 
-def bolometricLF(L_bol,z):
-	xsi = np.log10((1.+z)/(1.+2))
-	beta_min = 1.3
-	if (KEYS["FIT_KEY"]==5): beta_min = 0.02
-
-	#full model
-	if (KEYS["FIT_KEY"]==0):
-		P0, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14 = -4.8250643,13.035753,0.63150872,-11.763560,-14.249833,0.41698725,-0.62298947,2.1744386,1.4599393,-0.79280099,0.,0.,0.,0.,0.
-
-#parameters_init = np.array([0.417, 2.174, -4.825, 13.036, 0.632, -11.76, -14.25, -0.623, 1.460, -0.793])
-#parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis", "logLs_0", "k1", "k2", "k3" ,"k_gamma1" , "k_gamma2_1", "k_gamma2_2"])
-
-	#double power-law forms
-	if (KEYS["FIT_KEY"] <= 5):
-		phi_star = P0
-		#phi_star is constant as a function of redshift
-		l_star   = P1 + P2*xsi + P3*xsi**2 + P4*xsi**3
-		#l_star evolves (luminosity evolution) as a cubic polynomial in the 
-		#convenient variable xsi=log_{10}((1+z)/(1+z_ref)) with z_ref=2
-		gamma_1  = P5 * np.power(10.,xsi*P6)
-		#gamma_1 the faint-end slope -- optionally evolves with redshift
-		gamma_2  = 2.0 * P7 / (np.power(10.,xsi*P8) + np.power(10.,xsi*P9))
-		#gamma_2 the bright-end slope -- optionally evolves with redshift
-		if (gamma_2 < beta_min): gamma_2 = beta_min
-		#cap the bright-end evolution to prevent unphysical divergence
-		x = L_bol - l_star
-
-	if (KEYS["FIT_KEY"]==5): 
-		return np.power(10.,(phi_star - gamma_1*x - np.power(10.,x*gamma_2)/np.log(10.)))
-	return np.power(10.,phi_star - np.log10(np.power(10.,x*gamma_1) + np.power(10.,x*gamma_2)))
-
 #return the lognormal dispersion in bolometric corrections for a given band and luminosity
 def fit_func_disp(x,A,B,x0,sig):
 	return B+A*norm.cdf(x,loc=x0,scale=sig)
@@ -50,11 +19,11 @@ def band_dispersion(L_bol,nu):
 	if nu == 0.:  return 0.01
 	if nu < 0.:
 		if nu==(-1.): P0, P1, P2, P3=-0.3826995, 0.4052673, 42.3866639, 2.3775969
-        if nu==(-2.): P0, P1, P2, P3=-0.3380714, 0.4071626, 42.1588292, 2.1928345
-        if nu==(-3.): P0, P1, P2, P3=0.07969176, 0.1803728, 44.1641156, 1.4964823
-        if nu==(-4.): P0, P1, P2, P3=0.19262562, 0.0659231, 42.9876632, 1.8829639
-        if nu==(-5.): P0, P1, P2, P3=-0.3719955, 0.4048693, 42.3073116, 2.3097825
-        return fit_func_disp(x, P0, P1, P2, P3)
+		if nu==(-2.): P0, P1, P2, P3=-0.3380714, 0.4071626, 42.1588292, 2.1928345
+        	if nu==(-3.): P0, P1, P2, P3=0.07969176, 0.1803728, 44.1641156, 1.4964823
+        	if nu==(-4.): P0, P1, P2, P3=0.19262562, 0.0659231, 42.9876632, 1.8829639
+        	if nu==(-5.): P0, P1, P2, P3=-0.3719955, 0.4048693, 42.3073116, 2.3097825
+        	return fit_func_disp(x, P0, P1, P2, P3)
 	# interpolate between the known ranges, and (conservatively) hold constant 
 	#   outside of them. roughly consistent with Richards et al. 2006 dispersions, 
 	#   but uncertainty in how large the dispersions should be yields ~10% uncertainties 
@@ -97,185 +66,7 @@ def band_dispersion(L_bol,nu):
 		if (sx<=sx_floor): sx=sx_floor
 		return sx
 
-def pei_dust_extinction(lambda_in_microns):
-	key='SMC' #MW,LMC,SMC
-	xsi = 0.0 * lambda_in_microns
-	if (key=='MW'):
-  		a = np.array([165., 14., 0.045, 0.002, 0.002, 0.012])
-  		l = np.array([0.047, 0.08, 0.22, 9.7, 18., 25.])
-  		b = np.array([90., 4.00, -1.95, -1.95, -1.80, 0.00])
-  		n = np.array([2.0, 6.5, 2.0, 2.0, 2.0, 2.0])
-  		R_V = 3.08
-  		for i in range(6): 
-  			xsi += a[i]/( np.power(lambda_in_microns/l[i],n[i]) + np.power(l[i]/lambda_in_microns,n[i]) + b[i] )
-
-	if (key=='LMC'):
-		a = np.array([175., 19., 0.023, 0.005, 0.006, 0.020])
-		l = np.array([0.046, 0.08, 0.22, 9.7, 18., 25.])
-		b = np.array([90., 5.50, -1.95, -1.95, -1.80, 0.00])
-		n = np.array([2.0, 4.5, 2.0, 2.0, 2.0, 2.0])
-		R_V = 3.16
-  		for i in range(6):
-  			xsi += a[i]/( np.power(lambda_in_microns/l[i],n[i]) + np.power(l[i]/lambda_in_microns,n[i]) + b[i] )
-
-	if (key=='SMC'):
-		a = np.array([185., 27., 0.005, 0.010, 0.012, 0.030])
-		l = np.array([0.042, 0.08, 0.22, 9.7, 18., 25.])
-		b = np.array([90., 5.50, -1.95, -1.95, -1.80, 0.00])
-		n = np.array([2.0, 4.0, 2.0, 2.0, 2.0, 2.0])
-		R_V = 2.93
-		for i in range(6):
-			xsi += a[i]/( np.power(lambda_in_microns/l[i],n[i]) + np.power(l[i]/lambda_in_microns,n[i]) + b[i] )
-
-	#R_lam = (1.0 + R_V) * xsi;
-	return xsi
-
-def morrison_photoeletric_absorption(x):
-	if (x<0.03):
-		c0, c1, c2 = 17.3, 608.1, -2150.0
-		return (1.0e-24)*(c0+c1*0.03+c2*0.03*0.03)/(0.03*0.03*0.03)*np.power(x/0.03,-2.43)
-	elif (x>=0.03) and (x<0.1):
-		c0, c1, c2 = 17.3, 608.1, -2150.0
-	elif (x>=0.1) and (x<0.284):
-		c0, c1, c2 = 34.6, 267.9, -476.1
-	elif (x>=0.284) and (x<0.4):
-		c0, c1, c2 = 78.1, 18.8, 4.3
-	elif (x>=0.4) and (x<0.532):
-		c0, c1, c2 = 71.4, 66.8, -51.4
-	elif (x>=0.532) and (x<0.707):
-		c0, c1, c2 =  95.5, 45.8, 1.1
-	elif (x>=0.707) and (x<0.867):
-		c0, c1, c2 = 308.9, 80.6, 4.0
-	elif (x>=0.867) and (x<1.303):
-		c0, c1, c2 = 120.6, 69.3, 7.7
-	elif (x>=1.303) and (x<1.840):
-		c0, c1, c2 = 141.3, 46.8, 1.5
-	elif (x>=1.840) and (x<2.471):
-		c0, c1, c2 = 202.7, 04.7, 7.0
-	elif (x>=2.471) and (x<3.210):
-		c0, c1, c2 = 342.7, 18.7, 0.0
-	elif (x>=3.210) and (x<4.038):
-		c0, c1, c2 = 352.2, 18.7, 0.0
-	elif (x>=4.038) and (x<7.111):
-		c0, c1, c2 = 433.9, -2.4, 0.75
-	elif (x>=7.111) and (x<8.331):
-		c0, c1, c2 = 629.0, 30.9, 0.0
-	elif (x>=8.331) and (x<10.00):
-		c0, c1, c2 = 701.2, 25.2, 0.0
-	else:	
-		# extrapolate the > 10 keV results to higher frequencies
-		c0, c1, c2 = 701.2, 25.2, 0.0
-	#Use these coefficients to calculate the cross section per hydrogen atom
-	return (1.0e-24)*(c0+c1*x+c2*x**2)/(x**3); #cm^2
-
-def cross_section(nu):
-	sigma=0.
-	metallicity_over_solar = 1.
-	keV_in_Hz = 2.418e17
-	micron  = 1.0e-6
-	'''
-  	; For optical-IR regions, we use the Pei numerical approximations below.
-  	;
-  	; xsi = tau(lambda)/tau(B) is the ratio of extinction at lambda to the 
-  	;    extinction in the B-band. 
-  	; k = 10^21 (tau_B / NH)   (NH in cm^2) gives the dimensionless gas-to-dust
-  	;    ratio, with k=0.78 for MW, k=0.16 for LMC, k=0.08 for SMC.
-  	;    k is INDEPENDENT of the grain properties, and seems to scale rougly
-  	;    linearly with metallicity
-  	; so, for now, assume solar metallicity and k = k_MW = 0.78. we can rescale later.
-  	;
-  	; tau_B = ( NH / (10^21 cm^-2) ) * k --> SIGMA_B = k*10^-21  cm^2
-  	; tau_lambda = xsi * tau_B --> SIGMA = xsi * SIGMA_B
-  	;
-  	; k = 0.78 for the MW
-  	; k = 0.08 for the SMC, approximately in line with the MW/LMC/SMC metallicity 
-  	;  sequence, so we take a k_MW then scaled by the metallicity
-	'''
-	k_dust_to_gas = 0.78 * metallicity_over_solar
-	lambda_microns = con.c.value / nu / micron
-	if (nu < 0.03*keV_in_Hz): 
-		sigma += pei_dust_extinction(lambda_microns) * k_dust_to_gas * 1.0e-21
-
-
-	'''
-  	For 0.03 keV < E < 10 keV  
-  	  (7.2e15 < nu[Hz] < 2.4e18  or   1.2 < lambda[Angstroms] < 413)
-  	  we use the photoelectric absorption cross sections of 
-  	  Morrison & McCammon (1983)
-  	    NOTE: these assume solar abundances and no ionization, 
-  	            the appropriate number probably scales linearly with both
-  	  (this is all for the COMPTON THIN regime)
-	'''
-	if nu > (0.03*keV_in_Hz*1.362/3.0): # above Lyman edge
-		sigma += morrison_photoeletric_absorption(nu/keV_in_Hz)
-
-	'''
-	Floor in cross-section set by non-relativistic (achromatic) Thompson scattering
-	 (technically want to calculate self-consistently for the ionization state of the 
-	  gas, but for reasonable values this agrees well with more detailed calculations 
-	  including line effects from Matt, Pompilio, & La Franca; since we don't know the 
-	  state of the gas (& have already calculated the inner reflection component), this
-	  is the best guess)
-	'''
-	sigma += 6.65e-25
-	return sigma
-
-def return_tau(log_NH,nu):
-	if nu <= 0.:
-		if (nu== 0.): return 0.	#no bolometric attenuation
-		if (nu==-1.): return np.power(10.,log_NH)*cross_section(con.c.value/(4400.0e-10))
-		# call at nu_B
-		if (nu==-2.): return np.power(10.,log_NH)*cross_section(con.c.value/(15.0e-6))	 
-		# call at 15microns
-
-		if (nu==-3.):
-			NH = np.array([ 16.00, 16.10, 16.20, 16.30, 16.40, 16.50, 16.60, 16.70, 16.80, 16.90, 17.00, 17.10, 17.20, 17.30, 17.40, 17.50, 17.60, 17.70, 17.80, 17.90, 18.00, 18.10, 18.20, 18.30, 18.40, 18.50,
-			18.60, 18.70, 18.80, 18.90, 19.00, 19.10, 19.20, 19.30, 19.40, 19.50, 19.60, 19.70, 19.80, 19.90, 20.00, 20.10, 20.20, 20.30, 20.40, 20.50, 20.60, 20.70, 20.80, 20.90, 21.00, 21.10,
-			21.20, 21.30, 21.40, 21.50, 21.60, 21.70, 21.80, 21.90, 22.00, 22.10, 22.20, 22.30, 22.40, 22.50, 22.60, 22.70, 22.80, 22.90, 23.00, 23.10, 23.20, 23.30, 23.40, 23.50, 23.60, 23.70,
-			23.80, 23.90, 24.00, 24.10, 24.20, 24.30, 24.40, 24.50, 24.60, 24.70, 24.80, 24.90, 25.00, 25.10, 25.20, 25.30, 25.40, 25.50, 25.60, 25.70, 25.80, 25.90, 26.00])
-			tau = np.array([-0.00000124, -0.00000158,    -0.00000197,    -0.00000249,    -0.00000313,    -0.00000393,   -0.00000494, -0.00000624,    -0.00000784,    -0.00000989,    -0.00001245,    -0.00001566,
-			-0.00001973,    -0.00002483,    -0.00003127,    -0.00003935,    -0.00004955,    -0.00006236, -0.00007852,    -0.00009884,    -0.00012443,    -0.00015666,    -0.00019722, -0.00024827,   
-			-0.00031253,    -0.00039344,    -0.00049527,    -0.00062347,    -0.00078482, -0.00098790,   -0.00124348,    -0.00156514,    -0.00196988,    -0.00247909, -0.00311972,    -0.00392549,   
-			-0.00493867,    -0.00621233,    -0.00781276,    -0.00982293, -0.01234610,    -0.01551090,   -0.01947660,    -0.02443970,    -0.03064190, -0.03837750,    -0.04800200,    -0.05994050,   
-			-0.07469200,    -0.09283250,    -0.11500600, -0.14191000,    -0.17425400,    -0.21271700,   -0.25787899,    -0.31016999, -0.36986199,    -0.43716601,    -0.51242900,    -0.59641999,   
-			-0.69052601,    -0.79681402, -0.91799599,    -1.05745995,    -1.21945000,    -1.40935004,   
-			-1.63397002, -1.90190005,    -2.22390008,    -2.61347008,    -3.08738995,    -3.66647005,   -4.37638998, -5.24916983,    -6.32518005,    -7.65556002,    -9.30533981,   -11.35690022,
-			-13.40830040,   -15.45989990,   -17.51140022,   -19.56290054,   -21.61440086, -23.66589928,  -25.71750069,   -27.76889992,   -29.82049942,   -31.87199974, -33.92350006,   -35.97499847,
-			-38.02650070,   -40.07799911,   -42.12919998, -44.15449905,   -46.17983627,  -48.20517349,   -50.23051071,   -52.25585175, -54.28115082,   -56.30648804,   -58.33182526])
-			if (log_NH < NH[0]):  tau_f = tau[0]  + (tau[1]-tau[0])   *(log_NH-NH[0])/(NH[1]-NH[0])
-			if (log_NH > NH[99]): tau_f = tau[99] + (tau[100]-tau[99])*(log_NH-NH[99])/(NH[100]-NH[99])
-			if (log_NH>=NH[0]) and (log_NH<=NH[99]): 
-				n0 = int((log_NH-NH[0])/0.10)
-				tau_f  = tau[n0] + (tau[n0+1]-tau[n0])*(log_NH-NH[n0])/(NH[n0+1]-NH[n0])
-			if (tau_f >= 0.): tau_f=0.
-			return -tau_f * np.log(10.)
-
-		if (nu==-4.):
-			NH = np.array([16.00, 16.10, 16.20, 16.30, 16.40, 16.50, 16.60, 16.70, 16.80, 16.90, 17.00, 17.10, 17.20, 17.30, 17.40, 17.50, 17.60, 17.70, 17.80, 17.90, 18.00, 18.10, 18.20, 18.30, 18.40, 18.50,
-			18.60, 18.70, 18.80, 18.90, 19.00, 19.10, 19.20, 19.30, 19.40, 19.50, 19.60, 19.70, 19.80, 19.90, 20.00, 20.10, 20.20, 20.30, 20.40, 20.50, 20.60, 20.70, 20.80, 20.90, 21.00, 21.10,
-			21.20, 21.30, 21.40, 21.50, 21.60, 21.70, 21.80, 21.90, 22.00, 22.10, 22.20, 22.30, 22.40, 22.50, 22.60, 22.70, 22.80, 22.90, 23.00, 23.10, 23.20, 23.30, 23.40, 23.50, 23.60, 23.70,
-			23.80, 23.90, 24.00, 24.10, 24.20, 24.30, 24.40, 24.50, 24.60, 24.70, 24.80, 24.90, 25.00, 25.10, 25.20, 25.30, 25.40, 25.50, 25.60, 25.70, 25.80, 25.90, 26.00])
-			tau = np.array([-0.00000005, -0.00000005,    -0.00000005,    -0.00000008,    -0.00000010,    -0.00000013,   -0.00000016, -0.00000021,    -0.00000026,    -0.00000031,    -0.00000041,    -0.00000052,
-			-0.00000065,    -0.00000080,    -0.00000101,    -0.00000127,    -0.00000160,    -0.00000202, -0.00000256,    -0.00000321,    -0.00000404,    -0.00000510,    -0.00000642, -0.00000808,   
-			-0.00001017,    -0.00001281,    -0.00001613,    -0.00002030,    -0.00002555, -0.00003218,    -0.00004051,    -0.00005100,    -0.00006420,    -0.00008082, -0.00010174,    -0.00012808,   
-			-0.00016122,    -0.00020297,    -0.00025549,    -0.00032160, -0.00040484,    -0.00050955,   -0.00064138,    -0.00080723,    -0.00101594, -0.00127847,    -0.00160871,    -0.00202394,   
-			-0.00254596,    -0.00320199,    -0.00402598, -0.00506041,    -0.00635801,    -0.00798424,   -0.01002010,    -0.01256490, -0.01574020,    -0.01969330,    -0.02460080,    -0.03067190,   
-			-0.03814980,    -0.04731170, -0.05846370,    -0.07193180,    -0.08804700,    -0.10712300,   -0.12943600, -0.15520699,    -0.18461201,    -0.21782200,    -0.25508299,    -0.29682499,   
-			-0.34375799, -0.39693701,    -0.45780700,    -0.52823699,    -0.61060297,    -0.70790398,   -0.82392102,    -0.96342301,    -1.13239002,    -1.33829999,    -1.59043002,    -1.90021002,
-			-2.28153992,    -2.75111008,    -3.32871008,    -4.03739023,    -4.90411997, -5.96181011,   -7.25338984,    -8.54498959,    -9.83658981,   -11.12819958,   -12.41979980, -13.71140003,  
-			-15.00300026,   -16.29459953,   -17.58620071,   -18.87779999, -20.16939926])
-			if (log_NH < NH[0]):  tau_f = tau[0]  + (tau[1]-tau[0])   *(log_NH-NH[0])/(NH[1]-NH[0])
-			if (log_NH > NH[99]): tau_f = tau[99] + (tau[100]-tau[99])*(log_NH-NH[99])/(NH[100]-NH[99])
-			if (log_NH>=NH[0]) and (log_NH<=NH[99]): 
-				n0 = int((log_NH-NH[0])/0.10)
-				tau_f  = tau[n0] + (tau[n0+1]-tau[n0])*(log_NH-NH[n0])/(NH[n0+1]-NH[n0])
-			if (tau_f >= 0.): tau_f=0.
-			return -tau_f * np.log(10.)
-	else:
-		return np.power(10.,log_NH) * cross_section(nu)
-
 # load the optical-IR template, based on the observations in text and specifically 
-#		 the Richards et al. 2006 mean blue SED 
 def return_ratio_to_b_band(nu):
 	log_nu=np.array([    12.50, 12.52, 12.54, 12.56, 12.58, 12.60, 12.62, 12.64, 12.66, 12.68, 
 	12.70, 12.72, 12.74, 12.76, 12.78, 12.80, 12.82, 12.84, 12.86, 12.88, 12.90, 12.92, 12.94, 

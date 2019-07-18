@@ -15,5 +15,6 @@ for i in range(100):
 	samples = data[select,2:]
 
 	plt.plot(samples[:,pid])
+plt.axvline(8700, linestyle='--')
 plt.show()
 
