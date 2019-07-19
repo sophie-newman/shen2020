@@ -74,7 +74,7 @@ ax.errorbar(data["z"]+1,data["gamma1"],yerr=data['err1'],linestyle='',marker='o'
 
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 ax.plot(data["z"]+1,data["gamma1"],linestyle='',marker='o',
-	c='royalblue',mec='royalblue',ms=18,label=r'$\rm Local$ $\rm fits$ ($\phi_{\ast}$ $\rm and$ $\rm DTG$ $\rm fixed$)')
+	c='royalblue',mec='royalblue',ms=18,label=r'$\rm Local$ $\rm fits$ ($\phi_{\ast}$ $\rm fixed$)')
 
 ax.plot(z_a+1,gamma1_a,'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 ax.plot(z_a+1,bestfit(z_a,'gamma1'),'-',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
