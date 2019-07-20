@@ -36,14 +36,15 @@ def get_model_lf(parameters,nu,redshift,dtg):
 
 def get_model_lf_global(nu,redshift,dtg):
 	parameters=pglobal
+	zref = 2.
 	p=parameters[paraid==0]
 	gamma1 = polynomial(redshift,p,2)
 	p=parameters[paraid==1]
-	gamma2 = doublepower(redshift,p)
+	gamma2 = doublepower(redshift,(p[0],zref, p[1], p[2]))
 	p=parameters[paraid==2]
-	logphi = polynomial(redshift,p,1)# + 0.15
+	logphi = polynomial(redshift,p,1) + 0.1
 	p=parameters[paraid==3]	
-	Lbreak = doublepower(redshift,p)
+	Lbreak = doublepower(redshift,(p[0],zref, p[1], p[2]))
 	parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
 	return get_model_lf(parameters_at_z,nu,redshift,dtg)
 
@@ -82,10 +83,10 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
-E_list = np.logspace(-0.5,3,30)
+E_list = np.logspace(-1,3,100)
 nu_list = E_list*1000.*con.e.value/con.h.value
 
-zbins = np.linspace(0,7,50)
+zbins = np.linspace(0,7,100)
 zcenters = (zbins[1:]+zbins[:-1])/2.
 deltaz= zbins[5]-zbins[4]
 
@@ -111,15 +112,21 @@ ax.errorbar(data['E'],data['CXB'],xerr=data['dE'],yerr=data['dCXB'],c='crimson',
 data=np.genfromtxt("churazov2007.dat",names=True)
 ax.errorbar(data['E'],data['CXB'],xerr=(data['E']-data['Elo'],data['Eup']-data['E']),yerr=(data['CXB']-data['lo'],data['up']-data['CXB']),c='seagreen',mec='seagreen',capsize=0,capthick=0,linestyle='none',marker='.',lw=2,ms=1,label=r'$\rm Churazov+$ $\rm 2007$')
 
-prop = matplotlib.font_manager.FontProperties(size=25.0)
-ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
+data=np.genfromtxt("Gruber1999.dat",names=True)
+ax.errorbar(data['E'],data['CXB'],xerr=(data['E']-data['left'],data['right']-data['E']),yerr=(data['CXB']-data['lo'],data['up']-data['CXB']),c='chocolate',mec='chocolate',capsize=0,capthick=0,linestyle='none',marker='.',lw=2,ms=1,label=r'$\rm Gruber+$ $\rm 1999$')
+
+data=np.genfromtxt("gendreau1995.dat",names=True)
+ax.errorbar(data['E'],data['CXB'],yerr=(data['CXB']-data['lo'],data['up']-data['CXB']),c='darkorchid',mec='darkorchid',capsize=0,capthick=0,linestyle='none',marker='.',lw=2,ms=1,label=r'$\rm Gendreau+$ $\rm 1995$')
+
+prop = matplotlib.font_manager.FontProperties(size=23.0)
+ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm E$ [$\rm keV$]',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\nu I_{\rm XRB,\nu}$ [$\rm keV\,s^{-1}\,cm^{-2}\,sr^{-1}$]',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$\nu I_{\rm XRB,\nu}$ [$\rm keV^{2}\,s^{-1}\,cm^{-2}\,sr^{-1}\,keV^{-1}$]',fontsize=40,labelpad=5)
 
 #ax.text(0.25, 0.64, r'$\rm <-21$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
-ax.set_xlim(np.min(E_list),np.max(E_list))
-ax.set_ylim(2.,100.)
+ax.set_xlim(0.3,400)
+ax.set_ylim(3.,130.)
 ax.set_yscale('log')
 ax.set_xscale('log')
 ax.tick_params(labelsize=30)

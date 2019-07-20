@@ -27,14 +27,15 @@ convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
 def get_model_lf_global(parameters,redshift):
+	zref = 2.
 	p=parameters[paraid==0]
 	gamma1 = polynomial(redshift,p,2)
 	p=parameters[paraid==1]
-	gamma2 = doublepower(redshift,p)
+	gamma2 = doublepower(redshift,(p[0],zref, p[1], p[2]))
 	p=parameters[paraid==2]
 	logphi = polynomial(redshift,p,1)
 	p=parameters[paraid==3]	
-	Lbreak = doublepower(redshift,p)
+	Lbreak = doublepower(redshift,(p[0],zref, p[1], p[2]))
 	parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
 	return get_model_lf(parameters_at_z)
 
@@ -98,7 +99,7 @@ ax.errorbar(0.,np.log10(4.41*1e5),yerr=([np.log10(4.41)-np.log10(4.41-1.67)],[np
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\log{(\rho_{\rm BH}$ [${\rm M}_{\odot}\,{\rm Mpc}^{-3}$])}',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$\log{(\rho_{\rm BH}\,[{\rm M}_{\odot}\,{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
 
 #ax.text(0.25, 0.87, r'$\rm <-18$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 

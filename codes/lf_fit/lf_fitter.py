@@ -17,13 +17,17 @@ import resource
 import time
 import os
 
+zref = 2.
+
 def weightfunc(z):
 	if z<3.: return 1.
-	else: return (1.+z)/(1.+3.)
+	elif z<4: return np.power( (1.+z)/(1.+3.), 1.)
+	else: return np.power( (1.+4.)/(1.+3.), 1.) * np.power( (1.+z)/(1.+4.), 1.5)
 
-parameters_init = np.array([0.79847831 ,-0.25102297,0.02265792 ,1.846936805,0.316915805,-2.80025713,0.4003701  ,-3.5469101 ,-0.39856649,11.32661766,0.27481868 ,-0.82451577,0.25281821])
-#parameters_init = np.array([1.14436675, -0.42658811, 0.03168118, 1.95402727, 0.33739503, -2.22178968, 0.52685532, -3.90168138, -0.23981768, 10.35465428, -0.06446249, -0.98029392, 0.21807449])
-parameters_vary = np.array([0.4, 0.2, 0.2, 0.9, 0.3, 1.4, 0.3, 1.7, 0.3, 3., 0.2, 0.4, 0.3])
+#parameters_init = np.array([0.79847831 ,-0.25102297,0.02265792 ,1.846936805,0.316915805,-2.80025713,0.4003701  ,-3.5469101 ,-0.39856649,11.32661766,0.27481868 ,-0.82451577,0.25281821])
+parameters_init = np.array([0.79847831 ,-0.25102297,0.02265792 , 1.846936805, -2.80025713 , 0.4003701  ,-3.5469101 ,-0.39856649, 11.32661766 ,-0.82451577,0.25281821])
+#parameters_vary = np.array([0.4, 0.2, 0.2, 0.9, 0.3, 1.4, 0.3, 1.7, 0.3, 3., 0.2, 0.4, 0.3])
+parameters_vary = np.array([0.4, 0.2, 0.2, 0.9, 1.4, 0.3, 1.7, 0.3, 3., 0.4, 0.3])
 parameters_info = np.array(["gamma1", "gamma2", "logphis"  , "logLs"])
 
 #load the shared object file
@@ -108,7 +112,7 @@ def residual(pars):
 	if (np.count_nonzero(bad) > 0): alldata["P_PRED"][bad] = -40.0
 
 	chitot = np.sum( ((alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"])**2)
-	#print chitot, len(alldata["L_OBS"])
+	print chitot, len(alldata["L_OBS"])
 	residuals, sigmas = alldata["WEIGHT"]*(alldata["P_PRED"]-alldata["P_OBS"])/alldata["D_OBS"],alldata["D_OBS"]
 	alldata=None	
 
@@ -125,9 +129,9 @@ def lnprior(pars):
 	zdummy = 4.
 	xsi = 1.+ zdummy
 	gamma1=P[0]*T0(xsi)+P[1]*T1(xsi)+P[2]*T2(xsi)
-	gamma2=doublepower(zdummy,[P[3],P[4],P[5],P[6]])
-	Phis  =P[7]*T0(xsi)+P[8]*T1(xsi)
-	Lbreak=doublepower(zdummy,[P[9],P[10],P[11],P[12]])
+	gamma2=doublepower(zdummy,[P[3],zref,P[4],P[5]])
+	Phis  =P[6]*T0(xsi)+P[7]*T1(xsi)
+	Lbreak=doublepower(zdummy,[P[8],zref,P[9],P[10]])
 	if (np.isfinite(gamma1)) and (np.isfinite(gamma2)) and (np.isfinite(Phis)) and (np.isfinite(Lbreak)): 
 		if (gamma1>-5) and (gamma1<5) and (gamma2>-5) and (gamma2<5) and (Phis>-15) and (Phis<5) and (Lbreak>5) and (Lbreak<20):
 			return 0.0
@@ -144,7 +148,7 @@ def lnprob(pars):
 start_time = time.time()
 np.random.seed(4267)
 
-ndim, nwalkers = 13, 100
+ndim, nwalkers = 11, 100
 pos = np.array([np.random.randn(ndim) for i in range(nwalkers)])
 for i in range(pos.shape[0]):
 	pos[i,:] = pos[i,:] * parameters_vary + parameters_init
