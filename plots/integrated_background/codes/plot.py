@@ -3,6 +3,7 @@ import numpy as np
 from lf_shape import *
 import scipy.interpolate as inter
 from scipy.integrate import quad
+from scipy.integrate import romberg
 from convolve import *
 from scipy.optimize import curve_fit
 from scipy.optimize import minimize
@@ -42,7 +43,7 @@ def get_model_lf_global(nu,redshift,dtg):
 	p=parameters[paraid==1]
 	gamma2 = doublepower(redshift,(p[0],zref, p[1], p[2]))
 	p=parameters[paraid==2]
-	logphi = polynomial(redshift,p,1) + 0.1
+	logphi = polynomial(redshift,p,1)
 	p=parameters[paraid==3]	
 	Lbreak = doublepower(redshift,(p[0],zref, p[1], p[2]))
 	parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
@@ -60,7 +61,13 @@ def cumulative_emissivity(L_nu,Phi_nu,L_limit_low,L_limit_up,nu):
 	def emis(x):
 		return np.power(10.,logphi(x))*np.power(10.,x)/nu
 
-	return quad(emis, L_limit_low, L_limit_up)[0]*np.power(10.,L_solar)
+	result = quad(emis, L_limit_low, L_limit_up)[0]*np.power(10.,L_solar)
+	#return romberg(emis, L_limit_low, L_limit_up, divmax=20)*np.power(10.,L_solar)
+	if np.isfinite(result) == False:
+		print L_nu
+		print Phi_nu
+
+	return result
 
 def to_be_integrate(z, nuobs):
 	dtg = 0.78
@@ -86,7 +93,7 @@ ax = fig.add_axes([0.13,0.12,0.79,0.83])
 E_list = np.logspace(-1,3,100)
 nu_list = E_list*1000.*con.e.value/con.h.value
 
-zbins = np.linspace(0,7,100)
+zbins = np.linspace(0,7,50)
 zcenters = (zbins[1:]+zbins[:-1])/2.
 deltaz= zbins[5]-zbins[4]
 
