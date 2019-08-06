@@ -47,14 +47,15 @@ def plot_for_z(redshift,color):
         parameters_global_1 = pars_at_z(fit_evolve,redshift)
 	'''
         source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
+	zref = 2.
         p=source['value'][ source['paraid']==0 ]
         gamma1 = polynomial(redshift,p,2)
         p=source['value'][ source['paraid']==1 ]
-        gamma2 = doublepower(redshift,p)
+        gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
         p=source['value'][ source['paraid']==2 ]
         logphi = polynomial(redshift,p,1)
         p=source['value'][ source['paraid']==3 ]
-        Lbreak = doublepower(redshift,p)
+        Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
         parameters_global_2 = np.array([gamma1,gamma2,logphi,Lbreak])
 
 	x = L_bol_grid + L_solar 
