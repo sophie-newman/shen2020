@@ -115,7 +115,7 @@ ax.errorbar( (la18["zmin"]+la18["zmax"])/2., la18["f"]/100., yerr=la18["ferr"], 
 prop = matplotlib.font_manager.FontProperties(size=18.8)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=2)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$f_{\rm CTK}$',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$F_{\rm CTK}$',fontsize=40,labelpad=5)
 ax.set_xlim(-0.05,5)
 ax.set_ylim(0,0.9)
 ax.tick_params(labelsize=30)

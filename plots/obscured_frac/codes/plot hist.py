@@ -126,7 +126,7 @@ ax.errorbar( ud14["logNH"], ud14["f"], yerr=np.array([ud14["f"]-ud14["lo"],ud14[
 ax.plot(xgrid, f_nh(xgrid, logLx, redshift),    lw=6,  c='royalblue', label=r'$\rm Ueda+$ $\rm 2014$ ($\bf fid.$)')
 
 ax.text(0.10, 0.95, r'$\rm z=0.05$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30)
-ax.text(0.14, 0.88, r'$\log{L_{\rm HX}}=43.5$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30)
+ax.text(0.14, 0.88, r'$\log{L_{\rm X}}=43.5$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30)
 
 
 prop = matplotlib.font_manager.FontProperties(size=20)
@@ -139,5 +139,5 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-plt.show()
-#plt.savefig("../figs/NH_hist.pdf",fmt='pdf')
+#plt.show()
+plt.savefig("../figs/NH_hist.pdf",fmt='pdf')

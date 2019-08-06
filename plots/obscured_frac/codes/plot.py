@@ -144,7 +144,7 @@ ax.errorbar( (la18["zmin"][:-1]+la18["zmax"][:-1])/2., la18["f"][:-1], yerr=la18
 prop = matplotlib.font_manager.FontProperties(size=18.8)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=2)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$f_{\rm abs}$',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$F_{\rm abs}$',fontsize=40,labelpad=5)
 ax.set_xlim(-0.05,5)
 ax.set_ylim(0,1.1)
 ax.tick_params(labelsize=30)

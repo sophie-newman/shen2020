@@ -70,7 +70,7 @@ def cumulative_emissivity(L_nu,Phi_nu,L_limit_low,L_limit_up,nu):
 	return result
 
 def to_be_integrate(z, nuobs):
-	dtg = 0.78
+	dtg = return_dtg(z)
 	nuem = nuobs*(1+z)
         L_nu, PHI_nu = get_model_lf_global(nuem, z, dtg)
         emissivity = cumulative_emissivity(L_nu, PHI_nu, L_nu[0], L_nu[-1], nuem) 
