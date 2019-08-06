@@ -4,7 +4,9 @@ from lf_shape import *
 from new_load_kk18_lf_shape import *
 import scipy.interpolate as inter
 from scipy.integrate import quad
+from scipy.integrate import romberg
 from convolve import *
+from convolve_h07 import *
 from scipy.optimize import curve_fit
 from scipy.optimize import minimize
 from scipy.optimize import least_squares
@@ -20,7 +22,7 @@ def Gamma(epsilon,z):
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
-data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
+data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 pgamma1_fix, pgamma1_err_fix  = data["gamma1"], data["err1"]
 pgamma2_fix, pgamma2_err_fix  = data["gamma2"], data["err2"]
 plogphis_fix,plogphis_err_fix = data["phi_s"],  data["err3"]
@@ -28,7 +30,7 @@ pLbreak_fix, pLbreak_err_fix  = data["L_s"],    data["err3"]
 pz_fix=data['z']
 zpoints_fix=np.array(pz_fix)
 
-data=np.genfromtxt("../../fitresult/fit_at_z_nofix.dat",names=True)
+data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_nofix.dat",names=True)
 pgamma1_free, pgamma1_err_free  = data["gamma1"], data["err1"]
 pgamma2_free, pgamma2_err_free  = data["gamma2"], data["err2"]
 plogphis_free,plogphis_err_free = data["phi_s"],  data["err3"]
@@ -86,7 +88,9 @@ def cumulative_emissivity(L_band,Phi_band,L_limit_low,L_limit_up):
 		fnu = np.power(10.,-0.4*x)*3631*1e-23*4*np.pi*(10*con.pc.value*100)**2
 		fnu912 = fnu * (912./1450.)**(0.61)
 		return np.power(10.,logphi(x))*fnu912
-	return quad(emis,Mlow,Mup)[0]
+	print "1"
+	return romberg(emis,Mlow,Mup,divmax=20)
+	#return quad(emis,Mlow,Mup)[0]
 
 def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift,global_fit=False):
 	partials = 0.0 * parameters

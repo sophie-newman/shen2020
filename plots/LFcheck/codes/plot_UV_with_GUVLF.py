@@ -46,14 +46,15 @@ id=fit_res["z"]==redshift
 parameters=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
 
 source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
+zref = 2.
 p=source['value'][ source['paraid']==0 ]
 gamma1 = polynomial(redshift,p,2)
 p=source['value'][ source['paraid']==1 ]
-gamma2 = doublepower(redshift,p)
+gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
 p=source['value'][ source['paraid']==2 ]
 logphi = polynomial(redshift,p,1)
 p=source['value'][ source['paraid']==3 ]
-Lbreak = doublepower(redshift,p)
+Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
 parameters_global = np.array([gamma1,gamma2,logphi,Lbreak])
 
 #load the shared object file

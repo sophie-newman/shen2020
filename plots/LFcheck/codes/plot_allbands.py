@@ -202,6 +202,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
+#plt.show()
 
