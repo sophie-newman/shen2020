@@ -39,13 +39,14 @@ def bestfit(z,field):
 
 def bestfit_global(z,paraid):
 	source=np.genfromtxt("zevolution_fit_global.dat",names=True)
+	zref = 2.
 	p=source['value'][ source['paraid']==paraid ]
 	print p
 	if (paraid==0): 
 		return polynomial(z,p,2)
 	elif (paraid==2):
 		return polynomial(z,p,1)
-	else: return doublepower(z,p)
+	else: return doublepower(z,(p[0],zref,p[1],p[2]))
 
 def Hopkins07(z):
 	parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
@@ -104,9 +105,9 @@ ax.errorbar(data["z"],-data["alpha"]-1,yerr=(data['alphalowerr'],data['alphauper
 ax.plot([],[],'.',c='crimson',mec='crimson',marker='s',ms=15,label=r'$\rm Galaxy:$ $\rm observation$')
 ax.plot([],[],'.',c='royalblue',mec='royalblue',marker='s',ms=15,label=r'$\rm Galaxy:$ $\rm simulation$')
 
-data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-ax.errorbar(data["z"]+1,data["gamma1"],yerr=data['err1'],linestyle='',marker='^',
-	c='gray',mec='gray',ms=18,capsize=10,capthick=4,label=r'$\rm Quasar:$ $\rm local$ $\rm fits$ ($\phi_{\ast}$ $\rm fixed$)')
+data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
+ax.plot(data["z"]+1,data["gamma1"],linestyle='',marker='^',
+	c='gray',mec='gray',ms=18,label=r'$\rm Quasar:$ $\rm local$ $\rm fits$ ($\phi_{\ast}$ $\rm fixed$)')
 
 ax.plot(z_a+1,bestfit_global(z_a,0),'-',c='black',lw=6,label=r'$\rm Quasar:$ $\rm global$ $\rm fit$')
 

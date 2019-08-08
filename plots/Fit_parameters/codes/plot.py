@@ -39,13 +39,14 @@ def bestfit(z,field):
 
 def bestfit_global(z,paraid):
 	source=np.genfromtxt("zevolution_fit_global.dat",names=True)
+	zref = 2.0
 	p=source['value'][ source['paraid']==paraid ]
 	print p
 	if (paraid==0): 
 		return polynomial(z,p,2)
 	elif (paraid==2):
 		return polynomial(z,p,1)
-	else: return doublepower(z,p)
+	else: return doublepower(z,(p[0],zref,p[1],p[2]))
 
 def Hopkins07(z):
 	parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
