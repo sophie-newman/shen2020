@@ -12,6 +12,8 @@ from ctypes import *
 import ctypes
 import sys
 
+from new_load_giallongo15_lf_shape import *
+
 obdataPath = '../GUVLF_data/'
 def plt_obdata(fname,papername,color,label=True):
 	obdata=np.genfromtxt(obdataPath+fname,names=True, comments='#')
@@ -131,7 +133,12 @@ ax.plot(x,y,'-',lw=4,c='royalblue',label=r'$\rm Galaxy$ $\rm UVLF$ $\rm fit$')
 
 x,y,dy,yfit=get_data()
 ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='gray',mec='gray',marker='o', ms=10, capthick=2 ,label=r'$\rm Quasar$ $\rm UVLF$ $\rm compilation$')
-
+'''
+if redshift==6:
+	x = np.linspace(-14,-32,100) 
+	y = return_giallongo15_lf_fitted(x,6.)
+	ax.plot(x,y,'--',dashes=(25,15),c='seagreen',label=r'$\rm Giallongo+$ $\rm 2015$ $z=5-6.5$')
+'''
 if redshift==2:
 	snapnum=33
 	plt_obdata('obdata'+str(snapnum).zfill(3)+'_ala.dat',r'${\rm Alavi+}$ ${\rm 2014}$','darkorchid')

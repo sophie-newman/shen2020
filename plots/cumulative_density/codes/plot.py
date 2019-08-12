@@ -15,7 +15,7 @@ import sys
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
-data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
+data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 pgamma1, pgamma1_err  = data["gamma1"], data["err1"]
 pgamma2, pgamma2_err  = data["gamma2"], data["err2"]
 plogphis,plogphis_err = data["phi_s"],  data["err3"]
@@ -74,14 +74,15 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 def get_pars(parameters,redshift):
+	zref = 2.
         p=parameters[paraid==0]
         gamma1 = polynomial(redshift,p,2)
         p=parameters[paraid==1]
-        gamma2 = doublepower(redshift,p)
+        gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
         p=parameters[paraid==2]
         logphi = polynomial(redshift,p,1)
         p=parameters[paraid==3]
-        Lbreak = doublepower(redshift,p)
+        Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
         return gamma1, gamma2, logphi, Lbreak
 
 result=np.zeros((len(zlist),3))
@@ -89,7 +90,7 @@ for i in range(len(zlist)):
 	result[i,0]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF_at_z_H07(L_bol_grid,parameters_init,zlist[i],'Fiducial') ,45.5,46.5))
 	result[i,1]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF_at_z_H07(L_bol_grid,parameters_init,zlist[i],'Fiducial') ,46.5,47.5))
 	result[i,2]=np.log10( cumulative_count(L_bol_grid+L_solar ,LF_at_z_H07(L_bol_grid,parameters_init,zlist[i],'Fiducial') ,47.5,48.5))
-ax.plot(zlist,result[:,0],'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins$ $\rm 2007$')
+ax.plot(zlist,result[:,0],'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 ax.plot(zlist,result[:,1],'--',dashes=(25,15),c='crimson')
 ax.plot(zlist,result[:,2],'--',dashes=(25,15),c='crimson')
 
@@ -102,6 +103,7 @@ ax.plot(zlist,result[:,0],'-',c='darkorchid',label=r'$\rm Global$ $\rm fits$')
 ax.plot(zlist,result[:,1],'-',c='darkorchid')
 ax.plot(zlist,result[:,2],'-',c='darkorchid')
 
+'''
 result=np.zeros((len(zpoints),3))
 for i in range(len(zpoints)):
 	id=pz==zpoints[i]
@@ -112,13 +114,14 @@ for i in range(len(zpoints)):
 ax.plot(zpoints,result[:,0],'o',c='royalblue',mec='royalblue',ms=15)
 ax.plot(zpoints,result[:,1],'o',c='royalblue',mec='royalblue',ms=15)
 ax.plot(zpoints,result[:,2],'o',c='royalblue',mec='royalblue',ms=15)
+'''
 
-prop = matplotlib.font_manager.FontProperties(size=30.0)
+prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=1,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\Phi[{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
 
-ax.text(0.4, 0.33, r'$\rm 47.5-48.5$'  ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
+ax.text(0.4, 0.31, r'$\rm 47.5-48.5$'  ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 ax.text(0.4, 0.58, r'$\rm 46.5-47.5$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 ax.text(0.4, 0.88, r'$\rm 45.5-46.5$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
