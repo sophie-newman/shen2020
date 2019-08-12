@@ -16,9 +16,22 @@ from ctypes import *
 import ctypes
 import sys
 
-def Gamma(epsilon,z):
+def Gamma_old(epsilon,z):
 	alphaEUV=-1.70
 	return ( 2.*(1+z)**(-1.5)*epsilon/1e24/(3.+np.abs(alphaEUV)) )
+'''
+def Gamma(epsilon,z):
+        alphaEUV=-1.70
+        eta = 5.4
+        Dl = 65.
+        return 0.6 * (Dl/65.) * np.power((1.+z)/4.5,3.-eta) * epsilon/1e24 / (3.+np.abs(alphaEUV))
+'''
+def Gamma(epsilon,z):
+        alphaEUV=-1.70
+        eta = 2.5+1.94
+        Dl = 50.
+        return 0.46 * (Dl/50.) * np.power((1.+z)/4.5,3.-eta) * epsilon/1e24 / (3.+np.abs(alphaEUV))
+
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
@@ -40,7 +53,11 @@ zpoints_free=np.array(pz_free)
 
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
-zlist=np.linspace(0.1,7,100)
+zlist=np.linspace(0.1,7,15)
+
+zpoints_free = zpoints_free[zpoints_free>2.]
+zpoints_fix  = zpoints_fix[zpoints_fix>2.]
+zlist = zlist[zlist>2.]
 
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
@@ -88,9 +105,8 @@ def cumulative_emissivity(L_band,Phi_band,L_limit_low,L_limit_up):
 		fnu = np.power(10.,-0.4*x)*3631*1e-23*4*np.pi*(10*con.pc.value*100)**2
 		fnu912 = fnu * (912./1450.)**(0.61)
 		return np.power(10.,logphi(x))*fnu912
-	print "1"
-	return romberg(emis,Mlow,Mup,divmax=20)
-	#return quad(emis,Mlow,Mup)[0]
+	#return romberg(emis,Mlow,Mup,divmax=20)
+	return quad(emis,Mlow,Mup)[0]
 
 def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift,global_fit=False):
 	partials = 0.0 * parameters
@@ -132,20 +148,21 @@ ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 lowlimit=-35
 
-result=np.zeros((len(zlist),2))
-for i in range(len(zlist)):
+zlist_h07=np.linspace(0.1,7,20)
+result=np.zeros((len(zlist_h07),2))
+for i in range(len(zlist_h07)):
 	L_band = bolometric_correction_old(L_bol_grid,-1)
         nu_c = c_double(-1)
-        input_c= np.power(10.,LF_at_z_H07(L_bol_grid,parameters_init,zlist[i],"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        input_c= np.power(10.,LF_at_z_H07(L_bol_grid,parameters_init,zlist_h07[i],"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         res = convolve_c_old(input_c,nu_c)
         res = [j for j in res.contents]
         PHI_band = np.array(res,dtype=np.float64)
 	M_1450 = (M_sun_Bband_AB -2.5*L_band) + 0.706
 	PHI_1450 = np.log10(PHI_band) - np.log10(2.5)
 
-	result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zlist[i])
-	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist[i])
-ax.plot(zlist,np.log10(result[:,0]),'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
+	result[i,0]= Gamma_old(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zlist_h07[i])
+	result[i,1]= Gamma_old(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist_h07[i])
+ax.plot(zlist_h07,np.log10(result[:,0]),'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 
 result=np.zeros((len(zlist),2))
 uncertainty=np.zeros((len(zlist),2))
@@ -185,15 +202,29 @@ for i in range(len(zpoints_fix)):
 ax.plot(zpoints_fix,np.log10(result[:,0]),linestyle='none',marker='o',c='royalblue',mec='royalblue',ms=15)
 
 #######################################################################
-ax.errorbar([2.40,2.80,3.20,3.60,4.00,4.40,4.75],[0.015,-0.066,-0.103,-0.097,-0.072,-0.019,-0.029],yerr=([0.146, 0.131, 0.121, 0.118, 0.117, 0.122, 0.147],[0.132, 0.129, 0.130, 0.131, 0.135, 0.140, 0.156]),marker='s',linestyle='none',ms=15,color='k',mec='k',capsize=9,capthick=4,label=r'$\rm Becker$ $\rm &$ $\rm Bolton+$ $\rm 2013$')
+ax.errorbar([2.40,2.80,3.20,3.60,4.00,4.40,4.75],[0.015,-0.066,-0.103,-0.097,-0.072,-0.019,-0.029],yerr=([0.146, 0.131, 0.121, 0.118, 0.117, 0.122, 0.147],[0.132, 0.129, 0.130, 0.131, 0.135, 0.140, 0.156]),marker='o',linestyle='none',ms=15,color='k',mec='k',capsize=0,label=r'$\rm Becker$ $\rm &$ $\rm Bolton+$ $\rm 2013$')
 
 ydata=np.array([0.58, 0.53, 0.48, 0.47, 0.45, 0.29])
 lowerr=np.array([0.20, 0.19, 0.18, 0.18, 0.17, 0.11])
 uperr=np.array([0.08, 0.09, 0.10, 0.12, 0.14, 0.11])
-ax.errorbar([4.8,5.0,5.2,5.4,5.6,5.8], np.log10(ydata) ,yerr=(np.log10(ydata)-np.log10(ydata-lowerr),np.log10(ydata+uperr)-np.log10(ydata)),marker='s',linestyle='none',ms=15,color='navy',mec='navy',capsize=9,capthick=4,label=r'$\rm Aloisio+$ $\rm 2018$')
+ax.errorbar([4.8,5.0,5.2,5.4,5.6,5.8], np.log10(ydata) ,yerr=(np.log10(ydata)-np.log10(ydata-lowerr),np.log10(ydata+uperr)-np.log10(ydata)),marker='o',linestyle='none',ms=15,color='k',mec='k',capsize=0,label=r'$\rm Aloisio+$ $\rm 2018$')
 
-#data=np.genfromtxt("kk18.dat",names=['z','gamma'])
-#ax.plot(data['z'],data['gamma'],'--',c='gray',alpha=0.3)
+'''
+data=np.genfromtxt("Kuhlen2012.dat",names=True)
+ax.errorbar(data["z"], data["gamma"] ,yerr=(data["gamma"]-data["lo"],data["up"]-data["gamma"]),marker='o',linestyle='none',ms=15,color='k',mec='k',capsize=0,label=r'$\rm Kuhlen+$ $\rm 2012$')
+'''
+
+data=np.genfromtxt("Wyithe2011.dat",names=True)
+ax.errorbar(data['z'],data['gamma'], yerr=(data["gamma"]-data["lo"],data["up"]-data["gamma"]), marker='o',linestyle='none',ms=15,color='k',mec='k',label=r'$\rm Wyithe+$ $\rm 2011$')
+
+data=np.genfromtxt("Calverley2011.dat",names=True)
+ax.errorbar(data['z'],data['gamma'], yerr=(data["gamma"]-data["lo"],data["up"]-data["gamma"]), marker='o',linestyle='none',ms=15,color='k',mec='k',label=r'$\rm Wyithe+$ $\rm 2011$')
+
+data=np.genfromtxt("Gaikwad2017.dat",names=['z','gamma'])
+ax.plot(data['z'],data['gamma'], yerr=(data["gamma"]-data["lo"],data["up"]-data["gamma"]), marker='o',linestyle='none',ms=15,color='k',mec='k',label=r'$\rm Gaikwad+$ $\rm 2017$')
+
+data=np.genfromtxt("kk18.dat",names=['z','gamma'])
+ax.plot(data['z'],data['gamma'],'--',c='seagreen',label=r'$\rm Kulkarni+$ $\rm 2018$')
 #######################################################################
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)

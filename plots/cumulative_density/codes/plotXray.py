@@ -4,6 +4,7 @@ from lf_shape import *
 import scipy.interpolate as inter
 from scipy.integrate import quad
 from convolve import *
+from convolve_h07 import *
 from scipy.optimize import curve_fit
 from scipy.optimize import minimize
 from scipy.optimize import least_squares
@@ -15,7 +16,7 @@ import sys
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
-data=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
+data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 pgamma1, pgamma1_err  = data["gamma1"], data["err1"]
 pgamma2, pgamma2_err  = data["gamma2"], data["err2"]
 plogphis,plogphis_err = data["phi_s"],  data["err3"]
@@ -31,6 +32,11 @@ zlist=np.linspace(0.1,7,100)
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+
+#
+c_extenstion_old = CDLL(homepath+'codes/c_lib/convolve_old.so')
+convolve_c_old = c_extenstion_old.convolve
+convolve_c_old.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
 def cumulative_count(L_band,Phi_band,L_limit_low,L_limit_up,ABmag=False):
 	if ABmag==False:
@@ -74,22 +80,25 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 def get_model_lf_global(parameters,nu,redshift,magnitude=False):
+	zref = 2.
         p=parameters[paraid==0]
         gamma1 = polynomial(redshift,p,2)
         p=parameters[paraid==1]
-        gamma2 = doublepower(redshift,p)
+        gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
         p=parameters[paraid==2]
         logphi = polynomial(redshift,p,1)
         p=parameters[paraid==3]
-        Lbreak = doublepower(redshift,p)
+        Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
         parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
-        return get_model_lf(parameters_at_z,nu,magnitude=magnitude)
+        return get_model_lf(parameters_at_z,nu,redshift,magnitude=magnitude)
 
-def get_model_lf(parameters,nu,magnitude=False):
+def get_model_lf(parameters,nu,redshift,magnitude=False):
 	L_band = bolometric_correction(L_bol_grid,nu)
 	nu_c = c_double(nu)
+	redshift_c = c_double(redshift)
+	dtg_c = c_double(return_dtg(redshift))
 	input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-	res = convolve_c(input_c,nu_c)
+	res = convolve_c(input_c,nu_c,redshift_c,dtg_c)
 	res = [i for i in res.contents]
 	PHI_band = np.array(res,dtype=np.float64)
 	if magnitude==False:
@@ -101,10 +110,10 @@ def get_model_lf(parameters,nu,magnitude=False):
 
 result=np.zeros((len(zlist),3))
 for i in range(len(zlist)):
-	L_band = bolometric_correction(L_bol_grid,-4)
+	L_band = bolometric_correction_old(L_bol_grid,-4)
         nu_c = c_double(-4)
         input_c= np.power(10.,LF_at_z_H07(L_bol_grid,parameters_init,zlist[i],"Fiducial")).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-        res = convolve_c(input_c,nu_c)
+        res = convolve_c_old(input_c,nu_c)
         res = [j for j in res.contents]
         PHI_band = np.array(res,dtype=np.float64)
 
@@ -125,6 +134,7 @@ ax.plot(zlist,result[:,0],'-',c='darkorchid')
 ax.plot(zlist,result[:,1],'-',c='darkorchid')
 ax.plot(zlist,result[:,2],'-',c='darkorchid')
 
+'''
 result=np.zeros((len(zpoints),3))
 for i in range(len(zpoints)):
         id=pz==zpoints[i]
@@ -135,7 +145,7 @@ for i in range(len(zpoints)):
 ax.plot(zpoints,result[:,0],'o',c='royalblue',mec='royalblue',ms=15)
 ax.plot(zpoints,result[:,1],'o',c='royalblue',mec='royalblue',ms=15)
 ax.plot(zpoints,result[:,2],'o',c='royalblue',mec='royalblue',ms=15)
-
+'''
 prop = matplotlib.font_manager.FontProperties(size=30.0)
 #ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=1,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
