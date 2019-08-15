@@ -207,7 +207,7 @@ ax.errorbar([2.40,2.80,3.20,3.60,4.00,4.40,4.75],[0.015,-0.066,-0.103,-0.097,-0.
 ydata=np.array([0.58, 0.53, 0.48, 0.47, 0.45, 0.29])
 lowerr=np.array([0.20, 0.19, 0.18, 0.18, 0.17, 0.11])
 uperr=np.array([0.08, 0.09, 0.10, 0.12, 0.14, 0.11])
-ax.errorbar([4.8,5.0,5.2,5.4,5.6,5.8], np.log10(ydata) ,yerr=(np.log10(ydata)-np.log10(ydata-lowerr),np.log10(ydata+uperr)-np.log10(ydata)),marker='o',linestyle='none',ms=15,color='k',mec='k',capsize=0,label=r'$\rm Aloisio+$ $\rm 2018$')
+ax.errorbar([4.8,5.0,5.2,5.4,5.6,5.8], np.log10(ydata) ,yerr=(np.log10(ydata)-np.log10(ydata-lowerr),np.log10(ydata+uperr)-np.log10(ydata)),marker='o',linestyle='none',ms=15,color='gray',mec='gray',capsize=0,label=r'$\rm Aloisio+$ $\rm 2018$')
 
 '''
 data=np.genfromtxt("Kuhlen2012.dat",names=True)
@@ -215,13 +215,13 @@ ax.errorbar(data["z"], data["gamma"] ,yerr=(data["gamma"]-data["lo"],data["up"]-
 '''
 
 data=np.genfromtxt("Wyithe2011.dat",names=True)
-ax.errorbar(data['z'],data['gamma'], yerr=(data["gamma"]-data["lo"],data["up"]-data["gamma"]), marker='o',linestyle='none',ms=15,color='k',mec='k',label=r'$\rm Wyithe+$ $\rm 2011$')
+ax.errorbar(data['z'],data['gamma'], yerr=(data["gamma"]-data["lo"],data["up"]-data["gamma"]), marker='o',linestyle='none',ms=15,color='olive',mec='olive',label=r'$\rm Wyithe+$ $\rm 2011$')
 
 data=np.genfromtxt("Calverley2011.dat",names=True)
-ax.errorbar(data['z'],data['gamma'], yerr=(data["gamma"]-data["lo"],data["up"]-data["gamma"]), marker='o',linestyle='none',ms=15,color='k',mec='k',label=r'$\rm Wyithe+$ $\rm 2011$')
+ax.errorbar(data['z'],data['gamma'], yerr=(data["gamma"]-data["lo"],data["up"]-data["gamma"]), marker='o',linestyle='none',ms=15,color='chocolate',mec='chocolate',label=r'$\rm Calverley+$ $\rm 2011$')
 
 data=np.genfromtxt("Gaikwad2017.dat",names=['z','gamma'])
-ax.plot(data['z'],data['gamma'], yerr=(data["gamma"]-data["lo"],data["up"]-data["gamma"]), marker='o',linestyle='none',ms=15,color='k',mec='k',label=r'$\rm Gaikwad+$ $\rm 2017$')
+ax.plot(data['z'],data['gamma'], marker='o',linestyle='none',ms=15,color='deeppink',mec='deeppink',label=r'$\rm Gaikwad+$ $\rm 2017$')
 
 data=np.genfromtxt("kk18.dat",names=['z','gamma'])
 ax.plot(data['z'],data['gamma'],'--',c='seagreen',label=r'$\rm Kulkarni+$ $\rm 2018$')

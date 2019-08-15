@@ -110,8 +110,13 @@ for i in range(len(E_list)):
 
 #data=np.genfromtxt("ajello2008.dat",names=True)
 #scale = np.max(data['CXB'])/np.max(nu_list * Intensity * unit_convertion)
-ax.plot(E_list, nu_list * Intensity * unit_convertion, c='royalblue', label=r'$\rm This$ $\rm work$')
+ax.plot(E_list, nu_list * Intensity * unit_convertion, c='royalblue', label=r'$\rm This$ $\rm work:$ $\rm AGN$')
 print nu_list * Intensity * unit_convertion
+
+ax.plot(E_list, nu_list * Intensity * unit_convertion + 2., c='black', label=r'$\rm This$ $\rm work:$ $\rm AGN$ + $\rm galaxy$')
+
+data=np.genfromtxt("Hopkins2007.dat",names=["x","y"])
+ax.plot(data["x"],data["y"]+2.,'--',dashes=(25,15),c='gray',label=r'$\rm Hopkins+$ $\rm 2007$')
 
 data=np.genfromtxt("ajello2008.dat",names=True)
 ax.errorbar(data['E'],data['CXB'],xerr=data['dE'],yerr=data['dCXB'],c='crimson',mec='crimson',capsize=0,capthick=0,linestyle='none',marker='.',lw=2,ms=1,label=r'$\rm Ajello+$ $\rm 2008$')
