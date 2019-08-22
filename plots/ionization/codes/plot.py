@@ -174,8 +174,11 @@ for i in range(len(zlist)):
 uperr = np.log10(result + uncertainty)-np.log10(result)
 loerr = np.log10(result)-np.log10(result - uncertainty)
 loerr[np.invert(np.isfinite(loerr))] = 100
-ax.plot(zlist,np.log10(result[:,0]),'-',c='darkorchid',label=r'$\rm Global$ $\rm fit$')
+ax.plot(zlist,np.log10(result[:,0]),'-',c='darkorchid',alpha=0.7,label=r'$\rm Global$ $\rm fit$ ($\rm local$ $\rm approx.$)')
 ax.fill_between(zlist, y1=np.log10(result[:,0])+uperr[:,0] ,y2=np.log10(result[:,0])-loerr[:,0], color='darkorchid', alpha=0.4)
+
+data=np.genfromtxt("FG19.dat")
+ax.plot(10**data[0]-1,np.log10(data[1]/1e-12), color='deeppink',label=r'$\rm Global$ $\rm fit$ ($\rm full$ $\rm calc.$)')
 
 ###### fit at a given redshift
 result=np.zeros((len(zpoints_free),2))
