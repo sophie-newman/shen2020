@@ -178,7 +178,7 @@ ax.plot(zlist,np.log10(result[:,0]),'-',c='darkorchid',alpha=0.7,label=r'$\rm Gl
 ax.fill_between(zlist, y1=np.log10(result[:,0])+uperr[:,0] ,y2=np.log10(result[:,0])-loerr[:,0], color='darkorchid', alpha=0.4)
 
 data=np.genfromtxt("FG19_qso.dat")
-ax.plot(10**data[:,0]-1,np.log10(data[:,2]/1e-12), color='navy',label=r'$\rm Global$ $\rm fit$ ($\rm full$ $\rm UVB$ $\rm calc.$)')
+ax.plot(10**data[:,0]-1,np.log10(data[:,1]/1e-12), color='navy',label=r'$\rm Global$ $\rm fit$ ($\rm full$ $\rm UVB$ $\rm calc.$)')
 
 ###### fit at a given redshift
 result=np.zeros((len(zpoints_free),2))
