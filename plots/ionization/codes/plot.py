@@ -177,9 +177,8 @@ loerr[np.invert(np.isfinite(loerr))] = 100
 ax.plot(zlist,np.log10(result[:,0]),'-',c='darkorchid',alpha=0.7,label=r'$\rm Global$ $\rm fit$ ($\rm local$ $\rm approx.$)')
 ax.fill_between(zlist, y1=np.log10(result[:,0])+uperr[:,0] ,y2=np.log10(result[:,0])-loerr[:,0], color='darkorchid', alpha=0.4)
 
-data=np.genfromtxt("FG19.dat")
-print data.shape
-ax.plot(10**data[:,0]-1,np.log10(data[:,2]/1e-12), color='deeppink',label=r'$\rm Global$ $\rm fit$ ($\rm full$ $\rm calc.$)')
+data=np.genfromtxt("FG19_qso.dat")
+ax.plot(10**data[:,0]-1,np.log10(data[:,2]/1e-12), color='navy',label=r'$\rm Global$ $\rm fit$ ($\rm full$ $\rm UVB$ $\rm calc.$)')
 
 ###### fit at a given redshift
 result=np.zeros((len(zpoints_free),2))
@@ -193,7 +192,8 @@ for i in range(len(zpoints_free)):
 uperr = np.log10(result + uncertainty)-np.log10(result)
 loerr = np.log10(result)-np.log10(result - uncertainty)
 loerr[np.invert(np.isfinite(loerr))] = 100
-ax.errorbar(zpoints_free,np.log10(result[:,0]),yerr=(loerr[:,0],uperr[:,0]),linestyle='none',marker='o',c='gray',mec='gray',ms=15,capsize=9,capthick=4,alpha=0.5)
+uperr[np.invert(np.isfinite(uperr))] = 100
+ax.errorbar(zpoints_free,np.log10(result[:,0]),yerr=(loerr[:,0],uperr[:,0]),linestyle='none',lw=2,marker='x',c='gray',mec='gray',ms=15,capsize=9,capthick=2,alpha=0.7)
 
 
 result=np.zeros((len(zpoints_fix),2))
@@ -203,16 +203,9 @@ for i in range(len(zpoints_fix)):
         M_1450, PHI_1450 = get_model_lf([pgamma1_fix[id],pgamma2_fix[id],plogphis_fix[id],pLbreak_fix[id]], -5, zpoints_fix[i], magnitude=True)
         result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zpoints_fix[i])
 	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zpoints_fix[i])
-ax.plot(zpoints_fix,np.log10(result[:,0]),linestyle='none',marker='o',c='royalblue',mec='royalblue',ms=15)
+ax.plot(zpoints_fix,np.log10(result[:,0]),linestyle='none',marker='x',c='royalblue',mec='royalblue',ms=15)
 
 #######################################################################
-ax.errorbar([2.40,2.80,3.20,3.60,4.00,4.40,4.75],[0.015,-0.066,-0.103,-0.097,-0.072,-0.019,-0.029],yerr=([0.146, 0.131, 0.121, 0.118, 0.117, 0.122, 0.147],[0.132, 0.129, 0.130, 0.131, 0.135, 0.140, 0.156]),marker='o',linestyle='none',ms=15,color='k',mec='k',capsize=0,label=r'$\rm Becker$ $\rm &$ $\rm Bolton+$ $\rm 2013$')
-
-ydata=np.array([0.58, 0.53, 0.48, 0.47, 0.45, 0.29])
-lowerr=np.array([0.20, 0.19, 0.18, 0.18, 0.17, 0.11])
-uperr=np.array([0.08, 0.09, 0.10, 0.12, 0.14, 0.11])
-ax.errorbar([4.8,5.0,5.2,5.4,5.6,5.8], np.log10(ydata) ,yerr=(np.log10(ydata)-np.log10(ydata-lowerr),np.log10(ydata+uperr)-np.log10(ydata)),marker='o',linestyle='none',ms=15,color='gray',mec='gray',capsize=0,label=r'$\rm Aloisio+$ $\rm 2018$')
-
 '''
 data=np.genfromtxt("Kuhlen2012.dat",names=True)
 ax.errorbar(data["z"], data["gamma"] ,yerr=(data["gamma"]-data["lo"],data["up"]-data["gamma"]),marker='o',linestyle='none',ms=15,color='k',mec='k',capsize=0,label=r'$\rm Kuhlen+$ $\rm 2012$')
@@ -224,14 +217,21 @@ ax.errorbar(data['z'],data['gamma'], yerr=(data["gamma"]-data["lo"],data["up"]-d
 data=np.genfromtxt("Calverley2011.dat",names=True)
 ax.errorbar(data['z'],data['gamma'], yerr=(data["gamma"]-data["lo"],data["up"]-data["gamma"]), marker='o',linestyle='none',ms=15,color='chocolate',mec='chocolate',label=r'$\rm Calverley+$ $\rm 2011$')
 
+ax.errorbar([2.40,2.80,3.20,3.60,4.00,4.40,4.75],[0.015,-0.066,-0.103,-0.097,-0.072,-0.019,-0.029],yerr=([0.146, 0.131, 0.121, 0.118, 0.117, 0.122, 0.147],[0.132, 0.129, 0.130, 0.131, 0.135, 0.140, 0.156]),marker='o',linestyle='none',ms=15,color='k',mec='k',capsize=0,label=r'$\rm Becker$ $\rm &$ $\rm Bolton+$ $\rm 2013$')
+
 data=np.genfromtxt("Gaikwad2017.dat",names=['z','gamma'])
 ax.plot(data['z'],data['gamma'], marker='o',linestyle='none',ms=15,color='deeppink',mec='deeppink',label=r'$\rm Gaikwad+$ $\rm 2017$')
+
+ydata=np.array([0.58, 0.53, 0.48, 0.47, 0.45, 0.29])
+lowerr=np.array([0.20, 0.19, 0.18, 0.18, 0.17, 0.11])
+uperr=np.array([0.08, 0.09, 0.10, 0.12, 0.14, 0.11])
+ax.errorbar([4.8,5.0,5.2,5.4,5.6,5.8], np.log10(ydata) ,yerr=(np.log10(ydata)-np.log10(ydata-lowerr),np.log10(ydata+uperr)-np.log10(ydata)),marker='o',linestyle='none',ms=15,color='gray',mec='gray',capsize=0,label=r'$\rm Aloisio+$ $\rm 2018$')
 
 data=np.genfromtxt("kk18.dat",names=['z','gamma'])
 ax.plot(data['z'],data['gamma'],'--',c='seagreen',label=r'$\rm Kulkarni+$ $\rm 2018$')
 #######################################################################
 
-prop = matplotlib.font_manager.FontProperties(size=25.0)
+prop = matplotlib.font_manager.FontProperties(size=22.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\Gamma_{\rm -12}\,[\rm s^{-1}\,atom^{-1}])}$',fontsize=40,labelpad=5)
