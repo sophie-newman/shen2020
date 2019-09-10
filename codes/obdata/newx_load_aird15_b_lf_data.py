@@ -1,5 +1,6 @@
 # 
 # Aird et al. 2015b NuSTAR
+# Ultra hard band
 #
 from data import *
 import numpy as np 
@@ -36,5 +37,7 @@ def load_aird15_b_lf_data(z): # L_HX, PHI_HX, DPHI_HX
 	PHI_HX = np.log10(P_HX)
 	DPHI_HX= D_HX
 	L_HX = (L_HX - L_solar)
+
+	L_HX = L_HX - 0.11 # convert the ultra hard band to hard band
 
 	return L_HX, PHI_HX, DPHI_HX

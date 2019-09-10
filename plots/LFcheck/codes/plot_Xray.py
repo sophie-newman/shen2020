@@ -7,14 +7,12 @@ from scipy.optimize import curve_fit
 from scipy.optimize import minimize
 from scipy.optimize import least_squares
 # fit the luminosity function based on datasets at a given redshift
-from lf_data_compilation import *
+from lf_fitter_data import *
 from ctypes import *
 import ctypes
 import sys
 
 redshift=float(sys.argv[1])
-
-parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
 fit_res=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 id=fit_res["z"]==redshift
@@ -25,48 +23,33 @@ c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
-def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id,newdata=False):
+def get_fit_data(alldata,zmin,zmax,dset_name,dset_id):
 	alldata_tem={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([])}
 	
 	if dset_id!=-4: return False
-	if newdata==False: 
-		if load_LF_data[dset_name](redshift)!=False:
-			L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
-		else: return False
-	else: 
-		if new_load_LF_data[dset_name](redshift)!=False:
-			L_data, PHI_data, DPHI_data = new_load_LF_data[dset_name](redshift)
-		else: return False
-
+	
+	if load_LF_data[dset_name](redshift)!=False:
+		L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
+	else: return False
+	
 	L_tmp=bolometric_correction(L_bol_grid,dset_id)
-	if newdata==False:
-		if (return_LF[dset_name]!=None):
-			phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
-			phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
-			PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
-	else:
-		phi_fit_tmp = return_miyaji15_lf_fitted(L_tmp, redshift)
+	if (return_LF[dset_name]!=None):
+		phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
 		phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
-		PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
-
+		PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
+	
 	if len(L_data)>0:
 			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_data)
 			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_data)
 			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_data)# + 0.01)
 	print "NAME:",dset_name
 
-def get_data(parameters=parameters_init,newdata=False):
+def get_data():
         alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
-	if newdata==False:
-        	for key in dset_ids.keys():
-                	get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
+        for key in dset_ids.keys():
+                get_fit_data(alldata,zmins[key],zmaxs[key],key,dset_ids[key])
 
-        	return alldata["L_OBS"],alldata["P_OBS"],alldata["D_OBS"],alldata["P_PRED"]
-	if newdata==True:
-		for key in new_dset_ids.keys():
-                        get_fit_data(alldata,parameters,new_zmins[key],new_zmaxs[key],key,new_dset_ids[key],newdata=True)
-
-		return alldata["L_OBS"],alldata["P_OBS"],alldata["D_OBS"],alldata["P_PRED"]
+        return alldata["L_OBS"],alldata["P_OBS"],alldata["D_OBS"],alldata["P_PRED"]
 
 import matplotlib.pyplot as plt 
 import matplotlib
@@ -94,15 +77,11 @@ x = L_HX + L_solar
 y = np.log10(PHI_HX)
 ax.plot(x,y,'--',dashes=(25,15),c='black',label=r'$\rm new$ $\rm fit$')
 
-x,y,dy,yfit=get_data(newdata=True)
-x = x + L_solar
-y = y
-ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='crimson',mec='crimson',marker='o', ms=10,capthick=2,label=r'$\rm new$ $\rm data$')
-
 x,y,dy,yfit=get_data()
 x = x + L_solar
 y = y
-ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='o', ms=10,capthick=2, label=r'$\rm old$ $\rm data$')
+
+ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='crimson',mec='crimson',marker='o', ms=10,capthick=2,label=r'$\rm data$')
 
 prop = matplotlib.font_manager.FontProperties(size=30.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
