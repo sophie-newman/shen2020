@@ -9,10 +9,6 @@ from ctypes import *
 import ctypes
 import sys
 
-parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
-
-fduty=0.08
-
 def lamb_vs_Lbol(Lbol):
 	median = 0.469 * Lbol - 22.46
 	#median = -1.5 
@@ -44,6 +40,8 @@ def get_mass_function(Masses, Weights):
 	result = np.log10(result)
 	return (bins[1:]+bins[:-1])/2., result
 
+fduty=0.03
+
 import matplotlib.pyplot as plt 
 import matplotlib
 
@@ -59,31 +57,26 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 i=0
-colors=['royalblue','seagreen']
-for redshift in [0.4]:
-	fit_res=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-	id=fit_res["z"]==redshift
-	parameters_fix_local=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
-
-	source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
-	p=source['value'][ source['paraid']==0 ]
-	gamma1 = polynomial(redshift,p,2)
-	p=source['value'][ source['paraid']==1 ]
-	gamma2 = doublepower(redshift,p)
-	p=source['value'][ source['paraid']==2 ]
-	logphi = polynomial(redshift,p,1)
-	p=source['value'][ source['paraid']==3 ]
-	Lbreak = doublepower(redshift,p)
-	parameters_global_2 = np.array([gamma1,gamma2,logphi,Lbreak])
-
-	catalog = {"mass":0, "weight":0}
-
-	L_bol_grid_extended = np.linspace(5,15,100)
-	catalog["mass"], catalog["weight"] = generate_ensemble(L_bol_grid_extended+L_solar, LF(L_bol_grid_extended,parameters_global_2) )
-	x,y = get_mass_function(catalog["mass"],catalog["weight"])
-	ax.plot(x,y-np.log10(fduty),'-',c=colors[i],label=r'$\rm Convolved$ ($\rm total$)')
-	ax.plot(x,y+np.log10(0.2),'--',dashes=(25,15),c=colors[i],label=r'$\rm Convolved$ ($\rm type-I$)')
-	i=i+1
+colors='royalblue'
+redshift = 0.2
+	
+source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
+zref = 2.
+p=source['value'][ source['paraid']==0 ]
+gamma1 = polynomial(redshift,p,2)
+p=source['value'][ source['paraid']==1 ]
+gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
+p=source['value'][ source['paraid']==2 ]
+logphi = polynomial(redshift,p,1)
+p=source['value'][ source['paraid']==3 ]
+Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
+parameters_global_2 = np.array([gamma1,gamma2,logphi,Lbreak])
+catalog = {"mass":0, "weight":0}
+L_bol_grid_extended = np.linspace(5,15,100)
+catalog["mass"], catalog["weight"] = generate_ensemble(L_bol_grid_extended+L_solar, LF(L_bol_grid_extended,parameters_global_2) )
+x,y = get_mass_function(catalog["mass"],catalog["weight"])
+ax.plot(x,y-np.log10(fduty),'-',c=colors,label=r'$\rm Convolved$ ($\rm total$)')
+ax.plot(x,y+np.log10(0.38),'--',dashes=(25,15),c=colors,label=r'$\rm Convolved$ ($\rm type-I$)')
 
 def BHMF1(logM, logphi_s, logM_s, alpha, beta):
 	a = 10.**(logM-logM_s)
@@ -93,11 +86,10 @@ def BHMF2(logM, logphi_s, logM_s, alpha, beta):
 	a = 10.**(logM-logM_s)
 	return 10.**logphi_s / (a**alpha + a**beta)
 xfit = np.linspace(5,12,100)
-pfit = np.log10(BHMF2(xfit, -4.391, 8.645, 1.805, 0.5545))
-data = np.genfromtxt(datapath + 'BHMF/Marconi2004_local.dat', names=True)
+pfit = np.log10(BHMF2(xfit, -4.009, 8.047, 1.72, 0.5782))
+#pfit = np.log10(BHMF2(xfit, -4.391, 8.645, 1.805, 0.5545))
 ax.plot(xfit , pfit-np.log10(fduty),'-', color='crimson', label=r'$\rm Deconvolved$ ($\rm total$)')
-ax.plot(xfit , pfit+np.log10(0.2),'--', dashes=(25,15), color='crimson', label=r'$\rm Deconvolved$ ($\rm type-I$)')
-
+ax.plot(xfit , pfit+np.log10(0.38),'--', dashes=(25,15), color='crimson', label=r'$\rm Deconvolved$ ($\rm type-I$)')
 
 data = np.genfromtxt(datapath + 'BHMF/Kelly2013/table1.dat', names=True)
 id = data['z']==0.4

@@ -7,19 +7,18 @@ import matplotlib.pyplot as plt
 # fit the luminosity function based on datasets at a given redshift
 import sys
 
-parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
-
-redshift=0.4
+redshift=0.2
 
 source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
+zref = 2.
 p=source['value'][ source['paraid']==0 ]
 gamma1 = polynomial(redshift,p,2)
 p=source['value'][ source['paraid']==1 ]
-gamma2 = doublepower(redshift,p)
+gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
 p=source['value'][ source['paraid']==2 ]
 logphi = polynomial(redshift,p,1)
 p=source['value'][ source['paraid']==3 ]
-Lbreak = doublepower(redshift,p)
+Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
 parameters_global_2 = np.array([gamma1,gamma2,logphi,Lbreak])
 
 catalog = {"mass":0, "weight":0}
@@ -53,7 +52,7 @@ kernel1 = kernel1/np.sum(kernel1)
 kernel2 =kernel_func2(x, x0=-1.9+0.45*0.4, sigma=1.03-0.15*0.4)
 kernel2 = kernel2/np.sum(kernel2)
 
-kernel =(kernel1+kernel2)/2.
+kernel = 0.62*kernel1+0.38*kernel2
 kernel = np.flip(kernel)
 '''
 plt.plot(np.flip(x),kernel)

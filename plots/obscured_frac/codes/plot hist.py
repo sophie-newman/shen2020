@@ -63,6 +63,18 @@ def f_nh(logNH,logLx,z):
 	
 	return results
 
+def fraction(logLx,z):
+	return (1-phi(logLx,z))/(1+phi(logLx,z)*fCTK)
+
+Ls=np.linspace(43.7,47.0,10)
+f_fit=0.0*Ls
+for i in range(len(Ls)):
+	f_fit[i]= fraction(Ls[i], 0)
+print Ls
+print f_fit
+exit()
+
+
 ###########################################################################
 ###################################   Ueda2003
 phi_44_U03=0.47

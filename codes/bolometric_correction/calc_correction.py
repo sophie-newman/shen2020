@@ -170,6 +170,10 @@ def returnall(sed2500):
 	#print (M1450-MB)
 	#exit()
 
+	LUHX = integrate( sedall, freqall, 10.*1000.*con.e.value/con.h.value, 40.*1000.*con.e.value/con.h.value)
+	print np.log10(LUHX) - np.log10(LHX)
+	exit()
+
 	print 'done'
 	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logL1450, logLIR
 
