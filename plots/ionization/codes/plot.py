@@ -51,6 +51,14 @@ pLbreak_free, pLbreak_err_free  = data["L_s"],    data["err3"]
 pz_free=data['z']
 zpoints_free=np.array(pz_free)
 
+data=np.genfromtxt("../../../codes/lf_fit/output/special_fit.dat",names=True)
+pgamma1_spe, pgamma1_err_spe  = data["gamma1"], data["err1"]
+pgamma2_spe, pgamma2_err_spe  = data["gamma2"], data["err2"]
+plogphis_spe,plogphis_err_spe = data["phi_s"],  data["err3"]
+pLbreak_spe, pLbreak_err_spe  = data["L_s"],    data["err3"]
+pz_spe=data['z']
+zpoints_spe=np.array(pz_spe)
+
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
 zlist=np.linspace(0.1,7,15)
@@ -161,7 +169,7 @@ for i in range(len(zlist_h07)):
 	PHI_1450 = np.log10(PHI_band) - np.log10(2.5)
 
 	result[i,0]= Gamma_old(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zlist_h07[i])
-	result[i,1]= Gamma_old(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist_h07[i])
+	#result[i,1]= Gamma_old(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist_h07[i])
 ax.plot(zlist_h07,np.log10(result[:,0]),'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 
 result=np.zeros((len(zlist),2))
@@ -169,7 +177,7 @@ uncertainty=np.zeros((len(zlist),2))
 for i in range(len(zlist)):
 	M_1450, PHI_1450 = get_model_lf_global(pglobal, -5, zlist[i], magnitude=True)
 	result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zlist[i])
-	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist[i])
+	#result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist[i])
 	uncertainty[i,0]= Gamma_err(pglobal, pglobal_err, lowlimit, -18, zlist[i], global_fit=True)
 uperr = np.log10(result + uncertainty)-np.log10(result)
 loerr = np.log10(result)-np.log10(result - uncertainty)
@@ -188,7 +196,7 @@ for i in range(len(zpoints_free)):
         M_1450, PHI_1450 = get_model_lf([pgamma1_free[id],pgamma2_free[id],plogphis_free[id],pLbreak_free[id]], -5, zpoints_free[i], magnitude=True)
         result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zpoints_free[i])
         uncertainty[i,0]= Gamma_err(np.array([pgamma1_free[id],pgamma2_free[id],plogphis_free[id],pLbreak_free[id]]), [pgamma1_err_free[id],pgamma2_err_free[id],plogphis_err_free[id],pLbreak_err_free[id]], lowlimit, -18, zpoints_free[i])
-        result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zpoints_free[i])
+        #result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zpoints_free[i])
 uperr = np.log10(result + uncertainty)-np.log10(result)
 loerr = np.log10(result)-np.log10(result - uncertainty)
 loerr[np.invert(np.isfinite(loerr))] = 100
@@ -202,8 +210,16 @@ for i in range(len(zpoints_fix)):
         id= pz_fix==zpoints_fix[i]
         M_1450, PHI_1450 = get_model_lf([pgamma1_fix[id],pgamma2_fix[id],plogphis_fix[id],pLbreak_fix[id]], -5, zpoints_fix[i], magnitude=True)
         result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zpoints_fix[i])
-	result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zpoints_fix[i])
+	#result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zpoints_fix[i])
 ax.plot(zpoints_fix,np.log10(result[:,0]),linestyle='none',marker='x',c='royalblue',mec='royalblue',ms=15)
+
+result=np.zeros((len(zpoints_spe),2))
+uncertainty=np.zeros((len(zpoints_spe),2))
+for i in range(len(zpoints_spe)):
+	id= pz_spe==zpoints_spe[i]
+	M_1450, PHI_1450 = get_model_lf([pgamma1_spe[id],pgamma2_spe[id],plogphis_spe[id],pLbreak_spe[id]], -5, zpoints_spe[id], magnitude=True)
+	result[i,0] = Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zpoints_spe[id])
+ax.plot(zpoints_spe,np.log10(result[:,0]),linestyle='none',lw=2,marker='v',c='yellow',mec='yellow',ms=15)
 
 #######################################################################
 '''
