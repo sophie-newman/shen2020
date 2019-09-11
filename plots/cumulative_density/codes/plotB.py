@@ -117,9 +117,9 @@ for i in range(len(zlist)):
         res = [j for j in res.contents]
         PHI_band = np.array(res,dtype=np.float64)
 
-	result[i,0]=np.log10( cumulative_count(L_band+L_solar, np.log10(PHI_band),45.5,46.0))
-	result[i,1]=np.log10( cumulative_count(L_band+L_solar, np.log10(PHI_band),46.0,46.5))
-	result[i,2]=np.log10( cumulative_count(L_band+L_solar, np.log10(PHI_band),46.5,47.0))
+	result[i,0]=np.log10( cumulative_count(L_band+L_solar, np.log10(PHI_band),43.5,44.5))
+	result[i,1]=np.log10( cumulative_count(L_band+L_solar, np.log10(PHI_band),44.5,45.5))
+	result[i,2]=np.log10( cumulative_count(L_band+L_solar, np.log10(PHI_band),45.5,46.5))
 ax.plot(zlist,result[:,0],'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 ax.plot(zlist,result[:,1],'--',dashes=(25,15),c='crimson')
 ax.plot(zlist,result[:,2],'--',dashes=(25,15),c='crimson')
@@ -127,9 +127,9 @@ ax.plot(zlist,result[:,2],'--',dashes=(25,15),c='crimson')
 result=np.zeros((len(zlist),3))
 for i in range(len(zlist)):
 	L_B, PHI_B = get_model_lf_global(pglobal, -1, zlist[i])
-	result[i,0]=np.log10(cumulative_count(L_B+L_solar,np.log10(PHI_B),45.5,46.0))
-	result[i,1]=np.log10(cumulative_count(L_B+L_solar,np.log10(PHI_B),46.0,46.5))
-	result[i,2]=np.log10(cumulative_count(L_B+L_solar,np.log10(PHI_B),46.5,47.0))
+	result[i,0]=np.log10(cumulative_count(L_B+L_solar,np.log10(PHI_B),43.5,44.5))
+	result[i,1]=np.log10(cumulative_count(L_B+L_solar,np.log10(PHI_B),44.5,45.5))
+	result[i,2]=np.log10(cumulative_count(L_B+L_solar,np.log10(PHI_B),45.5,46.5))
 ax.plot(zlist,result[:,0],'-',c='darkorchid')
 ax.plot(zlist,result[:,1],'-',c='darkorchid')
 ax.plot(zlist,result[:,2],'-',c='darkorchid')
@@ -147,23 +147,32 @@ ax.plot(zpoints,result[:,1],'o',c='royalblue',mec='royalblue',ms=15)
 ax.plot(zpoints,result[:,2],'o',c='royalblue',mec='royalblue',ms=15)
 '''
 
-prop = matplotlib.font_manager.FontProperties(size=30.0)
-#ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=1,ncol=1,frameon=False)
+data = np.genfromtxt("../obdata/H07.dat",names=True)
+shift = 0.
+id = data["Lmin"]==45.5
+ax.errorbar( data["z"][id], data["logPhi"][id]-shift, yerr=(data["logPhi"][id]-data["lo"][id],data["up"][id]-data["logPhi"][id]), c='k', mec="k", linestyle='none', marker='o', ms=15, capthick=4, capsize=0, label=r'$\rm Hopkins+$ $\rm 2007$ $\rm compilation$')
+id = data["Lmin"]==46.0
+ax.errorbar( data["z"][id], data["logPhi"][id]-shift, yerr=(data["logPhi"][id]-data["lo"][id],data["up"][id]-data["logPhi"][id]), c='k', mec="k", linestyle='none', marker='o', ms=15, capthick=4, capsize=0)
+id = data["Lmin"]==46.5
+ax.errorbar( data["z"][id], data["logPhi"][id]-shift, yerr=(data["logPhi"][id]-data["lo"][id],data["up"][id]-data["logPhi"][id]), c='k', mec="k", linestyle='none', marker='o', ms=15, capthick=4, capsize=0)
+
+prop = matplotlib.font_manager.FontProperties(size=25.0)
+ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=1,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\Phi[{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
 
-ax.text(0.32, 0.4, r'$\rm 46.5-47.0$'  ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
-ax.text(0.32, 0.64, r'$\rm 46.0-46.5$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
-ax.text(0.32, 0.94, r'$\rm 45.5-46.0$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
+ax.text(0.32, 0.4, r'$\rm 43.5-44.5$'  ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
+ax.text(0.32, 0.64, r'$\rm 44.5-45.5$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
+ax.text(0.32, 0.94, r'$\rm 45.5-46.5$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
 ax.text(0.2, 0.1, r'$\rm B$ $\rm Band$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40,color='navy')
 
 ax.set_xlim(0,7)
-ax.set_ylim(-10.5,-5.4)
+ax.set_ylim(-8.5,-4.4)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-plt.savefig("../figs/cumu_num_Bband.pdf",fmt='pdf')
-#plt.show()
+#plt.savefig("../figs/cumu_num_Bband.pdf",fmt='pdf')
+plt.show()
 

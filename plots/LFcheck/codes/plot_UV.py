@@ -17,7 +17,6 @@ from new_load_giallongo15_lf_shape import *
 redshift=float(sys.argv[1])
 dtg = return_dtg(redshift)
 
-
 fit_res=np.genfromtxt("../../../codes/lf_fit/output/special_fit.dat",names=True)
 id=fit_res["z"]==redshift
 parameters_special=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
@@ -208,6 +207,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-plt.savefig("../figs/tension_"+str(redshift)+".pdf",fmt='pdf')
-#plt.show()
+#plt.savefig("../figs/tension_"+str(redshift)+".pdf",fmt='pdf')
+plt.show()
 
