@@ -137,9 +137,9 @@ for i in range(len(zlist)):
         result[i,0]=np.log10( cumulative_count(M_1450, PHI_1450, lowlimit, -18, ABmag=True))
         result[i,1]=np.log10( cumulative_count(M_1450, PHI_1450, lowlimit, -21, ABmag=True))
         result[i,2]=np.log10( cumulative_count(M_1450, PHI_1450, lowlimit, -24, ABmag=True))
-ax.plot(zlist,result[:,0],'--',dashes=(25,15),c='cyan',label=r'$\rm Kulkarni$ $\rm 2018$')
-ax.plot(zlist,result[:,1],'--',dashes=(25,15),c='cyan')
-ax.plot(zlist,result[:,2],'--',dashes=(25,15),c='cyan')
+ax.plot(zlist,result[:,0],'--',dashes=(25,15),c='seagreen',label=r'$\rm Kulkarni$ $\rm 2018$')
+ax.plot(zlist,result[:,1],'--',dashes=(25,15),c='seagreen')
+ax.plot(zlist,result[:,2],'--',dashes=(25,15),c='seagreen')
 
 result=np.zeros((len(zlist),3))
 for i in range(len(zlist)):
@@ -171,7 +171,7 @@ ax.text(0.25, 0.45, r'$\rm <-24$'  ,horizontalalignment='center',verticalalignme
 ax.text(0.25, 0.64, r'$\rm <-21$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 ax.text(0.25, 0.87, r'$\rm <-18$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
-ax.text(0.2, 0.1, r'$\rm FUV$ ($\rm 1450\AA$)' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40,color='navy')
+ax.text(0.2, 0.1, r'$\rm UV$ ($\rm 1450\AA$)' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40,color='navy')
 
 ax.set_xlim(0,7)
 ax.set_ylim(-8.5,-3.4)
