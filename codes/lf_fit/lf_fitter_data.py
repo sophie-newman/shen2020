@@ -71,7 +71,7 @@ dset_ids={
 	"SIANA": -1,
 	"CRISTIANI": -1,
 	"KDC": -1,
-	"FAN": -1,
+	#"FAN": -1,
 	"SSG": -1,
 	"COMBO17": -1,
 	#1450
@@ -82,7 +82,7 @@ dset_ids={
 	"GIALLONGO15":-5,
 	"GILKMAN11":  -5,
 	"IKEDA12":    -5,
-	"JIANG09":    -5,
+	#"JIANG09":    -5,
 	"JIANG16":    -5,
 	"KASHIKAWA15":-5,
 	"MASTER12":   -5,
@@ -108,7 +108,7 @@ dset_ids={
 	"LAFRANCA": -4,
 	"SILVERMAN_HX": -4,
 	"BARGER": -4,
-	"NANDRA": -4,
+	#"NANDRA": -4,
 	"SAZREV": -4,
 	#Hard Xray New
 	"AIRD08":      -4,

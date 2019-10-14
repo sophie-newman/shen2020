@@ -153,7 +153,8 @@ pos = np.array([np.random.randn(ndim) for i in range(nwalkers)])
 for i in range(pos.shape[0]):
 	pos[i,:] = pos[i,:] * parameters_vary + parameters_init
 
-pos = np.genfromtxt("output/chain_end.dat")[:,2:]
+if os.path.isfile("output/chain_end.dat")==True:
+	pos = np.genfromtxt("output/chain_end.dat")[:,2:]
 
 if os.path.isfile("output/chain.dat")==False:
 	f = open("output/chain.dat", "w")
