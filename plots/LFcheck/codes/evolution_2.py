@@ -62,10 +62,12 @@ def plot_for_z(redshift,color):
 	y = LF(L_bol_grid,parameters_global_2)
 	ax.plot(x,y,'-',c=color,label=r'$\rm z=$'+str(redshift))
 
-color_control = np.linspace(0,1,6)
+#color_control = np.linspace(0,1,6)
+colors = ["#fee5d9","#fcbba1","#fc9272","#fb6a4a","#de2d26","#a50f15"]
 i=0
 for redshift in [0.2,0.4,0.8,1.2,1.8,2.4]:
-	plot_for_z(redshift,(color_control[i],0,1-color_control[i]))
+	#plot_for_z(redshift,(color_control[i],0,1-color_control[i]))
+	plot_for_z(redshift,colors[5-i])
 	i+=1
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)
