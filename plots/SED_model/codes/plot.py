@@ -16,7 +16,7 @@ ax = fig.add_axes([0.10,0.09,0.87,0.83])
 ax2 = ax.twiny()
 
 data=np.genfromtxt(datapath+"MySED.dat",names=["lamb","logall"])
-ax.plot(data['lamb'],data['logall'],lw=5,c='royalblue',label=r'$\rm This$ $\rm work$')
+ax.plot(data['lamb'],data['logall'],lw=5,c='crimson',label=r'$\rm This$ $\rm work$')
 myf2500 = data['logall'][(data['lamb']-2500)<0][0]
 
 data=np.genfromtxt(datapath+"K13_SED.dat",names=["lognu","logall"],)
@@ -27,7 +27,7 @@ ax.plot(lamb[lamb>912],data['logall'][lamb>912]+scale,'--',dashes=(15,9),c='cyan
 data=np.genfromtxt(datapath+"R06_SED.dat",names=["lognu","logall","sigall","blue"],)
 lamb=con.c.value/(10**data['lognu'])*1e10
 scale = myf2500 - data['blue'][(lamb-2500)<0][0]
-ax.plot(lamb[lamb>500],data['blue'][lamb>500]+scale,'--',dashes=(15,9),c='crimson',label=r'$\rm Richards+$ $\rm 2006$ ($\rm blue$ $\rm quasars$)'
+ax.plot(lamb[lamb>500],data['blue'][lamb>500]+scale,'--',dashes=(15,9),c='royalblue',label=r'$\rm Richards+$ $\rm 2006$ ($\rm blue$ $\rm quasars$)'
 	+'\n'+r'$\rm adopted$ $\rm in$ $\rm Hopkins+$ $\rm 2007$')
 lamb=con.c.value/(10**data['lognu'])*1e10
 scale = myf2500 - data['logall'][(lamb-2500)<0][0]
@@ -38,7 +38,6 @@ lamb=con.c.value/(10**data['lognu'])*1e10
 scale = myf2500 - data['logall'][(lamb-2500)<0][0]
 ax.plot(lamb,data['logall']+scale,'--',c='darkorchid',label=r'$\rm Vanden$ $\rm Berk+$ $\rm 2001$')
 '''
-
 f2500 = np.power(10., myf2500)/(con.c.value/2500./1e-10)
 alphaox = -0.107*np.log10(f2500)+1.739
 f2kev=10**(alphaox/0.384)*f2500

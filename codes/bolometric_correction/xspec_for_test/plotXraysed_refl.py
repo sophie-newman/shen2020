@@ -1,4 +1,4 @@
-from data import *
+#from data import *
 import numpy as np 
 import astropy.constants as con
 import matplotlib.pyplot as plt 

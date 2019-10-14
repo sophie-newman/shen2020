@@ -1,4 +1,4 @@
-from data import *
+#from data import *
 import numpy as np 
 import astropy.constants as con
 import matplotlib.pyplot as plt 
@@ -44,7 +44,7 @@ lamb=con.c.value/(data['E']*1000*con.e.value/con.h.value)*1e10
 sed = np.log10(data['Ef'])
 id = (lamb - con.c.value/(10.*1000.*con.e.value/con.h.value)*1e10)<0
 scale =  np.log10( f10kev*(10.*1000.*con.e.value/con.h.value)) - sed[id][0]
-ax.plot(lamb, sed + scale,'-',c='crimson',label=r'$\rm repro$',alpha=0.4)
+ax.plot(lamb, sed + scale,'-',c='crimson',label=r'$\rm a15$',alpha=0.4)
 
 '''
 f100kev=1
