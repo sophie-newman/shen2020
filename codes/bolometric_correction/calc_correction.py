@@ -98,6 +98,9 @@ def returnIR_to_UV(sed2500):
 def returnXray(sed2500):
 	f2500 = np.power(10.,sed2500)/(con.c.value/2500./1e-10)
 
+	#beta, C = 0.721, 4.531	
+	#A, Cprime = 0.384*(1-beta), 0.384*C
+	#alphaox = -A*np.log10(f2500)+Cprime
 	alphaox = -0.107*np.log10(f2500)+1.739
 
 	f2kev=10**(alphaox/0.384)*f2500
@@ -162,7 +165,12 @@ def returnall(sed2500):
 	logLIR = tophat( sedall, freqall, con.c.value/((15+1.)*1e-6), con.c.value/((15-1)*1e-6))
 
 	Lbol= integrate( sedall, freqall, con.c.value/(30.*1e-6), 500*1000.*con.e.value/con.h.value)
-	
+
+	#check the wavelength range of bolometric luminosity
+	#Lbol2= integrate( sedall, freqall, con.c.value/(100.*1e-6), 500*1000.*con.e.value/con.h.value)
+	#print np.log10(Lbol) - np.log10(Lbol2)
+
+	#check the correction factor in IR
 	#logLNIR = tophat( sedall, freqall, con.c.value/((1.25+0.15)*1e-6), con.c.value/((1.25-0.15)*1e-6))
 	#print logLIR - logLNIR
 	#MB    = -2.5*( logLB - np.log10(Fab*con.c.value/4450e-10) ) 
@@ -170,15 +178,15 @@ def returnall(sed2500):
 	#print (M1450-MB)
 	#exit()
 
-	LUHX = integrate( sedall, freqall, 10.*1000.*con.e.value/con.h.value, 40.*1000.*con.e.value/con.h.value)
-	print np.log10(LUHX) - np.log10(LHX)
-	exit()
+	#check the correction facotr of Ultra hard xray band
+	#LUHX = integrate( sedall, freqall, 10.*1000.*con.e.value/con.h.value, 40.*1000.*con.e.value/con.h.value)
+	#print np.log10(LUHX) - np.log10(LHX)
+	#exit()
 
-	print 'done'
 	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logL1450, logLIR
 
 sed2500s = np.linspace(5,15,200)+L_solar
-#sed2500s = np.linspace(12,12,1)+L_solar
+#sed2500s = np.linspace(5,15,10)+L_solar
 Lbols = 0*sed2500s
 LHXs  = 0*sed2500s
 LSXs  = 0*sed2500s
@@ -187,9 +195,5 @@ L1450s= 0*sed2500s
 LIRs  = 0*sed2500s
 for i in range(len(sed2500s)):
 	Lbols[i],LHXs[i],LSXs[i],LBs[i],L1450s[i],LIRs[i] = returnall(sed2500s[i])
-
+	
 np.savetxt("bolcorr.dat", np.c_[Lbols,LHXs,LSXs,LBs,L1450s,LIRs], header='Lbols,LHXs,LSXs,LBs,L1450s,LIRs')
-
-
-
-

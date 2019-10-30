@@ -92,10 +92,10 @@ ax.plot(x_fit, f_fit, '--', dashes=(15,9), lw=5, c='crimson', label=r'$\rm Ueda+
 
 
 ax.errorbar( (br12["zmin"]+br12["zmax"])/2., br12["f"]/100., yerr=br12["ferr"]/100., xerr=(br12["zmax"]-br12["zmin"])/2.,
-			color='seagreen', mec='seagreen', linestyle='', marker='o', capsize=8, capthick=3, lw=4,
+			color='seagreen', mec='seagreen', linestyle='', marker='o', capsize=8, capthick=3, lw=4, fillstyle='none', mew=3,
 			label=r'$\rm Brightman+$ $\rm 2012$ ($\log{L_{\rm X}}=43.5$)' )
 
-ax.errorbar( 0.03, 0.20, yerr= ([0.06],[0.09]), marker='o', c='gray', mec='gray',
+ax.errorbar( 0.03, 0.20, yerr= ([0.06],[0.09]), marker='o', c='gray', mec='gray', fillstyle='none', mew=3,
 			 linestyle='', capsize=8, capthick=3, lw=4, label=r'$\rm Burlon+$ $\rm 2011$ ($\log{L_{\rm X}}=43.6$)')
 
 ax.errorbar( 2, 0.36, yerr= 0.12, xerr=1, marker='o', c='purple', mec='purple',
