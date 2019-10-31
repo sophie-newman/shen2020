@@ -152,8 +152,14 @@ ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
 plt.savefig("../figs/phi_s.pdf",fmt='pdf')
 
+####################################################
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.11,0.12,0.79,0.83])
+
+#load and plot observational data
+####################################################
+
+####################################################
 
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_nofix.dat",names=True)
 ax.errorbar(data["z"],data["L_s"],yerr=data['err4'],linestyle='',marker='o',c='gray',mec='gray',ms=18,capsize=10,capthick=4,alpha=0.5)
@@ -181,7 +187,7 @@ ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
 plt.savefig("../figs/Lbreak.pdf",fmt='pdf')
-
+####################################################
 
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.11,0.12,0.79,0.83])
