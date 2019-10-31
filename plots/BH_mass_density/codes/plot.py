@@ -77,34 +77,49 @@ ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 x,y = rhoBH()
 ax.plot(x,np.log10(y),c='royalblue',label=r'$\rm This$ $\rm work$')
-ax.fill_between(x,y1=np.log10(y/1.2),y2=np.log10(y/0.8),color='royalblue',alpha=0.2)
+ax.fill_between(x,y1=np.log10(y/(0.9/0.1)*(0.8/0.2)),y2=np.log10(y/(0.9/0.1)*(0.95/0.05)),color='royalblue',alpha=0.2)
 
 x,y = rhoBH(10)
 ax.plot(x,np.log10(y),c='crimson')
-ax.fill_between(x,y1=np.log10(y/1.2),y2=np.log10(y/0.8),color='crimson',alpha=0.2)
+ax.fill_between(x,y1=np.log10(y/(0.9/0.1)*(0.8/0.2)),y2=np.log10(y/(0.9/0.1)*(0.95/0.05)),color='crimson',alpha=0.2)
 
 x,y = rhoBH(4)
 ax.plot(x,np.log10(y),c='seagreen')
-ax.fill_between(x,y1=np.log10(y/1.2),y2=np.log10(y/0.8),color='seagreen',alpha=0.2)
+ax.fill_between(x,y1=np.log10(y/(0.9/0.1)*(0.8/0.2)),y2=np.log10(y/(0.9/0.1)*(0.95/0.05)),color='seagreen',alpha=0.2)
 
 ax.errorbar(0.,np.log10(4.81*1e5),yerr=([np.log10(4.81)-np.log10(4.81-0.99)],[np.log10(4.81+1.24)-np.log10(4.81)]),marker='o',c='gray',mec='gray',ms=15,capsize=9,capthick=4,label=r'$\rm Hopkins+$ $\rm 2007$')
 
-ax.errorbar(0.,np.log10(4.2*1e5),yerr=([np.log10(4.2)-np.log10(4.2-1.1)],[np.log10(4.2+1.1)-np.log10(4.2)]),marker='o',c='navy',mec='navy',ms=15,capsize=9,capthick=4,label=r'$\rm Shankar+$ $\rm 2001$')
+ax.errorbar(0-0.25,np.log10(4.2*1e5),yerr=([np.log10(4.2)-np.log10(4.2-1.1)],[np.log10(4.2+1.1)-np.log10(4.2)]),marker='o',c='navy',mec='navy',ms=15,capsize=9,capthick=4,label=r'$\rm Shankar+$ $\rm 2001$')
 
-ax.errorbar(0.,np.log10(4.6*1e5),yerr=([np.log10(4.6)-np.log10(4.6-1.4)],[np.log10(4.6+1.9)-np.log10(4.6)]),marker='o',c='k',mec='k',ms=15,capsize=9,capthick=4,label=r'$\rm Marconi+$ $\rm 2004$')
+ax.errorbar(0-0.50,np.log10(4.6*1e5),yerr=([np.log10(4.6)-np.log10(4.6-1.4)],[np.log10(4.6+1.9)-np.log10(4.6)]),marker='o',c='k',mec='k',ms=15,capsize=9,capthick=4,label=r'$\rm Marconi+$ $\rm 2004$')
 
-ax.errorbar(0.,np.log10(4.41*1e5),yerr=([np.log10(4.41)-np.log10(4.41-1.67)],[np.log10(4.41+1.67)-np.log10(4.41)]),marker='o',c='darkorchid',mec='darkorchid',ms=15,capsize=9,capthick=4,label=r'$\rm Graham+$ $\rm 2007$')
+ax.errorbar(0-0.75,np.log10(4.41*1e5),yerr=([np.log10(4.41)-np.log10(4.41-1.67)],[np.log10(4.41+1.67)-np.log10(4.41)]),marker='o',c='darkorchid',mec='darkorchid',ms=15,capsize=9,capthick=4,label=r'$\rm Graham+$ $\rm 2007$')
+
+ax.errorbar(0-1.00,np.log10(3.8*1e5),yerr=([np.log10(3.8)-np.log10(3.8-0.6)],[np.log10(3.8+0.7)-np.log10(3.8)]),marker='o',c='chocolate',mec='chocolate',ms=15,capsize=9,capthick=4,label=r'$\rm Yu+$ $\rm 2008$')
+
+ax.plot(0-1.25, np.log10(4.5*1e5*0.1/0.075), marker='o',c='pink',mec='pink',ms=15,label=r'$\rm Shankar+$ $\rm 2009$')
 
 #######################################################################
+ax.axvspan(-2,0,color='cyan',alpha=0.5)
+
 prop = matplotlib.font_manager.FontProperties(size=25.0)
-ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
+ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=1,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\rho_{\rm BH}\,[{\rm M}_{\odot}\,{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
 
 #ax.text(0.25, 0.87, r'$\rm <-18$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
-ax.set_xlim(-0.2,7.2)
+ax.set_xlim(-1.2,7.2)
 ax.set_ylim(2.2,6.1)
+
+from matplotlib.ticker import FixedLocator, FixedFormatter
+x_formatter = FixedFormatter(["0", "1", "2", "3", "4", "5", "6", "7"])
+x_locator   = FixedLocator([0, 1, 2, 3, 4, 5, 6, 7])
+xm_locator  = FixedLocator(np.linspace(0,7,int(7/0.2+1)))
+ax.xaxis.set_major_formatter(x_formatter)
+ax.xaxis.set_major_locator(x_locator)
+ax.xaxis.set_minor_locator(xm_locator)
+
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
