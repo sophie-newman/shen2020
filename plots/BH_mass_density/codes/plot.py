@@ -109,7 +109,7 @@ ax.set_ylabel(r'$\log{(\rho_{\rm BH}\,[{\rm M}_{\odot}\,{\rm Mpc}^{-3}])}$',font
 
 #ax.text(0.25, 0.87, r'$\rm <-18$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
-ax.set_xlim(-1.2,7.2)
+ax.set_xlim(-1.4,7.2)
 ax.set_ylim(2.2,6.1)
 
 from matplotlib.ticker import FixedLocator, FixedFormatter
