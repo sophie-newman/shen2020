@@ -100,7 +100,7 @@ dset_ids={
 	"WILLOTT10":  -5,
 	"YANG16":     -5,
 	"YANG18":     -5,
-	"GIALLONGO19":-5,
+	#"GIALLONGO19":-5,
 	#soft xray
 	#"HASINGER": -3,
 	#"MIYAJI": -3,

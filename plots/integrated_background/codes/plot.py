@@ -23,19 +23,34 @@ paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_e
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+##############
+c_extenstion1 = CDLL(homepath+'codes/c_lib/specialuse/CTK_convolve.so')
+convolve_c1 = c_extenstion1.convolve
+convolve_c1.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
-def get_model_lf(parameters,nu,redshift,dtg):
+c_extenstion2 = CDLL(homepath+'codes/c_lib/specialuse/CTNabs_convolve.so')
+convolve_c2 = c_extenstion2.convolve
+convolve_c2.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+
+c_extenstion3 = CDLL(homepath+'codes/c_lib/specialuse/CTNunabs_convolve.so')
+convolve_c3 = c_extenstion3.convolve
+convolve_c3.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+##############
+
+convolver_list = (convolve_c, convolve_c1, convolve_c2, convolve_c3)
+
+def get_model_lf(parameters,nu,redshift,dtg,convolver):
         L_band = bolometric_correction(L_bol_grid,nu)
         nu_c = c_double(nu)
 	redshift_c = c_double(redshift)
 	dtg_c = c_double(dtg)
         input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-        res = convolve_c(input_c,nu_c,redshift_c, dtg_c)
+        res = convolver(input_c,nu_c,redshift_c, dtg_c)
         res = [i for i in res.contents]
         PHI_band = np.array(res,dtype=np.float64)
 	return L_band, np.log10(PHI_band)
 
-def get_model_lf_global(nu,redshift,dtg):
+def get_model_lf_global(nu,redshift,dtg,convolver):
 	parameters=pglobal
 	zref = 2.
 	p=parameters[paraid==0]
@@ -47,7 +62,7 @@ def get_model_lf_global(nu,redshift,dtg):
 	p=parameters[paraid==3]	
 	Lbreak = doublepower(redshift,(p[0],zref, p[1], p[2]))
 	parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
-	return get_model_lf(parameters_at_z,nu,redshift,dtg)
+	return get_model_lf(parameters_at_z,nu,redshift,dtg,convolver)
 
 def cumulative_emissivity(L_nu,Phi_nu,L_limit_low,L_limit_up,nu):
 	def logphi(x):
@@ -63,16 +78,16 @@ def cumulative_emissivity(L_nu,Phi_nu,L_limit_low,L_limit_up,nu):
 
 	result = quad(emis, L_limit_low, L_limit_up)[0]*np.power(10.,L_solar)
 	#return romberg(emis, L_limit_low, L_limit_up, divmax=20)*np.power(10.,L_solar)
-	if np.isfinite(result) == False:
-		print L_nu
-		print Phi_nu
+	#if np.isfinite(result) == False:
+	#	print L_nu
+	#	print Phi_nu
 
 	return result
 
-def to_be_integrate(z, nuobs):
+def to_be_integrate(z, nuobs, convolver):
 	dtg = return_dtg(z)
 	nuem = nuobs*(1+z)
-        L_nu, PHI_nu = get_model_lf_global(nuem, z, dtg)
+        L_nu, PHI_nu = get_model_lf_global(nuem, z, dtg, convolver)
         emissivity = cumulative_emissivity(L_nu, PHI_nu, L_nu[0], L_nu[-1], nuem) 
 	return emissivity/4./np.pi/(cosmo.luminosity_distance(z).value*1e6*con.pc.value*1e2)**2  * cosmo.differential_comoving_volume(z).value 
 
@@ -97,23 +112,27 @@ zbins = np.linspace(0,7,50)
 zcenters = (zbins[1:]+zbins[:-1])/2.
 deltaz= zbins[5]-zbins[4]
 
-Intensity = 0.0*E_list
+Intensity = np.zeros((len(E_list),4))
 unit_convertion = 1e-7/(1000.*con.e.value)
 
 for i in range(len(E_list)):
-	Intensity[i]=0
-	for j in range(len(zcenters)):
-		Intensity[i] += to_be_integrate(zcenters[j],nu_list[i])*deltaz
-
-	#Intensity[i]=quad( to_be_integrate, 0, 7, args=(nu_list[i]) )[0]
+	for j in range(len(convolver_list)):
+		Intensity[i,j]=0
+		for k in range(len(zcenters)):
+			Intensity[i,j] += to_be_integrate(zcenters[k],nu_list[i],convolver_list[j])*deltaz
+		#Intensity[i]=quad( to_be_integrate, 0, 7, args=(nu_list[i]) )[0]
 	print i
 
-#data=np.genfromtxt("ajello2008.dat",names=True)
-#scale = np.max(data['CXB'])/np.max(nu_list * Intensity * unit_convertion)
-ax.plot(E_list, nu_list * Intensity * unit_convertion, c='royalblue', label=r'$\rm This$ $\rm work:$ $\rm AGN$')
-print nu_list * Intensity * unit_convertion
+ax.plot(E_list, nu_list * Intensity[:,0] * unit_convertion, c='royalblue', label=r'$\rm This$ $\rm work:$ $\rm AGN$')
+#print nu_list * Intensity * unit_convertion
 
-ax.plot(E_list, nu_list * Intensity * unit_convertion + 2., c='black', label=r'$\rm This$ $\rm work:$ $\rm AGN$ + $\rm galaxy$')
+ax.plot(E_list, nu_list * Intensity[:,0] * unit_convertion + 2., c='black', label=r'$\rm AGN$ + $\rm galaxies$')
+
+ax.plot(E_list, nu_list * Intensity[:,1] * unit_convertion, '--', dashes=(25,15), c='navy', label=r'$\rm AGN$ ($\rm CTK$)')
+
+ax.plot(E_list, nu_list * Intensity[:,2] * unit_convertion, '--', dashes=(25,15), c='dodgerblue', label=r'$\rm AGN$ ($\rm CTN,\,absorbed$)')
+
+ax.plot(E_list, nu_list * Intensity[:,3] * unit_convertion, '--', dashes=(25,15), c='deepskyblue', label=r'$\rm AGN$ ($\rm CTN\,unabsorbed$)')
 
 data=np.genfromtxt("Hopkins2007.dat",names=["x","y"])
 ax.plot(data["x"],data["y"]+2.,'--',dashes=(25,15),c='gray',label=r'$\rm Hopkins+$ $\rm 2007$')
@@ -124,21 +143,27 @@ ax.errorbar(data['E'],data['CXB'],xerr=data['dE'],yerr=data['dCXB'],c='crimson',
 data=np.genfromtxt("churazov2007.dat",names=True)
 ax.errorbar(data['E'],data['CXB'],xerr=(data['E']-data['Elo'],data['Eup']-data['E']),yerr=(data['CXB']-data['lo'],data['up']-data['CXB']),c='seagreen',mec='seagreen',capsize=0,capthick=0,linestyle='none',marker='.',lw=2,ms=1,label=r'$\rm Churazov+$ $\rm 2007$')
 
+data=np.genfromtxt("Cappelluti2017.dat",names=True)
+ax.errorbar(data['E'],data['CXB'],yerr=(data['CXB']-data['lo'],data['up']-data['CXB']),c='cyan',mec='cyan',capsize=0,capthick=0,linestyle='none',marker='.',lw=2,ms=1,label=r'$\rm Cappelluti+$ $\rm 2017$')
+
+data=np.genfromtxt("Moretti2009.dat",names=True)
+ax.errorbar(data['E'],data['CXB'],yerr=(data['CXB']-data['lo'],data['up']-data['CXB']),c='pink',mec='pink',capsize=0,capthick=0,linestyle='none',marker='.',lw=2,ms=1,label=r'$\rm Moretti+$ $\rm 2009$')
+
 data=np.genfromtxt("Gruber1999.dat",names=True)
 ax.errorbar(data['E'],data['CXB'],xerr=(data['E']-data['left'],data['right']-data['E']),yerr=(data['CXB']-data['lo'],data['up']-data['CXB']),c='chocolate',mec='chocolate',capsize=0,capthick=0,linestyle='none',marker='.',lw=2,ms=1,label=r'$\rm Gruber+$ $\rm 1999$')
 
 data=np.genfromtxt("gendreau1995.dat",names=True)
 ax.errorbar(data['E'],data['CXB'],yerr=(data['CXB']-data['lo'],data['up']-data['CXB']),c='darkorchid',mec='darkorchid',capsize=0,capthick=0,linestyle='none',marker='.',lw=2,ms=1,label=r'$\rm Gendreau+$ $\rm 1995$')
 
-prop = matplotlib.font_manager.FontProperties(size=23.0)
-ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
+prop = matplotlib.font_manager.FontProperties(size=21.5)
+ax.legend(prop=prop,numpoints=1, borderaxespad=0.3,loc=2,ncol=3,columnspacing=0.2,frameon=False)
 ax.set_xlabel(r'$\rm E$ [$\rm keV$]',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\nu I_{\rm XRB,\nu}$ [$\rm keV^{2}\,s^{-1}\,cm^{-2}\,sr^{-1}\,keV^{-1}$]',fontsize=40,labelpad=5)
 
 #ax.text(0.25, 0.64, r'$\rm <-21$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
 ax.set_xlim(0.3,400)
-ax.set_ylim(3.,130.)
+ax.set_ylim(1.,180.)
 ax.set_yscale('log')
 ax.set_xscale('log')
 ax.tick_params(labelsize=30)

@@ -61,7 +61,7 @@ zpoints_spe=np.array(pz_spe)
 
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
-zlist=np.linspace(0.1,7,15)
+zlist=np.linspace(0.1,7,30)
 
 zpoints_free = zpoints_free[zpoints_free>2.]
 zpoints_fix  = zpoints_fix[zpoints_fix>2.]
@@ -113,8 +113,8 @@ def cumulative_emissivity(L_band,Phi_band,L_limit_low,L_limit_up):
 		fnu = np.power(10.,-0.4*x)*3631*1e-23*4*np.pi*(10*con.pc.value*100)**2
 		fnu912 = fnu * (912./1450.)**(0.61)
 		return np.power(10.,logphi(x))*fnu912
-	#return romberg(emis,Mlow,Mup,divmax=20)
-	return quad(emis,Mlow,Mup)[0]
+	return romberg(emis,Mlow,Mup,divmax=20)
+	#return quad(emis,Mlow,Mup)[0]
 
 def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift,global_fit=False):
 	partials = 0.0 * parameters
@@ -213,13 +213,16 @@ for i in range(len(zpoints_fix)):
 	#result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zpoints_fix[i])
 ax.plot(zpoints_fix,np.log10(result[:,0]),linestyle='none',marker='x',c='royalblue',mec='royalblue',ms=15)
 
+data=np.genfromtxt("kk18.dat",names=['z','gamma'])
+ax.plot(data['z'],data['gamma'],'--',c='seagreen',label=r'$\rm Kulkarni+$ $\rm 2018$')
+
 result=np.zeros((len(zpoints_spe),2))
 uncertainty=np.zeros((len(zpoints_spe),2))
 for i in range(len(zpoints_spe)):
 	id= pz_spe==zpoints_spe[i]
 	M_1450, PHI_1450 = get_model_lf([pgamma1_spe[id],pgamma2_spe[id],plogphis_spe[id],pLbreak_spe[id]], -5, zpoints_spe[id], magnitude=True)
 	result[i,0] = Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zpoints_spe[id])
-ax.plot(zpoints_spe,np.log10(result[:,0]),linestyle='none',lw=2,marker='v',c='yellow',mec='yellow',ms=15)
+ax.plot(zpoints_spe,np.log10(result[:,0]),linestyle='none',lw=2,marker='v',c='gold',mec='gold',ms=15,label=r'$\rm Special$ $\rm fit$')
 
 #######################################################################
 '''
@@ -243,12 +246,10 @@ lowerr=np.array([0.20, 0.19, 0.18, 0.18, 0.17, 0.11])
 uperr=np.array([0.08, 0.09, 0.10, 0.12, 0.14, 0.11])
 ax.errorbar([4.8,5.0,5.2,5.4,5.6,5.8], np.log10(ydata) ,yerr=(np.log10(ydata)-np.log10(ydata-lowerr),np.log10(ydata+uperr)-np.log10(ydata)),marker='o',linestyle='none',ms=15,color='gray',mec='gray',capsize=0,label=r'$\rm Aloisio+$ $\rm 2018$')
 
-data=np.genfromtxt("kk18.dat",names=['z','gamma'])
-ax.plot(data['z'],data['gamma'],'--',c='seagreen',label=r'$\rm Kulkarni+$ $\rm 2018$')
 #######################################################################
 
-prop = matplotlib.font_manager.FontProperties(size=22.0)
-ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
+prop = matplotlib.font_manager.FontProperties(size=21.5)
+ax.legend(prop=prop,numpoints=1, borderaxespad=0.3,loc=3,ncol=2,columnspacing=0.2,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\Gamma_{\rm -12}\,[\rm s^{-1}\,atom^{-1}])}$',fontsize=40,labelpad=5)
 

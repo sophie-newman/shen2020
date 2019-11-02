@@ -41,6 +41,17 @@ p=source['value'][ source['paraid']==3 ]
 Lbreak = doublepower(redshift,(p[0],zref, p[1], p[2]))
 parameters_global_2 = np.array([gamma1,gamma2,logphi,Lbreak])
 
+############################
+p=source['value'][ source['paraid']==0 ]
+gamma1 = polynomial(0.1,p,2)
+p=source['value'][ source['paraid']==1 ]
+gamma2 = doublepower(0.1,(p[0],zref, p[1], p[2]))
+p=source['value'][ source['paraid']==2 ]
+logphi = polynomial(0.1,p,1)
+p=source['value'][ source['paraid']==3 ]
+Lbreak = doublepower(0.1,(p[0],zref, p[1], p[2]))
+parameters_global_z0 = np.array([gamma1,gamma2,logphi,Lbreak])
+
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
@@ -157,6 +168,9 @@ ax.plot(x,y,'--',dashes=(25,15),c='chocolate',alpha=0.7,label=r'$\rm Local$ $\rm
 y = LF(L_bol_grid,parameters_global_2)
 ax.plot(x,y,'--',dashes=(25,15),c='darkorchid',label=r'$\rm Global$ $\rm fit$')
 
+y = LF(L_bol_grid,parameters_global_z0)
+ax.plot(x,y,'--',dashes=(25,15),lw=2,c='cyan',label=r'$\rm Global$ $\rm fit$ ($\rm z\sim0$)')
+
 x = L_bol_grid + L_solar 
 y = LF_at_z_H07(L_bol_grid,parameters_init,redshift,"Fiducial")
 ax.plot(x,y,':',c='gray',label=r'$\rm Hopkins+$ $\rm 2007$')
@@ -186,21 +200,24 @@ xcollect = np.append(xcollect,x)
 xcollect = np.sort(xcollect-L_solar)
 print redshift, xcollect[2], xcollect[4], len(xcollect)
 
-ax.axvline(parameters_fix_local[3]+L_solar,color='cyan',lw=2)
-ax.axhline(parameters_fix_local[2]-np.log10(2.),color='cyan',lw=2)
+ax.axvline(parameters_fix_local[3]+L_solar,color='gold',lw=2,alpha=0.8)
+ax.axhline(parameters_fix_local[2]-np.log10(2.),color='gold',lw=2,alpha=0.8)
 
 prop = matplotlib.font_manager.FontProperties(size=22.0)
-ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
+if not (redshift in [2,3,4,5,6]):
+	ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 ax.set_xlabel(r'$\log{(L_{\rm bol}[{\rm erg}\,{\rm s}^{-1}])}$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\phi[{\rm dex}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
+
 ax.text(0.88, 0.92, r'${\rm z\sim'+str(redshift)+'}$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
 
-ax.set_xlim(42.5,51.3)
+#ax.set_xlim(42.5,51.3)
+ax.set_xlim(42.5,50.3)
 ax.set_ylim(-11.2,-2.3)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
+#plt.show()
 

@@ -76,15 +76,15 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 x,y = rhoBH()
-ax.plot(x,np.log10(y),c='royalblue',label=r'$\rm This$ $\rm work$')
+ax.plot(x,np.log10(y),c='royalblue',label=r'$\rm This$ $\rm work$'+'\n'+r'$\rm integrated$ $\rm from$ $z_{\rm i}=7$')
 ax.fill_between(x,y1=np.log10(y/(0.9/0.1)*(0.8/0.2)),y2=np.log10(y/(0.9/0.1)*(0.95/0.05)),color='royalblue',alpha=0.2)
 
 x,y = rhoBH(10)
-ax.plot(x,np.log10(y),c='crimson')
+ax.plot(x,np.log10(y),c='crimson',label=r'$\rm integrated$ $\rm from$ $z_{\rm i}=10$')
 ax.fill_between(x,y1=np.log10(y/(0.9/0.1)*(0.8/0.2)),y2=np.log10(y/(0.9/0.1)*(0.95/0.05)),color='crimson',alpha=0.2)
 
 x,y = rhoBH(4)
-ax.plot(x,np.log10(y),c='seagreen')
+ax.plot(x,np.log10(y),c='seagreen',label=r'$\rm integrated$ $\rm from$ $z_{\rm i}=4$')
 ax.fill_between(x,y1=np.log10(y/(0.9/0.1)*(0.8/0.2)),y2=np.log10(y/(0.9/0.1)*(0.95/0.05)),color='seagreen',alpha=0.2)
 
 ax.errorbar(0.,np.log10(4.81*1e5),yerr=([np.log10(4.81)-np.log10(4.81-0.99)],[np.log10(4.81+1.24)-np.log10(4.81)]),marker='o',c='gray',mec='gray',ms=15,capsize=9,capthick=4,label=r'$\rm Hopkins+$ $\rm 2007$')
@@ -100,9 +100,9 @@ ax.errorbar(0-1.00,np.log10(3.8*1e5),yerr=([np.log10(3.8)-np.log10(3.8-0.6)],[np
 ax.plot(0-1.25, np.log10(4.5*1e5*0.1/0.075), marker='o',c='pink',mec='pink',ms=15,label=r'$\rm Shankar+$ $\rm 2009$')
 
 #######################################################################
-ax.axvspan(-2,0,color='cyan',alpha=0.5)
+ax.axvspan(-2,0,color='cyan',alpha=0.3)
 
-prop = matplotlib.font_manager.FontProperties(size=25.0)
+prop = matplotlib.font_manager.FontProperties(size=21.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=1,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\rho_{\rm BH}\,[{\rm M}_{\odot}\,{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)

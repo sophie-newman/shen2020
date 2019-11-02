@@ -161,19 +161,31 @@ elif redshift==6:
 
 ax.errorbar([],[],yerr=([],[]),c='darkorchid',mec='darkorchid',linestyle='none',marker='o',lw=2,markersize=10,capsize=6,capthick=2,label=r'$\rm Galaxy$ $\rm UVLF$ $\rm compilation$')
 
-prop = matplotlib.font_manager.FontProperties(size=25.0)
-ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
+limit = np.log10(1./(cosmo.differential_comoving_volume(redshift).value*1.* 20000. * (1./180.*np.pi)**2))
+if redshift == 2:
+	ax.fill_between([-21,-35],y2=[9,9],y1=np.ones(2)*limit,color='seagreen',alpha=0.1,label=r'$\rm LSST$ $\rm single-visit$')
+	ax.fill_between([-18.5,-35],y2=[9,9],y1=np.ones(2)*limit,color='cyan',alpha=0.1,label=r'$\rm LSST$ $\rm final$')
+if redshift == 4:
+        ax.fill_between([-22,-35],y2=[9,9],y1=np.ones(2)*limit,color='seagreen',alpha=0.1)
+	ax.fill_between([-19,-35],y2=[9,9],y1=np.ones(2)*limit,color='cyan',alpha=0.1)
+if redshift == 6:
+        ax.fill_between([-24,-35],y2=[9,9],y1=np.ones(2)*limit,color='seagreen',alpha=0.1)
+	ax.fill_between([-21.5,-35],y2=[9,9],y1=np.ones(2)*limit,color='cyan',alpha=0.1)
+
+prop = matplotlib.font_manager.FontProperties(size=23.0)
+if redshift==2:
+	ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 #ax.set_xlabel(r'$\log{(L_{\rm B}/{\rm L}_{\odot})}$',fontsize=40,labelpad=2.5)
 ax.set_xlabel(r'$M_{\rm 1450}$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\phi[{\rm mag}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
 ax.text(0.88, 0.92, r'${\rm z\sim'+str(redshift)+'}$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
 
-ax.set_xlim(-15.5,-30.5)
+ax.set_xlim(-15.5,-29.5)
 ax.set_ylim(-12.2,-0.3)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/compare_"+str(redshift)+".pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/compare_"+str(redshift)+".pdf",fmt='pdf')
+#plt.show()
 

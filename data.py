@@ -12,6 +12,7 @@ sys.path.append(homepath+"codes/convolution/")
 sys.path.append(homepath+"codes/lf_fit/")
 sys.path.append(homepath+"codes/obdata/")
 sys.path.append(homepath+"codes/c_lib/")
+sys.path.append(homepath+"codes/c_lib/specialuse/")
 sys.path.append(homepath+"codes/")
 
 datapath=homepath+"data/"

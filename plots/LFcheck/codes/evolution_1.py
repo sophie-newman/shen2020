@@ -34,18 +34,6 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 def plot_for_z(redshift,color):
-	'''
-        fit_res=np.genfromtxt("../../fitresult/fit_at_z_nofix.dat",names=True)
-        id=fit_res["z"]==redshift
-        parameters_free_local=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
-
-        fit_res=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-        id=fit_res["z"]==redshift
-        parameters_fix_local=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
-
-        fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit.dat",names=['gamma1','gamma2','phis','Lbreak'])
-        parameters_global_1 = pars_at_z(fit_evolve,redshift)
-	'''
         source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 	zref = 2.
         p=source['value'][ source['paraid']==0 ]
@@ -56,16 +44,23 @@ def plot_for_z(redshift,color):
         logphi = polynomial(redshift,p,1)
         p=source['value'][ source['paraid']==3 ]
         Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
+	if (gamma1>gamma2) and (redshift>7):
+		gamma1 = gamma2
         parameters_global_2 = np.array([gamma1,gamma2,logphi,Lbreak])
 
 	x = L_bol_grid + L_solar 
 	y = LF(L_bol_grid,parameters_global_2)
-	ax.plot(x,y,'-',c=color,label=r'$\rm z=$'+str(redshift))
+	if redshift<=7:
+		ax.plot(x,y,'-',c=color,label=r'$\rm z=$'+str(redshift))
+	elif redshift<=9: 
+		ax.plot(x,y,'--',dashes=(25,15),alpha=0.7,c=color,label=r'$\rm z=$'+str(redshift)+r'$(\rm extrapolated)$')
+	else: ax.plot(x,y,'--',dashes=(25,15),c=color,label=r'$\rm z=$'+str(redshift)+r'$(\rm extrapolated)$')
 
 #color_control = np.linspace(0,1,7)
-colors = ["#eff3ff","#c6dbef","#9ecae1","#6baed6","#4292c6","#2171b5","#084594"]
+#colors = ["#eff3ff","#c6dbef","#9ecae1","#6baed6","#4292c6","#2171b5","#084594"]
+colors = ["lightgray","gray","#9ecae1","#6baed6","#4292c6","#2171b5","#084594"]
 i=0
-for redshift in [2.4,3.0,3.6,4.2,4.8,5.4,6.0]:
+for redshift in [2.4,3,4,5,6,8,10]:
 	#plot_for_z(redshift,(color_control[i],0,1-color_control[i]))
 	plot_for_z(redshift,colors[6-i])
 	i+=1

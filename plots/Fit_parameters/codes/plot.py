@@ -63,6 +63,7 @@ def Hopkins07(z):
 	gamma2   = 2.*gamma2_0 / (np.power(10., xsi_log*k_gamma2_1) + np.power(10., xsi_log*k_gamma2_2))
 	Lbreak  = L0 + k1*xsi_log + k2*xsi_log**2 + k3*xsi_log**3
 	return gamma1,gamma2,P0*np.ones(len(z)),Lbreak
+
 z_a=np.linspace(0.01,8,1000)
 gamma1_a, gamma2_a, phi_s_a, Lbreak_a = Hopkins07(z_a)
 
@@ -158,7 +159,65 @@ ax = fig.add_axes([0.11,0.12,0.79,0.83])
 
 #load and plot observational data
 ####################################################
+from lf_fitter_data import *
+from convolve import *
+from scipy import ndimage
+def get_data(alldata,zmin,zmax,dset_name,dset_id):
+        z_lis = 0.5*(zmin + zmax)
+        for iz in range(len(z_lis)):
+                redshift = z_lis[iz]
+                L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
 
+		if (dset_id!=-5):
+                	for i in range(len(L_data)):
+                        	L_data[i] = bolometric_correction_inverse(L_data[i],dset_id)
+        	elif (dset_id==-5):
+                	L_1450 = -0.4*L_data + np.log10(Fab*(con.c.value/1450e-10)) - L_solar
+			for i in range(len(L_data)):
+                        	L_data[i] = bolometric_correction_inverse(L_1450[i],dset_id)
+		
+		DL_data = 0.0*L_data
+		if len(L_data)!=1:
+			for j in range(len(L_data)):
+				if (j==0): DL_data[j] = (L_data[j+1]-L_data[j])/2.
+				elif (j==len(L_data)-1): DL_data[j] = (L_data[j]-L_data[j-1])/2.
+				else: DL_data[j] = (L_data[j+1]-L_data[j-1])/4.
+		else: DL_data = np.array([0.2])
+
+                alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_data)
+		alldata["DLOBS"]  = np.append(alldata["DLOBS"]  , DL_data)
+                alldata["Z"]  = np.append(alldata["Z"]  , np.ones(len(L_data)) * redshift)
+		alldata["Zlo"]= np.append(alldata["Zlo"], np.ones(len(L_data)) * zmin[iz])
+		alldata["Zup"]= np.append(alldata["Zup"], np.ones(len(L_data)) * zmax[iz])
+                return len(L_data)
+
+def loop_over_all_dset():
+        alldata={"L_OBS":np.array([]),"Zlo":np.array([]),"Zup":np.array([]),"Z":np.array([]),"DLOBS":np.array([])}
+        for key in dset_ids.keys():
+        	get_data(alldata,zmins[key],zmaxs[key],key,dset_ids[key])
+
+	return alldata["Z"], alldata["Zlo"], alldata["Zup"] ,alldata["L_OBS"], alldata["DLOBS"]
+
+pixel = 200
+x,xlo,xup,y,dy = loop_over_all_dset()
+r1,_,_ = np.histogram2d(x,y,bins=[np.linspace(0,7,pixel+1), np.linspace(10.3,13.8,pixel+1)])
+r2,_,_ = np.histogram2d(xup,y,bins=[np.linspace(0,7,pixel+1), np.linspace(10.3,13.8,pixel+1)])
+r3,_,_ = np.histogram2d(xlo,y,bins=[np.linspace(0,7,pixel+1), np.linspace(10.3,13.8,pixel+1)])
+r4,_,_ = np.histogram2d(x,y+dy,bins=[np.linspace(0,7,pixel+1), np.linspace(10.3,13.8,pixel+1)])
+r5,_,_ = np.histogram2d(x,y-dy,bins=[np.linspace(0,7,pixel+1), np.linspace(10.3,13.8,pixel+1)])
+
+image = r1+r2+r3+r4+r5
+image[np.invert(np.isfinite(image))] = 0
+image = ndimage.gaussian_filter(image, sigma=3)
+image = np.log10(image)
+mini= np.min(image[np.isfinite(image)])
+maxi= np.max(image[np.isfinite(image)])
+medi= np.median(image[np.isfinite(image)])
+print mini,maxi
+x,y = np.meshgrid( np.linspace(0,7,pixel+1), np.linspace(10.3,13.8,pixel+1) )
+
+cmap = plt.get_cmap('Greens')
+pos = ax.pcolormesh(x, y, np.transpose(image), cmap=cmap, norm=matplotlib.colors.Normalize(vmin=mini,vmax=maxi),alpha=1)
 ####################################################
 
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_nofix.dat",names=True)
@@ -171,9 +230,9 @@ ax.plot(z_a,Lbreak_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a,bestfit(z_a,'Lbreak'),'-',c='seagreen')
 ax.plot(z_a,bestfit_global(z_a,3),'-',c='darkorchid')
 
-limit = np.genfromtxt("../../fitresult/stat_limit.dat",names=True)
-ax.step(limit['z'],limit['Lmin3'],where='mid',linestyle=':',color='chocolate',label=r'$\rm 3$ $\rm data$ $\rm points$ $\rm limit$')
-ax.step(limit['z'],limit['Lmin5'],where='mid',linestyle=':',color='gray',label=r'$\rm 5$ $\rm data$ $\rm points$ $\rm limit$')
+#limit = np.genfromtxt("../../fitresult/stat_limit.dat",names=True)
+#ax.step(limit['z'],limit['Lmin3'],where='mid',linestyle=':',color='chocolate',label=r'$\rm 3$ $\rm data$ $\rm points$ $\rm limit$')
+#ax.step(limit['z'],limit['Lmin5'],where='mid',linestyle=':',color='gray',label=r'$\rm 5$ $\rm data$ $\rm points$ $\rm limit$')
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
