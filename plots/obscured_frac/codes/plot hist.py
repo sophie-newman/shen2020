@@ -27,8 +27,6 @@ def phi_4375(z):
 def phi(logLx,z):
 	return np.minimum( phi_max, np.maximum( phi_4375(z) - beta*(logLx-43.75), phi_min ) )
 
-print phi(43.0,2)
-
 def f_nh(logNH,logLx,z):
 	if phi(logLx,z)<(1.+eps)/(3.+eps):
 		f1 = 1-phi(logLx,z)*(2.+eps)/(1.+eps)
@@ -70,7 +68,7 @@ def fraction(logLx,z):
 Ls=np.linspace(43.7,47.0,10)
 f_fit=0.0*Ls
 for i in range(len(Ls)):
-	f_fit[i]= fraction(Ls[i], 0)
+	f_fit[i]= fraction(Ls[i], 2)
 print Ls
 print f_fit
 exit()

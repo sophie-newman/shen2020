@@ -58,7 +58,7 @@ ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 i=0
 colors='royalblue'
-redshift = 0.2
+redshift = 2.15
 	
 source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 zref = 2.
@@ -78,6 +78,7 @@ x,y = get_mass_function(catalog["mass"],catalog["weight"])
 ax.plot(x,y-np.log10(fduty),'-',c=colors,label=r'$\rm Convolved$ ($\rm total$)')
 ax.plot(x,y+np.log10(0.38),'--',dashes=(25,15),c=colors,label=r'$\rm Convolved$ ($\rm type-I$)')
 
+'''
 def BHMF1(logM, logphi_s, logM_s, alpha, beta):
 	a = 10.**(logM-logM_s)
 	return 10.**logphi_s * a**(1.+alpha) * np.exp(1-a)
@@ -90,25 +91,11 @@ pfit = np.log10(BHMF2(xfit, -4.009, 8.047, 1.72, 0.5782))
 #pfit = np.log10(BHMF2(xfit, -4.391, 8.645, 1.805, 0.5545))
 ax.plot(xfit , pfit-np.log10(fduty),'-', color='crimson', label=r'$\rm Deconvolved$ ($\rm total$)')
 ax.plot(xfit , pfit+np.log10(0.38),'--', dashes=(25,15), color='crimson', label=r'$\rm Deconvolved$ ($\rm type-I$)')
-
+'''
 data = np.genfromtxt(datapath + 'BHMF/Kelly2013/table1.dat', names=True)
-id = data['z']==0.4
+id = data['z']==redshift
 ax.errorbar( data['logM'][id], data['logPhi'][id], yerr=( data['logPhi'][id]-data['lo'][id], data['up'][id]-data['logPhi'][id]),
  c='gray', mec='gray', linestyle='none' ,marker='o',markersize=15, capthick=4, capsize=9, label=r'$\rm Kelly+$ $\rm 2013$')
-
-data = np.genfromtxt(datapath + 'BHMF/Vika2009_local.dat', names=True)
-scale = 1e-4 * (hubble/0.70)**3
-ax.errorbar( data['logM'], np.log10(data['Phi']*scale), yerr=( np.log10(data['Phi']) - np.log10(data['Phi']-data['loerr'])
-	, np.log10(data['Phi']+data['uperr']) - np.log10(data['Phi']) ), c='seagreen', mec='seagreen', linestyle='none' ,
-	marker='o',markersize=15, capthick=4, capsize=9, label=r'$\rm Vika+$ $\rm 2009$')
-
-data = np.genfromtxt(datapath + 'BHMF/Shankar2009_local.dat', names=True)
-ax.fill_between( data['logM'], y1= data['lo'] - data['logM'], y2= data['up'] - data['logM'], color='chocolate', 
-	edgecolor='none',alpha=0.3,label=r'$\rm Shankar+$ $\rm 2009$')
-
-data = np.genfromtxt(datapath + 'BHMF/Marconi2004_local.dat', names=True)
-ax.plot( data['logM'], data['logPhi'], c='darkorchid', mec='darkorchid', linestyle='none' ,
-	marker='o',markersize=15, label=r'$\rm Marconi+$ $\rm 2004$')
 
 prop = matplotlib.font_manager.FontProperties(size=22.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -122,6 +109,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-plt.savefig("../figs/BHMF_local.pdf",fmt='pdf')
-#plt.show()
+#plt.savefig("../figs/BHMF_local.pdf",fmt='pdf')
+plt.show()
 
