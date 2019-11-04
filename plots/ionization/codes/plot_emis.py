@@ -50,7 +50,7 @@ zpoints_spe=np.array(pz_spe)
 
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
-zlist=np.linspace(0.1,7,20)
+zlist=np.linspace(0.1,7,30)
 
 #zpoints_free = zpoints_free[zpoints_free>2.]
 #zpoints_fix  = zpoints_fix[zpoints_fix>2.]
@@ -102,8 +102,8 @@ def cumulative_emissivity(L_band,Phi_band,L_limit_low,L_limit_up):
 		fnu = np.power(10.,-0.4*x)*3631*1e-23*4*np.pi*(10*con.pc.value*100)**2
 		fnu912 = fnu * (912./1450.)**(0.61)
 		return np.power(10.,logphi(x))*fnu912
-	#return romberg(emis,Mlow,Mup,divmax=20)
-	return quad(emis,Mlow,Mup)[0]
+	return romberg(emis,Mlow,Mup,divmax=20)
+	#return quad(emis,Mlow,Mup)[0]
 
 def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift,global_fit=False):
 	partials = 0.0 * parameters
@@ -174,6 +174,8 @@ loerr[np.invert(np.isfinite(loerr))] = 100
 ax.plot(zlist,np.log10(result[:,0]),'-',c='darkorchid',alpha=0.7,label=r'$\rm Global$ $\rm fit$')
 ax.fill_between(zlist, y1=np.log10(result[:,0])+uperr[:,0] ,y2=np.log10(result[:,0])-loerr[:,0], color='darkorchid', alpha=0.4)
 
+np.savetxt("emissivity.dat",np.c_[zlist,np.log10(result[:,0])])
+
 ###### fit at a given redshift
 result=np.zeros((len(zpoints_free),2))
 uncertainty=np.zeros((len(zpoints_free),2))
@@ -200,10 +202,13 @@ for i in range(len(zpoints_fix)):
 ax.plot(zpoints_fix,np.log10(result[:,0]),linestyle='none',marker='x',c='royalblue',mec='royalblue',ms=15)
 
 data=np.genfromtxt("emis/kk18.dat",names=['z','eps'])
-ax.plot(data['z'],data['eps'],'--',c='seagreen',label=r'$\rm Kulkarni+$ $\rm 2018$')
+ax.plot(data['z'],data['eps'],'--',dashes=(25,15),c='seagreen',label=r'$\rm Kulkarni+$ $\rm 2018$')
 
 data=np.genfromtxt("emis/haardt12.dat",names=['z','eps'])
-ax.plot(data['z'],data['eps'],'--',c='navy',label=r'$\rm Haardt$ & $\rm Madau$ $\rm 2012$')
+ax.plot(data['z'],data['eps'],'--',dashes=(25,15),c='navy',label=r'$\rm Haardt$ & $\rm Madau$ $\rm 2012$')
+
+data=np.genfromtxt("emis/P16.dat",names=['z','eps'])
+ax.plot(data['z'],data['eps'],'--',dashes=(25,15),c='gold',label=r'$\rm Palanque-Delabrouille+$ $\rm 2016$')
 
 #######################################################################
 
@@ -220,7 +225,7 @@ data=np.genfromtxt("emis/parsa18.dat",names=True)
 ax.errorbar(data['z'],data['eps'], xerr=(data["z"]-data["zlo"],data["zup"]-data["z"]), marker='o',linestyle='none',ms=15,color='deeppink',mec='deeppink',label=r'$\rm Parsa+$ $\rm 2018$')
 
 d=np.genfromtxt("emis/onoue17.dat")
-ax.add_patch(matplotlib.patches.Rectangle((d[0],d[2]), d[1]-d[0], d[3]-d[2], angle=0.0, linewidth=4, fill=False, color='gray', zorder=100,label=r'$\rm Onoue+$ $\rm 2017$'))
+ax.add_patch(matplotlib.patches.Rectangle((d[0],d[2]), d[1]-d[0], d[3]-d[2], angle=0.0, linewidth=4, fill=False, color='k', zorder=100,label=r'$\rm Onoue+$ $\rm 2017$'))
 
 #######################################################################
 
