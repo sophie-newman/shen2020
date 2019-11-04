@@ -214,7 +214,7 @@ for i in range(len(zpoints_fix)):
 ax.plot(zpoints_fix,np.log10(result[:,0]),linestyle='none',marker='x',c='royalblue',mec='royalblue',ms=15)
 
 data=np.genfromtxt("kk18.dat",names=['z','gamma'])
-ax.plot(data['z'],data['gamma'],'--',c='seagreen',label=r'$\rm Kulkarni+$ $\rm 2018$')
+ax.plot(data['z'],data['gamma'],'--',dashes=(25,15),c='seagreen',label=r'$\rm Kulkarni+$ $\rm 2018$')
 
 result=np.zeros((len(zpoints_spe),2))
 uncertainty=np.zeros((len(zpoints_spe),2))

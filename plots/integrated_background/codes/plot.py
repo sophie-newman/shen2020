@@ -132,7 +132,7 @@ ax.plot(E_list, nu_list * Intensity[:,1] * unit_convertion, '--', dashes=(25,15)
 
 ax.plot(E_list, nu_list * Intensity[:,2] * unit_convertion, '--', dashes=(25,15), c='dodgerblue', label=r'$\rm AGN$ ($\rm CTN,\,absorbed$)')
 
-ax.plot(E_list, nu_list * Intensity[:,3] * unit_convertion, '--', dashes=(25,15), c='deepskyblue', label=r'$\rm AGN$ ($\rm CTN\,unabsorbed$)')
+ax.plot(E_list, nu_list * Intensity[:,3] * unit_convertion, '--', dashes=(25,15), c='deepskyblue', label=r'$\rm AGN$ ($\rm CTN,\,unabsorbed$)')
 
 data=np.genfromtxt("Hopkins2007.dat",names=["x","y"])
 ax.plot(data["x"],data["y"]+2.,'--',dashes=(25,15),c='gray',label=r'$\rm Hopkins+$ $\rm 2007$')
