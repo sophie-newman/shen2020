@@ -41,13 +41,13 @@ ax = fig.add_axes([0.11,0.12,0.79,0.83])
 data = np.genfromtxt("bolcorr.dat",names=['Lbol','LHX','LSX','LB','L1450','LIR'])
 
 ax.plot(data['Lbol'], data['Lbol']-data['LB']   , lw=6, c='royalblue' ,label=r'$\rm B$ $\rm band$')
-ax.plot(data['Lbol'], data['Lbol']-data['L1450'], lw=6, c='darkorchid',label=r'$\rm FUV$ ($\rm 1450\AA$)')
+ax.plot(data['Lbol'], data['Lbol']-data['L1450'], lw=6, c='darkorchid',label=r'$\rm UV$ $\rm 1450\AA$')
 ax.plot(data['Lbol'], data['Lbol']-data['LIR']  , lw=6, c='crimson'   ,label=r'$\rm Mid$ $\rm IR$ ($\rm 15\mu m$)')
-ax.plot(data['Lbol'], data['Lbol']-data['LHX']  , lw=6, c='seagreen'  ,label=r'$\rm Hard$ $\rm Xray$')
-ax.plot(data['Lbol'], data['Lbol']-data['LSX']  , lw=6, c='chocolate' ,label=r'$\rm Soft$ $\rm Xray$')
+ax.plot(data['Lbol'], data['Lbol']-data['LHX']  , lw=6, c='seagreen'  ,label=r'$\rm Hard$ $\rm X-ray$')
+ax.plot(data['Lbol'], data['Lbol']-data['LSX']  , lw=6, c='chocolate' ,label=r'$\rm Soft$ $\rm X-ray$')
 
-data2 = np.genfromtxt("bolcorr_2.dat",names=['Lbol','LHX','LSX','LB','L1450','LIR'])
-ax.plot(data2['Lbol'], data2['Lbol']-data2['LHX'] , lw=6, c='cyan')
+#data2 = np.genfromtxt("bolcorr_2.dat",names=['Lbol','LHX','LSX','LB','L1450','LIR'])
+#ax.plot(data2['Lbol'], data2['Lbol']-data2['LHX'] , lw=6, c='cyan')
 
 xs, ys = data['Lbol'], data['Lbol']-data['LB']
 sig = sigma_new(xs,-0.38269949 , 0.4052673 , 42.38666388 , 2.3775969)

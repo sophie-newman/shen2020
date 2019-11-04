@@ -198,7 +198,7 @@ def loop_over_all_dset():
 
 	return alldata["Z"], alldata["Zlo"], alldata["Zup"] ,alldata["L_OBS"], alldata["DLOBS"]
 
-pixel = 200
+pixel = 500
 x,xlo,xup,y,dy = loop_over_all_dset()
 r1,_,_ = np.histogram2d(x,y,bins=[np.linspace(0,7,pixel+1), np.linspace(10.3,13.8,pixel+1)])
 r2,_,_ = np.histogram2d(xup,y,bins=[np.linspace(0,7,pixel+1), np.linspace(10.3,13.8,pixel+1)])
@@ -208,20 +208,22 @@ r5,_,_ = np.histogram2d(x,y-dy,bins=[np.linspace(0,7,pixel+1), np.linspace(10.3,
 
 image = r1+r2+r3+r4+r5
 image[np.invert(np.isfinite(image))] = 0
-image = ndimage.gaussian_filter(image, sigma=3)
+image = ndimage.gaussian_filter(image, sigma=30)
 image = np.log10(image)
 mini= np.min(image[np.isfinite(image)])
 maxi= np.max(image[np.isfinite(image)])
 medi= np.median(image[np.isfinite(image)])
 print mini,maxi
+image[np.invert(np.isfinite(image))] = mini
 x,y = np.meshgrid( np.linspace(0,7,pixel+1), np.linspace(10.3,13.8,pixel+1) )
 
-cmap = plt.get_cmap('Greens')
-pos = ax.pcolormesh(x, y, np.transpose(image), cmap=cmap, norm=matplotlib.colors.Normalize(vmin=mini,vmax=maxi),alpha=1)
+cmap = plt.get_cmap('hsv_r')
+pos = ax.pcolormesh(x, y, np.transpose(image), cmap=cmap, 
+	norm=matplotlib.colors.Normalize(vmin=medi-3.0*(medi-mini),vmax=maxi+1.8*(maxi-medi)),alpha=1)
 ####################################################
 
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_nofix.dat",names=True)
-ax.errorbar(data["z"],data["L_s"],yerr=data['err4'],linestyle='',marker='o',c='gray',mec='gray',ms=18,capsize=10,capthick=4,alpha=0.5)
+ax.errorbar(data["z"],data["L_s"],yerr=data['err4'],linestyle='',marker='o',c='gray',mec='gray',ms=18,capsize=10,capthick=4,alpha=0.7)
 
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 ax.plot(data["z"],data["L_s"],linestyle='',marker='o',c='royalblue',mec='royalblue',ms=18)
@@ -245,7 +247,7 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-plt.savefig("../figs/Lbreak.pdf",fmt='pdf')
+plt.savefig("../figs/Lbreak.png",fmt='png')
 ####################################################
 
 fig=plt.figure(figsize = (15,10))

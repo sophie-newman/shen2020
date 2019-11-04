@@ -76,7 +76,7 @@ L_bol_grid_extended = np.linspace(5,15,100)
 catalog["mass"], catalog["weight"] = generate_ensemble(L_bol_grid_extended+L_solar, LF(L_bol_grid_extended,parameters_global_2) )
 x,y = get_mass_function(catalog["mass"],catalog["weight"])
 ax.plot(x,y-np.log10(fduty),'-',c=colors,label=r'$\rm Convolved$ ($\rm total$)')
-ax.plot(x,y+np.log10(0.38),'--',dashes=(25,15),c=colors,label=r'$\rm Convolved$ ($\rm type-I$)')
+ax.plot(x,y+np.log10(0.38),'--',dashes=(25,15),c=colors,label=r'$\rm Convolved$ ($\rm type-1$)')
 
 def BHMF1(logM, logphi_s, logM_s, alpha, beta):
 	a = 10.**(logM-logM_s)
@@ -89,7 +89,7 @@ xfit = np.linspace(5,12,100)
 pfit = np.log10(BHMF2(xfit, -4.009, 8.047, 1.72, 0.5782))
 #pfit = np.log10(BHMF2(xfit, -4.391, 8.645, 1.805, 0.5545))
 ax.plot(xfit , pfit-np.log10(fduty),'-', color='crimson', label=r'$\rm Deconvolved$ ($\rm total$)')
-ax.plot(xfit , pfit+np.log10(0.38),'--', dashes=(25,15), color='crimson', label=r'$\rm Deconvolved$ ($\rm type-I$)')
+ax.plot(xfit , pfit+np.log10(0.38),'--', dashes=(25,15), color='crimson', label=r'$\rm Deconvolved$ ($\rm type-1$)')
 
 data = np.genfromtxt(datapath + 'BHMF/Kelly2013/table1.dat', names=True)
 id = data['z']==0.4

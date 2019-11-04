@@ -45,7 +45,7 @@ data=np.genfromtxt(datapath+"XRAY_SED.dat",names=["lognu","logall"],)
 lamb=con.c.value/(10**data['lognu'])*1e10
 ratio = data['logall'][np.abs(10**data['lognu']*con.h.value/con.e.value/1000-2)<=0.05]-(-1.47406)
 L_HX =  np.log10( f2kev*(2.*1000.*con.e.value/con.h.value) / 10**ratio )
-ax.plot(lamb[lamb<50],(data['logall'][lamb<50]-(-1.47406))+L_HX,'--',dashes=(15,9),c='darkorchid',label=r'$\rm Xray$ $\rm Hopkins+$ $\rm 2007$')
+ax.plot(lamb[lamb<50],(data['logall'][lamb<50]-(-1.47406))+L_HX,'--',dashes=(15,9),c='darkorchid',label=r'$\rm X-ray$ $\rm Hopkins+$ $\rm 2007$')
 
 x=np.logspace(2.7,4.,1000)
 ax.plot(x, 45.7+np.log10((912./x)**(-0.44+1)) ,'-', lw=2, c='seagreen',label=r'$\rm Vanden$ $\rm Berk+$ $\rm 2001$')
@@ -71,13 +71,13 @@ ax.axvspan(912,con.c.value/(0.2*1000.*con.e.value/con.h.value)*1e10,
 ax.text(0.41, 0.58, r'$\rm EUV$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
 ax.axvspan(con.c.value/(0.5*1000.*con.e.value/con.h.value)*1e10,con.c.value/(2*1000.*con.e.value/con.h.value)*1e10,
 	color='navy',edgecolor='navy',alpha=0.1)
-ax.text(0.67, 0.58, r'$\rm Soft$ $\rm Xray$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
+ax.text(0.67, 0.58, r'$\rm Soft$ $\rm X-ray$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
 ax.axvspan(con.c.value/(2*1000.*con.e.value/con.h.value)*1e10,con.c.value/(10*1000.*con.e.value/con.h.value)*1e10,
 	color='darkorchid',edgecolor='darkorchid',alpha=0.1)
-ax.text(0.77, 0.58, r'$\rm Hard$ $\rm Xray$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
+ax.text(0.77, 0.58, r'$\rm Hard$ $\rm X-ray$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
 ax.axvspan(con.c.value/(11*1000.*con.e.value/con.h.value)*1e10,con.c.value/(100*1000.*con.e.value/con.h.value)*1e10,
 	color='silver',edgecolor='silver',alpha=0.2)
-ax.text(0.89, 0.58, r'$\rm Ultra$ $\rm Hard$ $\rm Xray$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
+ax.text(0.89, 0.58, r'$\rm Ultra$ $\rm Hard$ $\rm X-ray$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
