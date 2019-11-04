@@ -187,7 +187,7 @@ x,y,dy,yfit=get_data(rescale=True)
 ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='crimson',mec='crimson',alpha=0.5,marker='o', ms=10, capthick=2 ,label=r'$\rm UV$ ($\phi$ $\rm corrected$)')
 
 x,y,dy=get_data_Xray(parameters_global,xm,ym)
-ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='*', alpha=0.5, ms=10, capthick=2 ,label=r'$\rm Hard$ $\rm Xray$')
+ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='*', alpha=0.5, ms=10, capthick=2 ,label=r'$\rm Hard$ $\rm X-ray$')
 
 if (redshift<6.5) and (redshift>=4):
 	x = np.linspace(-14,-32,100) 

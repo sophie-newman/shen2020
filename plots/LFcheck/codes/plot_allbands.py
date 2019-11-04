@@ -186,15 +186,15 @@ ax.errorbar(x,y,yerr=dy,linestyle='none',c='pink',mec='pink',marker='o',ms=10,ca
 xcollect = np.append(xcollect,x)
 
 x,y,dy=get_data(parameters_fix_local,dataid=-4)
-ax.errorbar(x,y,yerr=dy,linestyle='none',c='royalblue',mec='royalblue',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm Hard$ $\rm Xray$')
+ax.errorbar(x,y,yerr=dy,linestyle='none',c='royalblue',mec='royalblue',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm Hard$ $\rm X-ray$')
 xcollect = np.append(xcollect,x)
 
 x,y,dy=get_data(parameters_fix_local,dataid=-3)
-ax.errorbar(x,y,yerr=dy,linestyle='none',c='seagreen',mec='seagreen',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm Soft$ $\rm Xray$')
+ax.errorbar(x,y,yerr=dy,linestyle='none',c='seagreen',mec='seagreen',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm Soft$ $\rm X-ray$')
 xcollect = np.append(xcollect,x)
 
 x,y,dy=get_data(parameters_fix_local,dataid=-2)
-ax.errorbar(x,y,yerr=dy,linestyle='none',c='olive',mec='olive',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm Mid$ $\rm Infrared$')
+ax.errorbar(x,y,yerr=dy,linestyle='none',c='olive',mec='olive',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm Mid$ $\rm IR$')
 xcollect = np.append(xcollect,x)
 
 xcollect = np.sort(xcollect-L_solar)

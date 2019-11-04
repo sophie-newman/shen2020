@@ -171,7 +171,7 @@ ax.text(0.25, 0.45, r'$\rm <-24$'  ,horizontalalignment='center',verticalalignme
 ax.text(0.25, 0.64, r'$\rm <-21$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 ax.text(0.25, 0.87, r'$\rm <-18$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
-ax.text(0.2, 0.1, r'$\rm UV$ ($\rm 1450\AA$)' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40,color='navy')
+ax.text(0.2, 0.1, r'$\rm UV$ $\rm 1450\AA$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40,color='navy')
 
 ax.set_xlim(0,7)
 ax.set_ylim(-8.5,-3.4)

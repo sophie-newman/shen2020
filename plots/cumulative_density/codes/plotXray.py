@@ -166,7 +166,7 @@ ax.text(0.32, 0.33, r'$\rm 45-46$'  ,horizontalalignment='center',verticalalignm
 ax.text(0.32, 0.66, r'$\rm 44-45$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 ax.text(0.32, 0.9, r'$\rm 43-44$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
-ax.text(0.2, 0.1, r'$\rm Hard$ $\rm Xray$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40,color='navy')
+ax.text(0.2, 0.1, r'$\rm Hard$ $\rm X-ray$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40,color='navy')
 
 ax.set_xlim(0,7)
 ax.set_ylim(-9.1,-3.3)
