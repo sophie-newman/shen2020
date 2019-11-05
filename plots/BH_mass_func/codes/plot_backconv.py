@@ -49,7 +49,7 @@ x=np.linspace(-4.,1.,51)
 kernel1 = kernel_func1(x, knee=np.log10(1.5), alpha=-0.6) 
 kernel1 = kernel1/np.sum(kernel1)
 
-kernel2 =kernel_func2(x, x0=-1.9+0.45*0.4, sigma=1.03-0.15*0.4)
+kernel2 =kernel_func2(x, x0=-1.9+0.45*redshift, sigma=1.03-0.15*redshift)
 kernel2 = kernel2/np.sum(kernel2)
 
 kernel = 0.62*kernel1+0.38*kernel2

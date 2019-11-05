@@ -217,9 +217,9 @@ print mini,maxi
 image[np.invert(np.isfinite(image))] = mini
 x,y = np.meshgrid( np.linspace(0,7,pixel+1), np.linspace(10.3,13.8,pixel+1) )
 
-cmap = plt.get_cmap('hsv_r')
+cmap = plt.get_cmap('magma_r')
 pos = ax.pcolormesh(x, y, np.transpose(image), cmap=cmap, 
-	norm=matplotlib.colors.Normalize(vmin=medi-3.0*(medi-mini),vmax=maxi+1.8*(maxi-medi)),alpha=1)
+	norm=matplotlib.colors.Normalize(vmin=medi-0.2*(medi-mini),vmax=maxi+5.*(maxi-medi)),alpha=1)
 ####################################################
 
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_nofix.dat",names=True)
