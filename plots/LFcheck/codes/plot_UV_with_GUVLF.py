@@ -78,12 +78,12 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
                 L_tmp  = np.sort(M_1450)
         else: L_tmp=bolometric_correction(L_bol_grid,dset_id)
 
-	'''
+	
         if return_LF[dset_name]!=None:
 		phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
 		phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
 		PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
-	'''
+	
 	if len(L_data)>0:
 			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_data)
 			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_data)
