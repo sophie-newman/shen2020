@@ -19,19 +19,20 @@ import sys
 def Gamma_old(epsilon,z):
 	alphaEUV=-1.70
 	return ( 2.*(1+z)**(-1.5)*epsilon/1e24/(3.+np.abs(alphaEUV)) )
-'''
-def Gamma(epsilon,z):
-        alphaEUV=-1.70
-        eta = 5.4
-        Dl = 65.
-        return 0.6 * (Dl/65.) * np.power((1.+z)/4.5,3.-eta) * epsilon/1e24 / (3.+np.abs(alphaEUV))
-'''
-def Gamma(epsilon,z):
-        alphaEUV=-1.70
-        eta = 2.5+1.94
-        Dl = 50.
-        return 0.46 * (Dl/50.) * np.power((1.+z)/4.5,3.-eta) * epsilon/1e24 / (3.+np.abs(alphaEUV))
 
+def emis_model(x,eps0,a,b,c,d):
+        return eps0 + np.log10( (1+x)**a * np.exp(-b*x)/(np.exp(c*x)+d))
+
+def Gamma(epsilon,z):
+        alphaEUV=-1.70
+        #eta = 2.5+1.94
+        #Dl = 50.
+        #return 0.46 * (Dl/50.) * np.power((1.+z)/4.5,3.-eta) * epsilon/1e24 / (3.+np.abs(alphaEUV))
+	data = np.genfromtxt("FG19_mfp.dat")
+	Dl = inter.interp1d(data[:,0],data[:,1])	
+	#corr = (1.-1./np.e)
+	#epsilon = 10**emis_model(z,24.065, 5.941, -0.763, 3.085, 14.571)
+	return 0.46 * (Dl(z)/50.) * np.power((1.+z)/4.5,3.) * epsilon/1e24 / (3.+np.abs(alphaEUV))
 
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
@@ -61,7 +62,7 @@ zpoints_spe=np.array(pz_spe)
 
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
-zlist=np.linspace(0.1,7,30)
+zlist=np.linspace(0.1,7,20)
 
 zpoints_free = zpoints_free[zpoints_free>2.]
 zpoints_fix  = zpoints_fix[zpoints_fix>2.]
@@ -113,8 +114,8 @@ def cumulative_emissivity(L_band,Phi_band,L_limit_low,L_limit_up):
 		fnu = np.power(10.,-0.4*x)*3631*1e-23*4*np.pi*(10*con.pc.value*100)**2
 		fnu912 = fnu * (912./1450.)**(0.61)
 		return np.power(10.,logphi(x))*fnu912
-	return romberg(emis,Mlow,Mup,divmax=20)
-	#return quad(emis,Mlow,Mup)[0]
+	#return romberg(emis,Mlow,Mup,divmax=20)
+	return quad(emis,Mlow,Mup)[0]
 
 def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift,global_fit=False):
 	partials = 0.0 * parameters

@@ -163,14 +163,14 @@ ax.errorbar([],[],yerr=([],[]),c='darkorchid',mec='darkorchid',linestyle='none',
 
 limit = np.log10(1./(cosmo.differential_comoving_volume(redshift).value*1.* 20000. * (1./180.*np.pi)**2))
 if redshift == 2:
-	ax.fill_between([-21,-35],y2=[9,9],y1=np.ones(2)*limit,color='seagreen',alpha=0.1,label=r'$\rm LSST$ $\rm single-visit$')
-	ax.fill_between([-18.5,-35],y2=[9,9],y1=np.ones(2)*limit,color='cyan',alpha=0.1,label=r'$\rm LSST$ $\rm final$')
+	ax.fill_between([-21  +0.89,-35],y2=[9,9],y1=np.ones(2)*limit,color='seagreen',alpha=0.1,label=r'$\rm LSST$ $\rm single-visit$')
+	ax.fill_between([-18.5+0.89,-35],y2=[9,9],y1=np.ones(2)*limit,color='cyan',alpha=0.1,label=r'$\rm LSST$ $\rm final$')
 if redshift == 4:
-        ax.fill_between([-22,-35],y2=[9,9],y1=np.ones(2)*limit,color='seagreen',alpha=0.1)
-	ax.fill_between([-19,-35],y2=[9,9],y1=np.ones(2)*limit,color='cyan',alpha=0.1)
+        ax.fill_between([-22+0.89,-35],y2=[9,9],y1=np.ones(2)*limit,color='seagreen',alpha=0.1)
+	ax.fill_between([-19+0.89,-35],y2=[9,9],y1=np.ones(2)*limit,color='cyan',alpha=0.1)
 if redshift == 6:
-        ax.fill_between([-24,-35],y2=[9,9],y1=np.ones(2)*limit,color='seagreen',alpha=0.1)
-	ax.fill_between([-21.5,-35],y2=[9,9],y1=np.ones(2)*limit,color='cyan',alpha=0.1)
+        ax.fill_between([-24  +0.89,-35],y2=[9,9],y1=np.ones(2)*limit,color='seagreen',alpha=0.1)
+	ax.fill_between([-21.5+0.89,-35],y2=[9,9],y1=np.ones(2)*limit,color='cyan',alpha=0.1)
 
 prop = matplotlib.font_manager.FontProperties(size=23.0)
 if redshift==2:
