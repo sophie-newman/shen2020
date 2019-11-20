@@ -147,12 +147,12 @@ ax.plot(zpoints,result[:,1],'o',c='royalblue',mec='royalblue',ms=15)
 ax.plot(zpoints,result[:,2],'o',c='royalblue',mec='royalblue',ms=15)
 '''
 data = np.genfromtxt("../obdata/aird15.dat",names=True)
-ax.plot( 10**data["logzplusone"][data["id"]==1]-1, data["logPhi"][data["id"]==1], '--', dashes=(25,10), c='seagreen', label=r'$\rm Aird+$ $\rm 2015$')
-ax.plot( 10**data["logzplusone"][data["id"]==2]-1, data["logPhi"][data["id"]==2], '--', dashes=(25,10), c='seagreen')
-ax.plot( 10**data["logzplusone"][data["id"]==3]-1, data["logPhi"][data["id"]==3], '--', dashes=(25,10), c='seagreen')
+ax.plot( 10**data["logzplusone"][data["id"]==1]-1, data["logPhi"][data["id"]==1], '--', dashes=(25,10), c='royalblue', label=r'$\rm Aird+$ $\rm 2015$')
+ax.plot( 10**data["logzplusone"][data["id"]==2]-1, data["logPhi"][data["id"]==2], '--', dashes=(25,10), c='royalblue')
+ax.plot( 10**data["logzplusone"][data["id"]==3]-1, data["logPhi"][data["id"]==3], '--', dashes=(25,10), c='royalblue')
 
 data = np.genfromtxt("../obdata/miyaji2015.dat",names=True)
-ax.errorbar( data["zplusone"]-1, data["logPhi"], yerr=(data["logPhi"]-data["lo"],data["up"]-data["logPhi"]), c='royalblue', mec="royalblue", linestyle='none', marker='o', ms=15, capthick=4, capsize=0, label=r'$\rm Miyaji+$ $\rm 2015$')
+ax.errorbar( data["zplusone"]-1, data["logPhi"], yerr=(data["logPhi"]-data["lo"],data["up"]-data["logPhi"]), c='gray', mec="gray", linestyle='none', marker='o', ms=15, capthick=4, capsize=0, label=r'$\rm Miyaji+$ $\rm 2015$')
 
 data = np.genfromtxt("../obdata/ueda14.dat",names=True)
 ax.errorbar( data["z"], data["logPhi"], yerr=(data["logPhi"]-data["lo"],data["up"]-data["logPhi"]), c='k', mec="k", linestyle='none', marker='o', ms=15, capthick=4, capsize=0, label=r'$\rm Ueda+$ $\rm 2014$')

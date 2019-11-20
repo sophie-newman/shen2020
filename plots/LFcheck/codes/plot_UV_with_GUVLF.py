@@ -35,7 +35,7 @@ def plt_obdata(fname,papername,color,label=True):
 	#if label==True:
 	#	ax.errorbar(x_ob,y_ob,yerr=(lowerr,uperr),c=color,lw=3,linestyle='',marker='o',markersize=9,capsize=4.5,label=papername)
 	#else: 
-	ax.errorbar(x_ob,y_ob,yerr=(lowerr,uperr),c=color,mec=color,linestyle='none',marker='o',lw=2,markersize=10,capsize=6,capthick=2)
+	ax.errorbar(x_ob,y_ob,yerr=(lowerr,uperr),c=color,mec=color,linestyle='none',marker='o',lw=3,markersize=15,capsize=6,capthick=3)
 
 
 redshift=float(sys.argv[1])
@@ -133,7 +133,7 @@ y = single_sch(x, 10**data['LogPhis'][id_z], data["Ms"][id_z], data["alpha"][id_
 ax.plot(x,y,'-',lw=4,c='royalblue',label=r'$\rm Galaxy$ $\rm UVLF$ $\rm fit$')
 
 x,y,dy,yfit=get_data()
-ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='gray',mec='gray',marker='o', ms=10, capthick=2 ,label=r'$\rm Quasar$ $\rm UVLF$ $\rm compilation$')
+ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=3,c='dimgray',mec='dimgray',marker='o', ms=15, capthick=3 ,label=r'$\rm Quasar$ $\rm UVLF$ $\rm compilation$')
 '''
 if redshift==6:
 	x = np.linspace(-14,-32,100) 
