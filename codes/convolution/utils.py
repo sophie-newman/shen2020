@@ -8,6 +8,9 @@ import astropy.constants as con
 #	m_AB_obs = M_AB + 2.5*np.log10(cosmo.luminosity_distance(redshift).value*1e6/10.)
 #	return m_AB_obs
 
+#the functions defined below actually are not used in our work, since we use the C version of them for speed
+#but readers can use them for convenience
+
 #return the lognormal dispersion in bolometric corrections for a given band and luminosity
 def fit_func_disp(x,A,B,x0,sig):
 	return B+A*norm.cdf(x,loc=x0,scale=sig)
@@ -118,7 +121,6 @@ def return_ratio_to_b_band(nu):
 
 	if (log_nu_obs < log_nu[0]):   nuLnu_obs = log_nuLnu[0]
 	if (log_nu_obs > log_nu[159]): nuLnu_obs = log_nuLnu[159]
-	#assumes Gamma=2.0; the calling code will actually use X-ray template for this case
 	if ((log_nu_obs>=log_nu[0]) and (log_nu_obs<=log_nu[159])): 
 		n0 = int((log_nu_obs-log_nu[0])/0.02)
 		nuLnu_obs = log_nuLnu[n0] + (log_nuLnu[n0+1]-log_nuLnu[n0]) * ((log_nu_obs-log_nu[n0])/(log_nu[n0+1]-log_nu[n0]))
@@ -126,8 +128,7 @@ def return_ratio_to_b_band(nu):
 	return np.power(10.0,nuLnu_obs-L_BB)
 
 # load the x-ray template, based on the observations in text and 
-#     specifically the Magdziarz & Zdziarski 1995 PEXRAV model with Gamma=1.8 
-#     (Tozzi et al., George et al.), theta=2pi, solar abundances
+#     specifically the Magdziarz & Zdziarski 1995 PEXRAV model with Gamma=1.8/1.9 , theta=2pi, solar abundances
 def return_ratio_to_hard_xray(nu):
 	gamma = 1.8
 

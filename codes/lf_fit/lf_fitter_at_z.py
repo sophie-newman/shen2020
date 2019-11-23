@@ -1,3 +1,5 @@
+# fit the luminosity function based on datasets at a given redshift
+
 from data import *
 import numpy as np 
 from lf_shape import *
@@ -7,21 +9,22 @@ from scipy.optimize import minimize
 from scipy.optimize import leastsq
 import lmfit
 import corner
-# fit the luminosity function based on datasets at a given redshift
 from lf_fitter_data import *
 from ctypes import *
 import ctypes
 import sys
 redshift=float(sys.argv[1])
-dtg = return_dtg(redshift)
+dtg = return_dtg(redshift)  # load the dtg value, see data.py
 FIX = int(sys.argv[2])
 FIX = bool(FIX)
 
+#initial guess, doesn't really matter what you put here
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.4])
 parameters_info = np.array(["gamma1_0", "gamma2_0", "logphis"  , "logLs_0", "dtg"])
 parameters_bound=(np.array([-np.inf,-np.inf,-np.inf,-np.inf,0]),np.array([0,0,np.inf,np.inf,np.inf]))
 
 #load the shared object file
+#the c code does the bolometric and extinction corrections
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
@@ -34,12 +37,14 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 	else:
 		return False
 
+	#create a temporary grid of luminosities (magnitudes if in UV) 
 	if dset_id==-5: 
 		L_1450 = bolometric_correction(L_bol_grid,dset_id) + L_solar
                 M_1450 = -2.5*( L_1450 - np.log10(Fab*con.c.value/1450e-10) )
                 L_tmp  = np.sort(M_1450)
 	else: L_tmp=bolometric_correction(L_bol_grid,dset_id)
 
+	#do the number density correction for potential redshift misalignment
 	if return_LF[dset_name]!=None:
 		phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
 		phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
@@ -54,8 +59,8 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 			res = convolve_c(input_c,nu_c,redshift_c,dtg_c)
 			res = [i for i in res.contents]
 			PHI_model = np.array(res,dtype=np.float64)
-			#L_model, PHI_model = convolve(np.power(10.,LF_at_z(L_bol_grid,parameters,redshift,"Fiducial")), dset_id) 
-			
+
+			# if it is in UV, we need to convert it to number density per magnitude
 			if dset_id==-5:
 				L_1450 = (-0.4*L_data) + np.log10(Fab*(con.c.value/1450e-10)) - L_solar
                                 phi_i = np.interp(L_1450, L_model, np.log10(PHI_model))

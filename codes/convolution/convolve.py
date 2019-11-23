@@ -9,6 +9,8 @@ import time
 #all the NHs are in log10
 #all Phis are "not" in log10
 
+#bolometric correction function used in this work
+
 def bolometric_correction(L_bol,nu):  #L_bol is in log10   
 	x = L_bol - 10.
 	if nu==0.: return L_bol
@@ -42,6 +44,7 @@ def bolometric_correction(L_bol,nu):  #L_bol is in log10
 		L00  = np.log10(L500) + np.log10(L50/L500) * (np.log10(nu/nu500)/np.log10(nu50/nu500))
 		return L00 + L_bol
 
+# inverse of the bolometric correction, used to move data points to the bolometric plane
 def bolometric_correction_inverse(L_obs,nu):
 	def fobjective(L_bol):
 		return bolometric_correction(L_bol,nu)-L_obs

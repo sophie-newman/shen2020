@@ -1,3 +1,5 @@
+# global fit of the luminosity function based on all the datasets 
+
 from data import *
 import numpy as np 
 from lf_shape import *
@@ -8,7 +10,6 @@ import emcee
 from emcee.utils import MPIPool
 import corner
 import matplotlib.pyplot as plt
-# fit the luminosity function based on datasets at a given redshift
 from lf_fitter_data import *
 from ctypes import *
 import ctypes
@@ -25,6 +26,8 @@ def weightfunc(z):
 	else: return np.power( (1.+4.)/(1.+3.), 1.) * np.power( (1.+z)/(1.+4.), 1.5)
 
 #parameters_init = np.array([0.79847831 ,-0.25102297,0.02265792 , 1.846936805, -2.80025713 , 0.4003701  ,-3.5469101 ,-0.39856649, 11.32661766 ,-0.82451577,0.25281821])
+# we explore the parameter choice a bit, so the initial guess is already close to the best-fit, 
+# but we still vary it for at least 50% to make sure that it is a global minimum
 parameters_init = np.array([0.858, -0.262, 0.021, 2.54, -1.05, 1.14, -3.54, -0.4, 13., -0.6, 0.45])
 parameters_vary = np.array([0.4  , 0.2   , 0.2  , 0.9 , 0.6  , 0.6 , 1.7  , 0.3 , 3. , 0.4 , 0.3])
 parameters_info = np.array(["gamma1", "gamma2", "logphis"  , "logLs"])

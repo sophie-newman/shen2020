@@ -142,7 +142,7 @@ ax.plot(z_a,bestfit_global(z_a,2),'-',c='darkorchid')
 #prop = matplotlib.font_manager.FontProperties(size=25.0)
 #ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\log{(\phi_{\ast})}$ $[\rm Mpc]$',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$\log{(\phi_{\ast}\,[{\rm dex}^{-1}\,{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
 
 ax.set_xlim(0,7.)
 #ax.set_ylim(-6.3,-4.1)
@@ -217,13 +217,14 @@ print mini,maxi
 image[np.invert(np.isfinite(image))] = mini
 x,y = np.meshgrid( np.linspace(0,7,pixel+1), np.linspace(10.3,13.8,pixel+1) )
 
-cmap = plt.get_cmap('magma_r')
+#cmap = plt.get_cmap('magma_r')
+cmap = plt.get_cmap('Greys')
 pos = ax.pcolormesh(x, y, np.transpose(image), cmap=cmap, 
-	norm=matplotlib.colors.Normalize(vmin=medi-0.2*(medi-mini),vmax=maxi+5.*(maxi-medi)),alpha=1)
+	norm=matplotlib.colors.Normalize(vmin=medi-0.2*(medi-mini),vmax=maxi+3.*(maxi-medi)),alpha=1)
 ####################################################
 
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_nofix.dat",names=True)
-ax.errorbar(data["z"],data["L_s"],yerr=data['err4'],linestyle='',marker='o',c='gray',mec='gray',ms=18,capsize=10,capthick=4,alpha=0.7)
+ax.errorbar(data["z"],data["L_s"],yerr=data['err4'],linestyle='',marker='o',c='gray',mec='gray',ms=18,capsize=10,capthick=4,alpha=1)
 
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 ax.plot(data["z"],data["L_s"],linestyle='',marker='o',c='royalblue',mec='royalblue',ms=18)
@@ -239,7 +240,7 @@ ax.plot(z_a,bestfit_global(z_a,3),'-',c='darkorchid')
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\log{(L_{\ast})}$ $[{\rm L}_{\odot}]$',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$\log{(L_{\ast}\,[{\rm L}_{\odot}])}$',fontsize=40,labelpad=5)
 
 ax.set_xlim(0,7.)
 ax.set_ylim(10.3,13.8)
