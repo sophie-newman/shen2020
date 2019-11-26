@@ -259,7 +259,7 @@ ax.errorbar(data['z'],np.log10(data['eps']*1e24), xerr=(data["z"]-data["zlo"],da
 prop = matplotlib.font_manager.FontProperties(size=21.5)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.3,loc=3,ncol=2,columnspacing=0.2,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\log{(\epsilon_{\rm 912}\,[{\rm erg}\,{\rm s}^{-1}\,{\rm Hz}^{-1}\,{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$\log{(\epsilon_{\rm 912}\,[{\rm erg}\,{\rm s}^{-1}\,{\rm Hz}^{-1}\,{\rm cMpc}^{-3}])}$',fontsize=40,labelpad=5)
 
 #ax.text(0.25, 0.64, r'$\rm <-21$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 #ax.text(0.25, 0.87, r'$\rm <-18$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')

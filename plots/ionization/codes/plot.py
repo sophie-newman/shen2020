@@ -186,7 +186,7 @@ loerr[np.invert(np.isfinite(loerr))] = 100
 ax.plot(zlist,np.log10(result[:,0]),'-',c='darkorchid',alpha=0.7,label=r'$\rm Global$ $\rm fit$ ($\rm local$ $\rm approx.$)')
 ax.fill_between(zlist, y1=np.log10(result[:,0])+uperr[:,0] ,y2=np.log10(result[:,0])-loerr[:,0], color='darkorchid', alpha=0.4)
 
-data=np.genfromtxt("FG19_qso.dat")
+data=np.genfromtxt("FG20_qso.dat")
 ax.plot(10**data[:,0]-1,np.log10(data[:,1]/1e-12), color='navy',label=r'$\rm Global$ $\rm fit$ ($\rm full$ $\rm UVB$ $\rm calc.$)')
 
 ###### fit at a given redshift
@@ -216,7 +216,7 @@ ax.plot(zpoints_fix,np.log10(result[:,0]),linestyle='none',marker='x',c='royalbl
 
 data=np.genfromtxt("kk18.dat",names=['z','gamma'])
 ax.plot(data['z'],data['gamma'],'--',dashes=(25,15),c='seagreen',label=r'$\rm Kulkarni+$ $\rm 2018$')
-
+'''
 result=np.zeros((len(zpoints_spe),2))
 uncertainty=np.zeros((len(zpoints_spe),2))
 for i in range(len(zpoints_spe)):
@@ -224,7 +224,7 @@ for i in range(len(zpoints_spe)):
 	M_1450, PHI_1450 = get_model_lf([pgamma1_spe[id],pgamma2_spe[id],plogphis_spe[id],pLbreak_spe[id]], -5, zpoints_spe[id], magnitude=True)
 	result[i,0] = Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zpoints_spe[id])
 ax.plot(zpoints_spe,np.log10(result[:,0]),linestyle='none',lw=2,marker='v',c='gold',mec='gold',ms=15,label=r'$\rm Special$ $\rm fit$')
-
+'''
 #######################################################################
 '''
 data=np.genfromtxt("Kuhlen2012.dat",names=True)
