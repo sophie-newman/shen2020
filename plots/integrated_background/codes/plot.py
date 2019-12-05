@@ -24,15 +24,15 @@ c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 ##############
-c_extenstion1 = CDLL(homepath+'codes/c_lib/specialuse/CTK_convolve.so')
+c_extenstion1 = CDLL(homepath+'codes/c_lib/specialuse/CTK_convolve.so')   #only convolve CTK objects
 convolve_c1 = c_extenstion1.convolve
 convolve_c1.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
-c_extenstion2 = CDLL(homepath+'codes/c_lib/specialuse/CTNabs_convolve.so')
+c_extenstion2 = CDLL(homepath+'codes/c_lib/specialuse/CTNabs_convolve.so') #only convolve absorbed CTN objects
 convolve_c2 = c_extenstion2.convolve
 convolve_c2.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
-c_extenstion3 = CDLL(homepath+'codes/c_lib/specialuse/CTNunabs_convolve.so')
+c_extenstion3 = CDLL(homepath+'codes/c_lib/specialuse/CTNunabs_convolve.so') #only convolve unabsorbed CTN objects
 convolve_c3 = c_extenstion3.convolve
 convolve_c3.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 ##############
@@ -77,7 +77,7 @@ def cumulative_emissivity(L_nu,Phi_nu,L_limit_low,L_limit_up,nu):
 		return np.power(10.,logphi(x))*np.power(10.,x)/nu
 
 	result = quad(emis, L_limit_low, L_limit_up)[0]*np.power(10.,L_solar)
-	#return romberg(emis, L_limit_low, L_limit_up, divmax=20)*np.power(10.,L_solar)
+	#result = romberg(emis, L_limit_low, L_limit_up, divmax=20)*np.power(10.,L_solar)
 	#if np.isfinite(result) == False:
 	#	print L_nu
 	#	print Phi_nu
@@ -113,7 +113,7 @@ zcenters = (zbins[1:]+zbins[:-1])/2.
 deltaz= zbins[5]-zbins[4]
 
 Intensity = np.zeros((len(E_list),4))
-unit_convertion = 1e-7/(1000.*con.e.value)
+unit_convertion = 1e-7/(1000.*con.e.value) #erg to keV
 
 for i in range(len(E_list)):
 	for j in range(len(convolver_list)):
@@ -135,10 +135,10 @@ ax.plot(E_list, nu_list * Intensity[:,2] * unit_convertion, '--', dashes=(25,15)
 ax.plot(E_list, nu_list * Intensity[:,3] * unit_convertion, '--', dashes=(25,15), c='deepskyblue', label=r'$\rm AGN$ ($\rm CTN,\,unabsorbed$)')
 
 data=np.genfromtxt("Hopkins2007.dat",names=["x","y"])
-ax.plot(data["x"],data["y"]+2.,'--',dashes=(25,15),c='gray',label=r'$\rm Hopkins+$ $\rm 2007$')
+ax.plot(data["x"],data["y"]+2.,'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 
 data=np.genfromtxt("ajello2008.dat",names=True)
-ax.errorbar(data['E'],data['CXB'],xerr=data['dE'],yerr=data['dCXB'],c='crimson',mec='crimson',capsize=0,capthick=0,linestyle='none',marker='.',lw=2,ms=1,label=r'$\rm Ajello+$ $\rm 2008$')
+ax.errorbar(data['E'],data['CXB'],xerr=data['dE'],yerr=data['dCXB'],c='gray',mec='gray',capsize=0,capthick=0,linestyle='none',marker='.',lw=2,ms=1,label=r'$\rm Ajello+$ $\rm 2008$')
 
 data=np.genfromtxt("churazov2007.dat",names=True)
 ax.errorbar(data['E'],data['CXB'],xerr=(data['E']-data['Elo'],data['Eup']-data['E']),yerr=(data['CXB']-data['lo'],data['up']-data['CXB']),c='seagreen',mec='seagreen',capsize=0,capthick=0,linestyle='none',marker='.',lw=2,ms=1,label=r'$\rm Churazov+$ $\rm 2007$')

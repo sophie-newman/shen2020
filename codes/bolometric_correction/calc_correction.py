@@ -7,7 +7,7 @@ from scipy.integrate import quad
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 def returnIR_to_UV_H07(sed2500):
-	'''
+	''' # overlay optical SEDs with emission lines
 	data1=np.genfromtxt(datapath+"OpticalSED.dat",names=["lognu","logall"],)
 	lamb1=con.c.value/(10**data1['lognu'])*1e10
 	sed1 =data1['logall']
@@ -58,13 +58,13 @@ def returnXray_H07(sed2500):
 	sed3 = sed3 + scale
 	return lamb3[lamb3<50], sed3[lamb3<50]
 
-def returnIR_to_UV(sed2500):
+def returnIR_to_UV(sed2500):  #return the UV to IR SED
 	data1=np.genfromtxt(datapath+"K13_SED.dat",names=["lognu","logall"],)
 	freq1=10**data1['lognu']
 	lamb1=con.c.value/(10**data1['lognu'])*1e10
 	sed1 =data1['logall']
 	
-	#IR construction
+	#IR construction, using the R06 SED at the wavelengths beyond the coverage of K13
 	IR_end=lamb1[0]
 	data2=np.genfromtxt(datapath+"R06_SED.dat",names=["lognu","logall","sigall","blue"],)
 	lamb2=con.c.value/(10**data2['lognu'])*1e10
@@ -85,7 +85,7 @@ def returnIR_to_UV(sed2500):
 	lamb1,sed1 = lamb1[lamb1>UV_end],sed1[lamb1>UV_end]
 	
 	lambUV= np.linspace(UV_end, 600.,100)
-	sedUV = sed1[-1] + (UVslope-1) * (np.log10(lambUV) - np.log10(lamb1[-1]))
+	sedUV = sed1[-1] + (UVslope-1) * (np.log10(lambUV) - np.log10(lamb1[-1])) #extrapolate to EUV with a power-law
 	
 	lamb1= np.append( lamb1, lambUV)
 	sed1 = np.append( sed1 , sedUV)
@@ -95,13 +95,13 @@ def returnIR_to_UV(sed2500):
 
 	return lamb1, sed1+totscale
 
-def returnXray(sed2500):
+def returnXray(sed2500): #return the X-ray SED
 	f2500 = np.power(10.,sed2500)/(con.c.value/2500./1e-10)
 
 	#beta, C = 0.721, 4.531	
 	#A, Cprime = 0.384*(1-beta), 0.384*C
 	#alphaox = -A*np.log10(f2500)+Cprime
-	alphaox = -0.107*np.log10(f2500)+1.739
+	alphaox = -0.107*np.log10(f2500)+1.739 #fiducial model
 
 	f2kev=10**(alphaox/0.384)*f2500
 	data3=np.genfromtxt("xspec_lib/Xspec_1_9.dat",names=["E","f"],)	
@@ -162,7 +162,7 @@ def returnall(sed2500):
 
 	logL1450 = tophat( sedall, freqall, con.c.value/(1500e-10), con.c.value/(1400e-10))
 
-	logLIR = tophat( sedall, freqall, con.c.value/((15+1.)*1e-6), con.c.value/((15-1)*1e-6))
+	logLIR = tophat( sedall, freqall, con.c.value/((15+1.)*1e-6), con.c.value/((15-1.)*1e-6))
 
 	Lbol= integrate( sedall, freqall, con.c.value/(30.*1e-6), 500*1000.*con.e.value/con.h.value)
 

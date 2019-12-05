@@ -220,11 +220,11 @@ x,y = np.meshgrid( np.linspace(0,7,pixel+1), np.linspace(10.3,13.8,pixel+1) )
 #cmap = plt.get_cmap('magma_r')
 cmap = plt.get_cmap('Greys')
 pos = ax.pcolormesh(x, y, np.transpose(image), cmap=cmap, 
-	norm=matplotlib.colors.Normalize(vmin=medi-0.2*(medi-mini),vmax=maxi+3.*(maxi-medi)),alpha=1)
+	norm=matplotlib.colors.Normalize(vmin=medi-0.5*(medi-mini),vmax=maxi+3.*(maxi-medi)),alpha=1)
 ####################################################
 
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_nofix.dat",names=True)
-ax.errorbar(data["z"],data["L_s"],yerr=data['err4'],linestyle='',marker='o',c='gray',mec='gray',ms=18,capsize=10,capthick=4,alpha=1)
+ax.errorbar(data["z"],data["L_s"],yerr=data['err4'],linestyle='',marker='o',c='gray',mec='dimgray',ms=18,capsize=10,capthick=4,alpha=0.9)
 
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 ax.plot(data["z"],data["L_s"],linestyle='',marker='o',c='royalblue',mec='royalblue',ms=18)

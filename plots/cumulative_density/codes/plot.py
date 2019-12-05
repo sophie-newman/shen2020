@@ -13,8 +13,10 @@ from ctypes import *
 import ctypes
 import sys
 
+# parameters of the H07 model
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
+# local best-fits
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 pgamma1, pgamma1_err  = data["gamma1"], data["err1"]
 pgamma2, pgamma2_err  = data["gamma2"], data["err2"]
@@ -23,6 +25,7 @@ pLbreak, pLbreak_err  = data["L_s"],    data["err3"]
 pz=data['z']
 zpoints=np.array(pz)
 
+# global best-fit
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
 zlist=np.linspace(0.1,7,100)

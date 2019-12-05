@@ -15,8 +15,10 @@ from ctypes import *
 import ctypes
 import sys
 
+# parameters of the H07 model
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
+# best-fit in our global fit
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
 zlist=np.linspace(0.1,7,100)
@@ -48,14 +50,14 @@ def cumulative_lum(L_bol,Phi_bol,L_limit_low,L_limit_up):
 		return np.power(10.,logphi(x)) * 10**(x+L_solar)
 	return romberg(func,L_limit_low,L_limit_up,divmax=20)
 
-eps = 0.1
+eps = 0.1 #our fiducial choice of the radiative efficiency
 def rhoBH(zstart=7):
 	zlist = np.linspace(zstart,0,101)
 	rholist = 0.0*zlist
 	rholist[0] = 1e-30
 	for i,z in enumerate(zlist):
 		if i!=0:
-			K = 1./(cosmo.H(z).value*(1000./1e6/con.pc.value)*(1+z))/eps/con.c.value**2
+			K = (1-eps)/(cosmo.H(z).value*(1000./1e6/con.pc.value)*(1+z))/eps/con.c.value**2 #prefactor
 			L_bol, Phi_bol = get_model_lf_global(pglobal, z)
 			rholist[i] = rholist[i-1] + K * cumulative_lum(L_bol, Phi_bol, 43-L_solar, 48-L_solar)*1e-7 * np.abs(zlist[i]-zlist[i-1])  
 	rholist = rholist/(con.M_sun.value)
@@ -123,7 +125,7 @@ ax.xaxis.set_minor_locator(xm_locator)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
-ax.minorticks_on()
+#ax.minorticks_on()
 plt.savefig("../figs/bh_mass_density.pdf",fmt='pdf')
 #plt.show()
 
