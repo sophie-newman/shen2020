@@ -123,7 +123,7 @@ ax.xaxis.set_minor_locator(xm_locator)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
-ax.minorticks_on()
+#ax.minorticks_on()
 plt.savefig("../figs/bh_mass_density.pdf",fmt='pdf')
 #plt.show()
 
