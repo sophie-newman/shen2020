@@ -39,7 +39,7 @@ ax = fig.add_axes([0.11,0.12,0.79,0.83])
 #medians,_,_ = binned_statistic(f['BOL'], f['HX'], statistic="median", bins=bins)
 sigmas,_,_ = binned_statistic(f['BOL'], f['HX'], statistic=std, bins=bins)
 ax.plot(bincenter,sigmas,'.', c='seagreen', mec='seagreen', marker='o', markersize=15)
-ax.plot( x_fit, sigma_H07(x_fit, 0.06, 0.10, 0.08), '--', dashes=(25,15), c='crimson'  )
+ax.plot( x_fit, sigma_H07(x_fit, 0.06, 0.10, 0.08), '--', dashes=(25,15), c='seagreen'  )
 
 pbest,_=curve_fit(new_fit_func2, bincenter, sigmas, p0=(0.06, 0.05, 42, 2), maxfev=10000)
 print 'HX:', pbest
@@ -48,7 +48,7 @@ ax.plot(x_fit, new_fit_func2(x_fit,*pbest),'-',c='seagreen' )
 ######################
 sigmas,_,_ = binned_statistic(f['BOL'], f['SX'], statistic=std, bins=bins)
 ax.plot(bincenter,sigmas,'.', c='chocolate', mec='chocolate',  marker='o', markersize=15)
-ax.plot( x_fit, sigma_H07(x_fit, 0.046, 0.10, 0.08), '--',dashes=(25,15),  c='seagreen'  )
+ax.plot( x_fit, sigma_H07(x_fit, 0.046, 0.10, 0.08), '--',dashes=(25,15),  c='chocolate'  )
 
 pbest,_=curve_fit(new_fit_func2, bincenter, sigmas, p0=(0.06, 0.05, 42, 2), maxfev=10000)
 print 'SX:', pbest
@@ -74,7 +74,7 @@ ax.plot(x_fit, new_fit_func2(x_fit,*pbest),'-',c='darkorchid' )
 ######################
 sigmas,_,_ = binned_statistic(f['BOL'], f['IR'], statistic=std, bins=bins)
 ax.plot(bincenter,sigmas,'.', c='crimson', mec='crimson', marker='o', markersize=15)
-ax.plot( x_fit, sigma_H07(x_fit, 0.07, -0.17, 0.086), '--', dashes=(25,15), c='chocolate'  )
+ax.plot( x_fit, sigma_H07(x_fit, 0.07, -0.17, 0.086), '--', dashes=(25,15), c='crimson'  )
 
 pbest,_=curve_fit(new_fit_func2, bincenter, sigmas, p0=(0.06, 0.05, 42, 2), maxfev=10000)
 print 'IR', pbest

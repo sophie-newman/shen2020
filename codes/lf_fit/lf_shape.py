@@ -40,7 +40,7 @@ T0 = np.polynomial.chebyshev.Chebyshev((1,0,0,0))
 T1 = np.polynomial.chebyshev.Chebyshev((0,1,0,0))
 T2 = np.polynomial.chebyshev.Chebyshev((0,0,1,0))
 T3 = np.polynomial.chebyshev.Chebyshev((0,0,0,1))
-def polynomial(z,p,n=3):
+def polynomial(z,p,n=3): #Chebyshev polynomials
         xsi=1.+z
         if n==1: return p[0]*T0(xsi)+p[1]*T1(xsi)
         elif n==2: return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)
@@ -48,7 +48,7 @@ def polynomial(z,p,n=3):
                 return p[0]*T0(xsi)+p[1]*T1(xsi)+p[2]*T2(xsi)+p[3]*T3(xsi)
         else: return False
 
-def doublepower(z,p):
+def doublepower(z,p): #double power law, definition slightly different from the DPL LF
         xsi=1.+z
         zref=p[1]
         return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))

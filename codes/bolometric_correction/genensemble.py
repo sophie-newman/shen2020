@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 from scipy.stats import binned_statistic
 
-def returnIR_to_UV(sed2500, slope):
+def returnIR_to_UV(sed2500, slope): #generate the SED with an optical slope
 	data1=np.genfromtxt(datapath+"K13_SED.dat",names=["lognu","logall"],)
 	freq1=10**data1['lognu']
 	lamb1=con.c.value/(10**data1['lognu'])*1e10
@@ -30,8 +30,9 @@ def returnIR_to_UV(sed2500, slope):
 	sed1 = np.append( sed2_ir + scale, sed1)
 
 	sed1 = sed1[lamb1 > 1e4]
-	lamb1= lamb1[lamb1 > 1e4]
+	lamb1= lamb1[lamb1 > 1e4]  
 
+	# optical and UV SED is approximated by a broken power-law here
 	optical_slope = slope
 	lamb_op= np.linspace(1e4, 700., 100)
 	sed_op = sed1[-1] + (optical_slope-1) * (np.log10(lamb_op) - np.log10(lamb1[-1]))
@@ -41,7 +42,7 @@ def returnIR_to_UV(sed2500, slope):
 	
 	#UV construction
 	UV_end  =912.
-	UVslope =1.70
+	UVslope =1.70 #the EUV slope is fixed
 	
 	lamb1,sed1 = lamb1[lamb1>UV_end],sed1[lamb1>UV_end]
 	
@@ -57,12 +58,14 @@ def returnIR_to_UV(sed2500, slope):
 	return lamb1, sed1+totscale
 
 def returnXray(sed2500, gamma, alphaox_disp):
+	#generate the X-ray SED with a photon index gamma and assuming a deviation from the fiducial value of alpha_ox
 	f2500 = np.power(10.,sed2500)/(con.c.value/2500./1e-10)
 
 	alphaox = -0.107*np.log10(f2500) + 1.739 + alphaox_disp
 
 	f2kev=10**(alphaox/0.384)*f2500
-	
+
+	#interpolate between precalculated X-ray SEDs/ extrapolate if outside	
 	if (gamma<photon_index_list.max()) and (gamma>=photon_index_list.min()):
 		pup = photon_index_list[photon_index_list>gamma][0]
 		plo = photon_index_list[photon_index_list<=gamma][-1]
@@ -124,7 +127,7 @@ def returnall(sed2500, slope, gamma, alphaox_disp):
 
 	logL1450 = tophat( sedall, freqall, con.c.value/(1500e-10), con.c.value/(1400e-10))
 
-	logLIR = tophat( sedall, freqall, con.c.value/((15+1.)*1e-6), con.c.value/((15-1)*1e-6))
+	logLIR = tophat( sedall, freqall, con.c.value/((15+1.)*1e-6), con.c.value/((15-1.)*1e-6))
 
 	Lbol= integrate( sedall, freqall, con.c.value/(30.*1e-6), 500*1000.*con.e.value/con.h.value)
 	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logL1450, logLIR
@@ -138,10 +141,10 @@ sigma_ox, ox_best = 0.1, 0
 np.random.seed(4367)
 Nsamples = 100000
 
-par1=np.random.normal(sl_best, sigma_sl, size=Nsamples)
-par2=np.random.normal(pi_best, sigma_pi, size=Nsamples)
-par3=np.random.normal(ox_best, sigma_ox, size=Nsamples)
-par5=np.random.uniform(-5,15,size=Nsamples)+L_solar
+par1=np.random.normal(sl_best, sigma_sl, size=Nsamples) #optical slope
+par2=np.random.normal(pi_best, sigma_pi, size=Nsamples) #photon index
+par3=np.random.normal(ox_best, sigma_ox, size=Nsamples) #alpha ox deviation
+par5=np.random.uniform(-5,15,size=Nsamples)+L_solar   #sed2500
 
 Lbols   = np.zeros( Nsamples )
 HXcorrs = np.zeros( Nsamples )
