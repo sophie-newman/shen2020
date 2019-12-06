@@ -150,6 +150,7 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
+'''
 L_1450 = bolometric_correction(L_bol_grid,-5)
 nu_c = c_double(-5)
 redshift_c = c_double(redshift)
@@ -161,7 +162,7 @@ PHI_1450 = np.array(res,dtype=np.float64)
 x = -2.5*( L_1450 + L_solar - np.log10(Fab*(con.c.value/1450e-10)) )
 y = np.log10(PHI_1450) - np.log10(2.5)
 ax.plot(x,y,'-',lw=4,c='gold',label=r'$\rm Special$ $\rm fit$')
-
+'''
 
 L_1450 = bolometric_correction(L_bol_grid,-5)
 nu_c = c_double(-5)
@@ -181,13 +182,13 @@ ax.plot(x,y,'--',dashes=(25,15),c='seagreen',label=r'$\rm Kulkarni+$ $\rm 2018$'
 
 x,y,dy,yfit=get_data()
 #ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='gray',mec='gray',marker='x', ms=10, capthick=2 ,label=r'$\rm UV$ ($\rm not$ $\rm rescaled$)')
-ax.plot(x,y,linestyle='',lw=2,c='k',mec='k',marker='x',ms=10,label=r'$\rm UV$ ($\rm original$)')
+ax.plot(x,y,linestyle='',lw=3,mew=2,c='gray',mec='gray',marker='x',ms=15,label=r'$\rm UV$ ($\rm original$)')
 
 x,y,dy,yfit=get_data(rescale=True)
-ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='crimson',mec='crimson',alpha=0.5,marker='o', ms=10, capthick=2 ,label=r'$\rm UV$ ($\phi$ $\rm corrected$)')
+ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='black',mec='black',alpha=0.8,marker='o', ms=10, capthick=2 ,label=r'$\rm UV$ ($\phi$ $\rm corrected$)')
 
 x,y,dy=get_data_Xray(parameters_global,xm,ym)
-ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='*', alpha=0.5, ms=10, capthick=2 ,label=r'$\rm Hard$ $\rm X-ray$')
+ax.errorbar(x,y,yerr=dy,capsize=9,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='*', alpha=0.8, ms=15, capthick=3 ,label=r'$\rm Hard$ $\rm X-ray$')
 
 if (redshift<6.5) and (redshift>=4):
 	x = np.linspace(-14,-32,100) 

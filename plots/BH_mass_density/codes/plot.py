@@ -48,6 +48,7 @@ def cumulative_lum(L_bol,Phi_bol,L_limit_low,L_limit_up):
 	logphi=inter.interp1d(L_bol,Phi_bol)
 	def func(x):
 		return np.power(10.,logphi(x)) * 10**(x+L_solar)
+	#return quad(func,L_limit_low,L_limit_up)[0]
 	return romberg(func,L_limit_low,L_limit_up,divmax=20)
 
 eps = 0.1 #our fiducial choice of the radiative efficiency
@@ -89,17 +90,17 @@ x,y = rhoBH(4)
 ax.plot(x,np.log10(y),c='seagreen',label=r'$\rm integrated$ $\rm from$ $z_{\rm i}=4$')
 ax.fill_between(x,y1=np.log10(y/(0.9/0.1)*(0.8/0.2)),y2=np.log10(y/(0.9/0.1)*(0.95/0.05)),color='seagreen',alpha=0.2)
 
-ax.errorbar(0.,np.log10(4.81*1e5),yerr=([np.log10(4.81)-np.log10(4.81-0.99)],[np.log10(4.81+1.24)-np.log10(4.81)]),marker='o',c='gray',mec='gray',ms=15,capsize=9,capthick=4,label=r'$\rm Hopkins+$ $\rm 2007$')
+ax.errorbar(0.,np.log10(4.81*1e5),yerr=([np.log10(4.81)-np.log10(4.81-0.99)],[np.log10(4.81+1.24)-np.log10(4.81)]),marker='o',c='gray',mec='gray',ms=15,capsize=9,capthick=4,label=r'$\rm Hopkins+$ $\rm 2007$',linestyle='none')
 
-ax.errorbar(0-0.25,np.log10(4.2*1e5),yerr=([np.log10(4.2)-np.log10(4.2-1.1)],[np.log10(4.2+1.1)-np.log10(4.2)]),marker='o',c='navy',mec='navy',ms=15,capsize=9,capthick=4,label=r'$\rm Shankar+$ $\rm 2001$')
+ax.errorbar(0-0.25,np.log10(4.2*1e5),yerr=([np.log10(4.2)-np.log10(4.2-1.1)],[np.log10(4.2+1.1)-np.log10(4.2)]),marker='o',c='navy',mec='navy',ms=15,capsize=9,capthick=4,label=r'$\rm Shankar+$ $\rm 2001$',linestyle='none')
 
-ax.errorbar(0-0.50,np.log10(4.6*1e5),yerr=([np.log10(4.6)-np.log10(4.6-1.4)],[np.log10(4.6+1.9)-np.log10(4.6)]),marker='o',c='k',mec='k',ms=15,capsize=9,capthick=4,label=r'$\rm Marconi+$ $\rm 2004$')
+ax.errorbar(0-0.50,np.log10(4.6*1e5),yerr=([np.log10(4.6)-np.log10(4.6-1.4)],[np.log10(4.6+1.9)-np.log10(4.6)]),marker='o',c='k',mec='k',ms=15,capsize=9,capthick=4,label=r'$\rm Marconi+$ $\rm 2004$',linestyle='none')
 
-ax.errorbar(0-0.75,np.log10(4.41*1e5),yerr=([np.log10(4.41)-np.log10(4.41-1.67)],[np.log10(4.41+1.67)-np.log10(4.41)]),marker='o',c='darkorchid',mec='darkorchid',ms=15,capsize=9,capthick=4,label=r'$\rm Graham+$ $\rm 2007$')
+ax.errorbar(0-0.75,np.log10(4.41*1e5),yerr=([np.log10(4.41)-np.log10(4.41-1.67)],[np.log10(4.41+1.67)-np.log10(4.41)]),marker='o',c='darkorchid',mec='darkorchid',ms=15,capsize=9,capthick=4,label=r'$\rm Graham+$ $\rm 2007$',linestyle='none')
 
-ax.errorbar(0-1.00,np.log10(3.8*1e5),yerr=([np.log10(3.8)-np.log10(3.8-0.6)],[np.log10(3.8+0.7)-np.log10(3.8)]),marker='o',c='chocolate',mec='chocolate',ms=15,capsize=9,capthick=4,label=r'$\rm Yu+$ $\rm 2008$')
+ax.errorbar(0-1.00,np.log10(3.8*1e5),yerr=([np.log10(3.8)-np.log10(3.8-0.6)],[np.log10(3.8+0.7)-np.log10(3.8)]),marker='o',c='chocolate',mec='chocolate',ms=15,capsize=9,capthick=4,label=r'$\rm Yu+$ $\rm 2008$',linestyle='none')
 
-ax.plot(0-1.25, np.log10(4.5*1e5*0.1/0.075), marker='o',c='pink',mec='pink',ms=15,label=r'$\rm Shankar+$ $\rm 2009$')
+ax.plot(0-1.25, np.log10(4.5*1e5*0.1/0.075), marker='o',c='pink',mec='pink',ms=15,label=r'$\rm Shankar+$ $\rm 2009$',linestyle='none')
 
 #######################################################################
 ax.axvspan(-2,0,color='cyan',alpha=0.3)
@@ -115,6 +116,7 @@ ax.set_xlim(-1.4,7.2)
 ax.set_ylim(2.2,6.1)
 
 from matplotlib.ticker import FixedLocator, FixedFormatter
+#ax.minorticks_on()
 x_formatter = FixedFormatter(["0", "1", "2", "3", "4", "5", "6", "7"])
 x_locator   = FixedLocator([0, 1, 2, 3, 4, 5, 6, 7])
 xm_locator  = FixedLocator(np.linspace(0,7,int(7/0.2+1)))
@@ -122,10 +124,12 @@ ax.xaxis.set_major_formatter(x_formatter)
 ax.xaxis.set_major_locator(x_locator)
 ax.xaxis.set_minor_locator(xm_locator)
 
+ym_locator = FixedLocator(np.linspace(2.0,7.0,int((7.0-2.0)/0.1+1)))
+ax.yaxis.set_minor_locator(ym_locator)
+
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
-#ax.minorticks_on()
 plt.savefig("../figs/bh_mass_density.pdf",fmt='pdf')
 #plt.show()
 

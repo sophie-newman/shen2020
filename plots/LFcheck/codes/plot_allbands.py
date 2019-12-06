@@ -16,8 +16,10 @@ redshift=float(sys.argv[1])
 #dtg=float(sys.argv[2])
 dtg=return_dtg(redshift)
 
+# parameters of the H07 model
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
+# our best-fits
 fit_res=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_nofix.dat",names=True)
 id=fit_res["z"]==redshift
 parameters_free_local=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
@@ -42,6 +44,7 @@ Lbreak = doublepower(redshift,(p[0],zref, p[1], p[2]))
 parameters_global_2 = np.array([gamma1,gamma2,logphi,Lbreak])
 
 ############################
+# parameters of the local QLF
 p=source['value'][ source['paraid']==0 ]
 gamma1 = polynomial(0.1,p,2)
 p=source['value'][ source['paraid']==1 ]
@@ -69,7 +72,6 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
                 M_1450 = -2.5*( L_1450 - np.log10(Fab*con.c.value/1450e-10) ) 
                 L_tmp  = np.sort(M_1450)
         else: L_tmp=bolometric_correction(L_bol_grid,dset_id)
-
 
         if return_LF[dset_name]!=None:
 		#if (redshift!=0.4) or (dset_id!=-2):
@@ -173,12 +175,12 @@ ax.plot(x,y,'--',dashes=(25,15),lw=2,c='cyan',label=r'$\rm Global$ $\rm fit$ ($\
 
 x = L_bol_grid + L_solar 
 y = LF_at_z_H07(L_bol_grid,parameters_init,redshift,"Fiducial")
-ax.plot(x,y,':',c='gray',label=r'$\rm Hopkins+$ $\rm 2007$')
+ax.plot(x,y,'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 
 xcollect = np.array([])
 
 x,y,dy=get_data(parameters_fix_local,dataid=-5)
-ax.errorbar(x,y,yerr=dy,linestyle='none',c='crimson',mec='crimson',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm UV$ $\rm 1450\AA$')
+ax.errorbar(x,y,yerr=dy,linestyle='none',c='seagreen',mec='seagreen',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm UV$ $\rm 1450\AA$')
 xcollect = np.append(xcollect,x)
 
 x,y,dy=get_data(parameters_fix_local,dataid=-1)
@@ -190,7 +192,7 @@ ax.errorbar(x,y,yerr=dy,linestyle='none',c='royalblue',mec='royalblue',marker='o
 xcollect = np.append(xcollect,x)
 
 x,y,dy=get_data(parameters_fix_local,dataid=-3)
-ax.errorbar(x,y,yerr=dy,linestyle='none',c='seagreen',mec='seagreen',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm Soft$ $\rm X-ray$')
+ax.errorbar(x,y,yerr=dy,linestyle='none',c='gray',mec='gray',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm Soft$ $\rm X-ray$')
 xcollect = np.append(xcollect,x)
 
 x,y,dy=get_data(parameters_fix_local,dataid=-2)

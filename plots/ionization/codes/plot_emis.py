@@ -16,14 +16,17 @@ from ctypes import *
 import ctypes
 import sys
 
+#dummy functions, no real meaning
 def Gamma_old(epsilon,z):
 	return epsilon
 
 def Gamma(epsilon,z):
 	return epsilon
 
+#parameters of the H07 model
 parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 
+#our best-fits
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 pgamma1_fix, pgamma1_err_fix  = data["gamma1"], data["err1"]
 pgamma2_fix, pgamma2_err_fix  = data["gamma2"], data["err2"]
@@ -51,10 +54,6 @@ zpoints_spe=np.array(pz_spe)
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
 zlist=np.linspace(0.1,7,30)
-
-#zpoints_free = zpoints_free[zpoints_free>2.]
-#zpoints_fix  = zpoints_fix[zpoints_fix>2.]
-#zlist = zlist[zlist>2.]
 
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
@@ -105,6 +104,7 @@ def cumulative_emissivity(L_band,Phi_band,L_limit_low,L_limit_up):
 	return romberg(emis,Mlow,Mup,divmax=20)
 	#return quad(emis,Mlow,Mup)[0]
 
+''' for test
 def cumulative_emissivity2(L_band,Phi_band,L_limit_low,L_limit_up):
         Mband, Mlow, Mup = L_band, L_limit_low, L_limit_up
         logphi=inter.interp1d(Mband,Phi_band)
@@ -115,9 +115,11 @@ def cumulative_emissivity2(L_band,Phi_band,L_limit_low,L_limit_up):
                 return np.power(10.,logphi(x))*fnu912
         #return romberg(emis,Mlow,Mup,divmax=20)
         return quad(emis,Mlow,Mup)[0]
+'''
 
+# uncertainties calculated in a straight forward way
 def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift,global_fit=False):
-	partials = 0.0 * parameters
+	partials = 0.0 * parameters #partial derivatives
 	delta = 1e-6
 	if global_fit==False:
 		def fobjective(parameters):
@@ -155,14 +157,7 @@ fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
 lowlimit=-35
-'''
-M_1450 = np.linspace(-1000, 0, 10000)
-PHI_1450 = np.log10( 10**(-5.2) / ( 10**(0.4*(-3.13+1)*(M_1450-(-23.2))) + 10**(0.4*(-1.52+1)*(M_1450-(-23.2))) ))
-result= Gamma(cumulative_emissivity2(M_1450, PHI_1450, -35, -18), 5)
-print np.log10(result/1e24)
-print result/1e24
-exit()
-'''
+
 zlist_h07=np.linspace(0.1,7,20)
 result=np.zeros((len(zlist_h07),2))
 for i in range(len(zlist_h07)):
