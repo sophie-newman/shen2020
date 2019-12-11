@@ -66,18 +66,17 @@ ax.axvspan(10000,1e6,color='tan',edgecolor='tan',alpha=0.1)
 ax.text(0.12, 0.58, r'$\rm Infrared$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
 ax.axvspan(912,2500,color='seagreen',edgecolor='seagreen',alpha=0.1)
 ax.text(0.335, 0.58, r'$\rm FUV$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
-ax.axvspan(912,con.c.value/(0.2*1000.*con.e.value/con.h.value)*1e10,
-	color='cyan',edgecolor='cyan',alpha=0.1)
+ax.axvspan(912,600, color='cyan',edgecolor='cyan',alpha=0.1)
 ax.text(0.41, 0.58, r'$\rm EUV$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
 ax.axvspan(con.c.value/(0.5*1000.*con.e.value/con.h.value)*1e10,con.c.value/(2*1000.*con.e.value/con.h.value)*1e10,
 	color='navy',edgecolor='navy',alpha=0.1)
-ax.text(0.67, 0.58, r'$\rm Soft$ $\rm X-ray$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
+ax.text(0.68, 0.58, r'$\rm Soft$ $\rm X-ray$' + '\n' + r'$0.5 - 2\, {\rm keV}$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
 ax.axvspan(con.c.value/(2*1000.*con.e.value/con.h.value)*1e10,con.c.value/(10*1000.*con.e.value/con.h.value)*1e10,
 	color='darkorchid',edgecolor='darkorchid',alpha=0.1)
-ax.text(0.77, 0.58, r'$\rm Hard$ $\rm X-ray$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
-ax.axvspan(con.c.value/(11*1000.*con.e.value/con.h.value)*1e10,con.c.value/(100*1000.*con.e.value/con.h.value)*1e10,
+ax.text(0.78, 0.58, r'$\rm Hard$ $\rm X-ray$' + '\n' + r'$2 - 10\, {\rm keV}$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
+ax.axvspan(con.c.value/(10*1000.*con.e.value/con.h.value)*1e10,con.c.value/(100*1000.*con.e.value/con.h.value)*1e10,
 	color='silver',edgecolor='silver',alpha=0.2)
-ax.text(0.89, 0.58, r'$\rm Ultra$ $\rm Hard$ $\rm X-ray$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
+ax.text(0.90, 0.58, r'$\rm Ultra$ $\rm Hard$ $\rm X-ray$' + '\n' + r'$>10\, {\rm keV}$',color='gray',fontsize=25,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,rotation='vertical')
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
