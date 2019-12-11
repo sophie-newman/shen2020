@@ -76,7 +76,7 @@ ax.errorbar(data["z"],data["gamma1"],yerr=data['err1'],linestyle='',marker='o',
 
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 ax.plot(data["z"],data["gamma1"],linestyle='',marker='o',
-	c='royalblue',mec='royalblue',ms=18,label=r'$\rm Local$ $\rm fits$ ($\phi_{\ast}$ $\rm fixed$)')
+	c='royalblue',mec='royalblue',ms=18,label=r'$\rm Local$ $\rm fits$ ($\phi_{\ast}(z)$ $\rm fixed$)')
 
 ax.plot(z_a,gamma1_a,'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 ax.plot(z_a,bestfit(z_a,'gamma1'),'-',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
@@ -109,7 +109,7 @@ ax.plot(z_a,gamma2_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a,bestfit(z_a,'gamma2'),'-',c='seagreen')
 ax.plot(z_a,bestfit_global(z_a,1),'-',c='darkorchid')
 
-ax.axhspan(0,1,color='yellow',alpha=0.5,label=r'$\rm Divergence$')
+ax.axhspan(0,1,color='gold',alpha=1,label=r'$\rm Divergence$')
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
@@ -142,7 +142,7 @@ ax.plot(z_a,bestfit_global(z_a,2),'-',c='darkorchid')
 #prop = matplotlib.font_manager.FontProperties(size=25.0)
 #ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\log{(\phi_{\ast}\,[{\rm dex}^{-1}\,{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$\log{(\phi_{\ast}\,[{\rm dex}^{-1}\,{\rm cMpc}^{-3}])}$',fontsize=40,labelpad=5)
 
 ax.set_xlim(0,7.)
 #ax.set_ylim(-6.3,-4.1)
