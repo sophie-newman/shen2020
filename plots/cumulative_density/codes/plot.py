@@ -122,7 +122,7 @@ ax.plot(zpoints,result[:,2],'o',c='royalblue',mec='royalblue',ms=15)
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=1,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\log{(\Phi[{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$\log{(\Phi[{\rm cMpc}^{-3}])}$',fontsize=40,labelpad=5)
 
 ax.text(0.4, 0.31, r'$\rm 47.5-48.5$'  ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 ax.text(0.4, 0.58, r'$\rm 46.5-47.5$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')

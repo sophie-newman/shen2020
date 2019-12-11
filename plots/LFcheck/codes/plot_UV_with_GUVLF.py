@@ -177,7 +177,7 @@ if redshift==2:
 	ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 #ax.set_xlabel(r'$\log{(L_{\rm B}/{\rm L}_{\odot})}$',fontsize=40,labelpad=2.5)
 ax.set_xlabel(r'$M_{\rm 1450}$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\log{(\phi[{\rm mag}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$\log{(\phi[{\rm mag}^{-1}{\rm cMpc}^{-3}])}$',fontsize=40,labelpad=5)
 ax.text(0.88, 0.92, r'${\rm z\sim'+str(redshift)+'}$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
 
 ax.set_xlim(-15.5,-29.5)

@@ -164,7 +164,7 @@ x = L_bol_grid + L_solar
 #y = LF(L_bol_grid,parameters_free_local)
 #ax.plot(x,y,'--',dashes=(25,15),c='navy',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\rm free$)')
 y = LF(L_bol_grid,parameters_fix_local)
-ax.plot(x,y,'--',dashes=(25,15),c='chocolate',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\phi_{\ast}$ $\rm fixed$)')
+ax.plot(x,y,'--',dashes=(25,15),c='chocolate',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\phi_{\ast}(z)$ $\rm fixed$)')
 #y = LF(L_bol_grid,parameters_global_1)
 #ax.plot(x,y,':',c='tan',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
 y = LF(L_bol_grid,parameters_global_2)
@@ -202,14 +202,14 @@ xcollect = np.append(xcollect,x)
 xcollect = np.sort(xcollect-L_solar)
 print redshift, xcollect[2], xcollect[4], len(xcollect)
 
-ax.axvline(parameters_fix_local[3]+L_solar,color='gold',lw=2,alpha=0.8)
-ax.axhline(parameters_fix_local[2]-np.log10(2.),color='gold',lw=2,alpha=0.8)
+ax.axvline(parameters_fix_local[3]+L_solar,color='gold',lw=3,alpha=1)
+ax.axhline(parameters_fix_local[2]-np.log10(2.),color='gold',lw=3,alpha=1)
 
 prop = matplotlib.font_manager.FontProperties(size=22.0)
 if not (redshift in [2,3,4,5,6]):
 	ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 ax.set_xlabel(r'$\log{(L_{\rm bol}[{\rm erg}\,{\rm s}^{-1}])}$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\log{(\phi[{\rm dex}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$\log{(\phi[{\rm dex}^{-1}{\rm cMpc}^{-3}])}$',fontsize=40,labelpad=5)
 
 ax.text(0.88, 0.92, r'${\rm z\sim'+str(redshift)+'}$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
 

@@ -108,7 +108,7 @@ ax.axvspan(-2,0,color='cyan',alpha=0.3)
 prop = matplotlib.font_manager.FontProperties(size=21.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=1,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\log{(\rho_{\rm BH}\,[{\rm M}_{\odot}\,{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$\log{(\rho_{\rm BH}\,[{\rm M}_{\odot}\,{\rm cMpc}^{-3}])}$',fontsize=40,labelpad=5)
 
 #ax.text(0.25, 0.87, r'$\rm <-18$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 

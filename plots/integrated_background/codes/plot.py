@@ -130,9 +130,9 @@ ax.plot(E_list, nu_list * Intensity[:,0] * unit_convertion, c='royalblue', label
 
 ax.plot(E_list, nu_list * Intensity[:,0] * unit_convertion + 2., c='black', label=r'$\rm AGN$ + $\rm galaxies$')
 
-ax.plot(E_list, nu_list * Intensity[:,1] * unit_convertion, '--', dashes=(25,15), c='navy', label=r'$\rm AGN$ ($\rm CTK$)')
+ax.plot(E_list, nu_list * Intensity[:,1] * unit_convertion, '--', dashes=(25,15), c='magenta', label=r'$\rm AGN$ ($\rm CTK$)')
 
-ax.plot(E_list, nu_list * Intensity[:,2] * unit_convertion, '--', dashes=(25,15), c='dodgerblue', label=r'$\rm AGN$ ($\rm CTN,\,absorbed$)')
+ax.plot(E_list, nu_list * Intensity[:,2] * unit_convertion, '--', dashes=(25,15), c='navy', label=r'$\rm AGN$ ($\rm CTN,\,absorbed$)')
 
 ax.plot(E_list, nu_list * Intensity[:,3] * unit_convertion, '--', dashes=(25,15), c='deepskyblue', label=r'$\rm AGN$ ($\rm CTN,\,unabsorbed$)')
 

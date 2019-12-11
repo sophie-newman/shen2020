@@ -113,7 +113,7 @@ ax.plot( data['logM'], data['logPhi'], c='darkorchid', mec='darkorchid', linesty
 prop = matplotlib.font_manager.FontProperties(size=22.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
 ax.set_xlabel(r'$\log{(M_{\rm BH}[{\rm M}_{\odot}])}$',fontsize=40,labelpad=2.5)
-ax.set_ylabel(r'$\log{(\phi[{\rm dex}^{-1}{\rm Mpc}^{-3}])}$',fontsize=40,labelpad=5)
+ax.set_ylabel(r'$\log{(\phi[{\rm dex}^{-1}{\rm cMpc}^{-3}])}$',fontsize=40,labelpad=5)
 ax.text(0.88, 0.92, r'${\rm local}$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
 
 ax.set_xlim(5.8, 12.)
