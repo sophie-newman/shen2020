@@ -22,6 +22,11 @@ parameters=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+#################
+c_extenstion_ao = CDLL(homepath+'codes/c_lib/specialuse/convolve_ao.so')
+convolve_c_ao= c_extenstion_ao.convolve
+convolve_c_ao.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+#################
 
 def get_fit_data(alldata,zmin,zmax,dset_name,dset_id):
 	alldata_tem={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([])}
@@ -32,11 +37,11 @@ def get_fit_data(alldata,zmin,zmax,dset_name,dset_id):
 		L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
 	else: return False
 	
-	L_tmp=bolometric_correction(L_bol_grid,dset_id)
-	if (return_LF[dset_name]!=None):
-		phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
-		phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
-		PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
+	#L_tmp=bolometric_correction(L_bol_grid,dset_id)
+	#if (return_LF[dset_name]!=None):
+	#	phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
+	#	phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+	#	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
 	
 	if len(L_data)>0:
 			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_data)
@@ -48,6 +53,14 @@ def get_data():
         alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
         for key in dset_ids.keys():
                 get_fit_data(alldata,zmins[key],zmaxs[key],key,dset_ids[key])
+
+        return alldata["L_OBS"],alldata["P_OBS"],alldata["D_OBS"],alldata["P_PRED"]
+
+def get_data_miyaji():
+        alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
+        for key in dset_ids.keys():
+		if key == "MIYAJI15":
+                	get_fit_data(alldata,zmins[key],zmaxs[key],key,dset_ids[key])
 
         return alldata["L_OBS"],alldata["P_OBS"],alldata["D_OBS"],alldata["P_PRED"]
 
@@ -80,8 +93,25 @@ ax.plot(x,y,'--',dashes=(25,15),c='black',label=r'$\rm new$ $\rm fit$')
 x,y,dy,yfit=get_data()
 x = x + L_solar
 y = y
-
 ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='crimson',mec='crimson',marker='o', ms=10,capthick=2,label=r'$\rm data$')
+
+x,y,dy,yfit=get_data_miyaji()
+x = x + L_solar
+y = y
+ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='o', ms=10,capthick=2,label=r'$\rm data$')
+
+L_tmp=bolometric_correction(L_bol_grid, -4)
+phi_fit_tmp = return_LF["MIYAJI15"](L_tmp, redshift)
+ax.plot(L_tmp + L_solar, phi_fit_tmp, c = 'seagreen', label=r'M15')
+
+redshift_c = c_double(redshift)
+input_c_1= np.power(10., phi_fit_tmp).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+input_c_2= L_tmp.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+res = convolve_c_ao(input_c_2,input_c_1,redshift_c)
+res = [i for i in res.contents]
+PHI_HX = np.array(res,dtype=np.float64)
+y = np.log10(PHI_HX)
+ax.plot(L_tmp + L_solar, y, '--',c = 'seagreen', label=r'M15')
 
 prop = matplotlib.font_manager.FontProperties(size=30.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)

@@ -167,8 +167,8 @@ def returnall(sed2500):
 	Lbol= integrate( sedall, freqall, con.c.value/(30.*1e-6), 500*1000.*con.e.value/con.h.value)
 
 	#check the wavelength range of bolometric luminosity
-	#Lbol2= integrate( sedall, freqall, con.c.value/(100.*1e-6), 500*1000.*con.e.value/con.h.value)
-	#print np.log10(Lbol) - np.log10(Lbol2)
+	Lbol2= integrate( sedall, freqall, con.c.value/(1.*1e-6), 500*1000.*con.e.value/con.h.value)
+	print np.log10(Lbol) - np.log10(Lbol2)
 
 	#check the correction factor in IR
 	#logLNIR = tophat( sedall, freqall, con.c.value/((1.25+0.15)*1e-6), con.c.value/((1.25-0.15)*1e-6))
@@ -185,8 +185,8 @@ def returnall(sed2500):
 
 	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logL1450, logLIR
 
-sed2500s = np.linspace(5,15,200)+L_solar
-#sed2500s = np.linspace(5,15,10)+L_solar
+#sed2500s = np.linspace(5,15,200)+L_solar
+sed2500s = np.linspace(5,15,10)+L_solar
 Lbols = 0*sed2500s
 LHXs  = 0*sed2500s
 LSXs  = 0*sed2500s
@@ -195,5 +195,6 @@ L1450s= 0*sed2500s
 LIRs  = 0*sed2500s
 for i in range(len(sed2500s)):
 	Lbols[i],LHXs[i],LSXs[i],LBs[i],L1450s[i],LIRs[i] = returnall(sed2500s[i])
-	
+
+exit()	
 np.savetxt("bolcorr.dat", np.c_[Lbols,LHXs,LSXs,LBs,L1450s,LIRs], header='Lbols,LHXs,LSXs,LBs,L1450s,LIRs')
