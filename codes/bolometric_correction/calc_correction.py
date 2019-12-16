@@ -167,7 +167,7 @@ def returnall(sed2500):
 	Lbol= integrate( sedall, freqall, con.c.value/(30.*1e-6), 500*1000.*con.e.value/con.h.value)
 
 	#check the wavelength range of bolometric luminosity
-	Lbol2= integrate( sedall, freqall, con.c.value/(1.*1e-6), 500*1000.*con.e.value/con.h.value)
+	Lbol2= integrate( sedall, freqall, con.c.value/(2.*1e-6), 500*1000.*con.e.value/con.h.value)
 	print np.log10(Lbol) - np.log10(Lbol2)
 
 	#check the correction factor in IR
@@ -186,7 +186,7 @@ def returnall(sed2500):
 	return  np.log10(Lbol), np.log10(LHX), np.log10(LSX), logLB, logL1450, logLIR
 
 #sed2500s = np.linspace(5,15,200)+L_solar
-sed2500s = np.linspace(5,15,10)+L_solar
+sed2500s = np.linspace(10,14,10)+L_solar
 Lbols = 0*sed2500s
 LHXs  = 0*sed2500s
 LSXs  = 0*sed2500s
