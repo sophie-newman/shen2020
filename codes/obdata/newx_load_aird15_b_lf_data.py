@@ -40,4 +40,5 @@ def load_aird15_b_lf_data(z): # L_HX, PHI_HX, DPHI_HX
 
 	L_HX = L_HX - 0.11 # convert the ultra hard band to hard band
 
+	PHI_HX = PHI_HX + absorption_correction_xray(L_HX, z)
 	return L_HX, PHI_HX, DPHI_HX

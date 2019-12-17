@@ -59,6 +59,11 @@ parameters_global_z0 = np.array([gamma1,gamma2,logphi,Lbreak])
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+#################
+c_extenstion_ao = CDLL(homepath+'codes/c_lib/specialuse/convolve_ao.so')
+convolve_c_ao= c_extenstion_ao.convolve
+convolve_c_ao.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+#################
 
 def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
         alldata_tem={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([])}
@@ -76,9 +81,22 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
         if return_LF[dset_name]!=None:
 		#if (redshift!=0.4) or (dset_id!=-2):
 		#if (dset_id!=-2):# and (dset_id==-5):
+		if dset_id != -4:
                 	phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
                 	phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
-                	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))		
+                	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+		else:	
+			phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
+                	redshift_c = c_double(redshift)
+                	input_c_1 = L_tmp.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+                	input_c_2 = np.power(10.,phi_fit_tmp).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+                	res = convolve_c_ao(input_c_1,input_c_2,redshift_c)
+                	res = [i for i in res.contents]
+                	phi_fit_tmp = np.log10(np.array(res ,dtype=np.float64))
+
+			phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+                	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+
 	#if len(PHI_data)==0:
 	#	print dset_name
 	#if dset_id == -5:
@@ -220,6 +238,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
-#plt.show()
+#plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
+plt.show()
 

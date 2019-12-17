@@ -59,6 +59,7 @@ from newx_load_embero09_lf_data import *
 from newx_load_fiore12_lf_data import *
 from newx_load_khorunzhev18_lf_data import *
 from newx_load_miyaji15_lf_data import *
+from newx_load_ueda14_lf_data import *
 
 from newir_load_assef11_lf_data import *
 from newir_load_lacy15_lf_data import *
@@ -120,6 +121,7 @@ dset_ids={
 	"FIORE12":     -4,
 	"KHORUNZHEV18":-4,
 	"MIYAJI15":    -4,
+	"UEDA14":      -4,
 	#soft Xray new
 	"EBRERO09_SX": -3,
 	#INFRARED
@@ -189,6 +191,7 @@ zmins={
 	"FIORE12":     np.array([3.,4.,5.8]),
 	"KHORUNZHEV18":np.array([3.,3.19,3.47,3.90,4.30]),
 	"MIYAJI15":    np.array([0.015,0.20,0.40,0.80,1.60,2.30]),
+	"UEDA14":      np.array([0.002, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0, 2.4, 3.0, 4.0]),
 	#INFRARED
 	"BROWN":np.array([1.5]),
 	"MATUTE":np.array([0.0, 0.5]),
@@ -245,6 +248,7 @@ zmaxs={
 	"FIORE12":     np.array([4.,5.,7.5]),
 	"KHORUNZHEV18":np.array([3.19,3.47,3.90,4.30,5.10]),
 	"MIYAJI15":    np.array([0.20,0.40,0.80,1.60,2.30,4.60]),
+	"UEDA14":      np.array([0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0, 2.4, 3.0, 4.0, 5.0]),
 	#Xray_or_IR
 	"HASINGER":np.array([0.2, 0.4, 0.8, 1.6, 3.2, 4.8]),
 	"MIYAJI":np.array([0.2, 0.4, 0.8, 1.6, 2.3, 4.6]),
@@ -322,6 +326,7 @@ load_LF_data={
 	"FIORE12":     load_fiore12_lf_data,
 	"KHORUNZHEV18":load_khorunzhev18_lf_data_vitobins,
 	"MIYAJI15":    load_miyaji15_lf_data,
+	"UEDA14":      load_ueda14_lf_data,
 	#INF new
 	"ASSEF11":	   load_assef11_lf_data,
 	"LACY15":	   load_lacy15_lf_data
@@ -383,6 +388,7 @@ return_LF={
 	"FIORE12":     return_miyaji15_lf_fitted,
 	"KHORUNZHEV18":return_miyaji15_lf_fitted,
 	"MIYAJI15":    return_miyaji15_lf_fitted,
+	"UEDA14":      return_miyaji15_lf_fitted,
 	#Xray S
 	"EBRERO09_SX": return_hasinger_lf_fitted,
 	#INF new

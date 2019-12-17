@@ -37,11 +37,23 @@ def get_fit_data(alldata,zmin,zmax,dset_name,dset_id):
 		L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
 	else: return False
 	
-	#L_tmp=bolometric_correction(L_bol_grid,dset_id)
-	#if (return_LF[dset_name]!=None):
-	#	phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
-	#	phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
-	#	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
+	L_tmp=bolometric_correction(L_bol_grid,dset_id)
+	if (return_LF[dset_name]!=None):
+		if dset_id != -4:
+                        phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
+                        phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+                        PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+                else:
+                        phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
+                        redshift_c = c_double(redshift)
+                        input_c_1 = L_tmp.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+                        input_c_2 = np.power(10.,phi_fit_tmp).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+                        res = convolve_c_ao(input_c_1,input_c_2,redshift_c)
+                        res = [i for i in res.contents]
+                        phi_fit_tmp = np.log10(np.array(res ,dtype=np.float64))
+
+                        phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+                        PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
 	
 	if len(L_data)>0:
 			alldata["L_OBS"]  = np.append(alldata["L_OBS"]  , L_data)
@@ -59,8 +71,9 @@ def get_data():
 def get_data_miyaji():
         alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
         for key in dset_ids.keys():
-		if key == "MIYAJI15":
-                	get_fit_data(alldata,zmins[key],zmaxs[key],key,dset_ids[key])
+		if key in ["UEDA14","MIYAJI15","AIRD15_b","EMBERO_HX"]:
+                #if key in ["MIYAJI15"]:
+			get_fit_data(alldata,zmins[key],zmaxs[key],key,dset_ids[key])
 
         return alldata["L_OBS"],alldata["P_OBS"],alldata["D_OBS"],alldata["P_PRED"]
 

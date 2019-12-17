@@ -41,6 +41,8 @@ def load_ebrero09_HX_lf_data(z): # L_HX, PHI_HX, DPHI_HX
 	L_HX = (L_HX - L_solar) 
 	PHI_HX  = P_HX
 	DPHI_HX = D_HX
+
+	PHI_HX = PHI_HX + absorption_correction_xray(L_HX, z)
 	return L_HX, PHI_HX, DPHI_HX
  
 def load_ebrero09_SX_lf_data(z): # L_SX, PHI_SX, DPHI_SX

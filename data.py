@@ -115,3 +115,60 @@ def return_dtg(z):
 
 	return MZR_Ma2016(z)/MZR_Ma2016(0) * dtg_mw
 
+
+#Xray absorption correction
+from convolve import *
+from ctypes import *
+import ctypes
+#from newx_load_miyaji15_lf_data import *
+
+c_extenstion_ao = CDLL(homepath+'codes/c_lib/specialuse/convolve_ao.so')
+convolve_c_ao= c_extenstion_ao.convolve
+convolve_c_ao.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+
+def absorption_correction_xray(logLx , redshift):
+        # correct for the absorption in the CTN regime
+        L_tmp = bolometric_correction(L_bol_grid, -4)
+        phi_fit_tmp = return_miyaji15_lf_fitted(L_tmp, redshift)
+
+        redshift_c = c_double(redshift)
+        input_c_2= np.power(10., phi_fit_tmp).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        input_c_1= L_tmp.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        res = convolve_c_ao(input_c_1,input_c_2,redshift_c)
+        res = [i for i in res.contents]
+        phi_corrected = np.log10( np.array(res,dtype=np.float64))
+
+        correction = phi_corrected - phi_fit_tmp
+        return np.interp(logLx, L_tmp, correction)
+
+def return_miyaji15_lf_fitted(Llist,z):
+        Llist = Llist + L_solar
+        p1_44,p2_44,p3 = 5.29, -0.35, -5.6
+        zb1_44,zb2 = 1.1, 2.7
+        alpha = 0.18
+        beta1, beta2 = 1.2, 1.5
+
+        gamma1 = 1.17
+        gamma2 = 2.80
+        lbreak = 44.04
+        phi_s = 1.56e-6
+
+        def ed(Lx,z):
+                p1 = p1_44 + beta1*(Lx - 44.)
+                p2 = p2_44 + beta2*(Lx - 44.)
+
+                zb1_0 = zb1_44 / np.power( 10**44/10**44.5, alpha )
+                if Lx <= 44.5: zb1 = zb1_0 * np.power( 10**Lx/10**44.5, alpha )
+                else: zb1 = zb1_0
+
+                if z < zb1:  ed = (1.+z)**p1
+                elif z < zb2: ed = (1.+zb1)**p1 * np.power( (1+z)/(1+zb1) ,p2)
+                else: ed = (1.+zb1)**p1 * np.power( (1+zb2)/(1+zb1) ,p2) * np.power( (1+z)/(1+zb2) ,p3)
+
+                return ed
+
+        x = np.power(10., Llist-lbreak)
+        eds = np.zeros(len(Llist))
+        for i in range(len(eds)):
+                eds[i] = ed(Llist[i],z)
+        return np.log10( phi_s/( np.power(x,gamma1) + np.power(x,gamma2))*eds )

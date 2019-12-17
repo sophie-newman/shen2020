@@ -19,6 +19,8 @@ def load_miyaji15_lf_data(z):
 		L_X = L_X - L_solar		 
 		PHI_X = np.log10(phi)
 		DPHI_X = ((np.log10(phi+phierr)-np.log10(phi)) + (np.log10(phi)-np.log10(phi-phierr)))/2.
+
+		PHI_X = PHI_X + absorption_correction_xray(L_X, z)
 		return L_X, PHI_X, DPHI_X
 
 def return_miyaji15_lf_fitted(Llist,z):
