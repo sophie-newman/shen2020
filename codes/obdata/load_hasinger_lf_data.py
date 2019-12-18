@@ -6,12 +6,12 @@ import numpy as np
 
 def load_hasinger_lf_data(z): # L_SX, PHI_SX, DPHI_SX, z
 	# determine which redshift interval its in
-	if ((z >= 0.0) and (z < 0.2)): WHICH_BLOCK = 1
-	if ((z >= 0.2) and (z < 0.4)): WHICH_BLOCK = 2
-	if ((z >= 0.4) and (z < 0.8)): WHICH_BLOCK = 3
-	if ((z >= 0.8) and (z < 1.6)): WHICH_BLOCK = 4
-	if ((z >= 1.6) and (z < 3.2)): WHICH_BLOCK = 5
-	if ((z >= 3.2) and (z <=4.8)): WHICH_BLOCK = 6
+	if ((z > 0.0) and (z <= 0.2)): WHICH_BLOCK = 1
+	if ((z > 0.2) and (z <= 0.4)): WHICH_BLOCK = 2
+	if ((z > 0.4) and (z <= 0.8)): WHICH_BLOCK = 3
+	if ((z > 0.8) and (z <= 1.6)): WHICH_BLOCK = 4
+	if ((z > 1.6) and (z <= 3.2)): WHICH_BLOCK = 5
+	if ((z > 3.2) and (z <= 4.8)): WHICH_BLOCK = 6
 	if (z > 4.8): WHICH_BLOCK = 7
 
 	if (WHICH_BLOCK == 7): return False

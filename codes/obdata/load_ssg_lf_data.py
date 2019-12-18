@@ -4,7 +4,7 @@ from data import *
 import numpy as np
 
 def load_ssg_lf_data(z): # L_BB, PHI_BB, DPHI_BB, z
-	if ((z < 2.75) or (z > 4.75)): return False
+	if ((z <= 2.75) or (z > 4.75)): return False
 	else:		
 		pc = np.log10(2.5 * phi_correct_cosmology(3.75)*((7./5.)**3))
 		M_B_o = np.array([-25.8,-26.3,-26.8,-27.5])+ 5.*np.log10(7./5.) - 2.5*np.log10(lum_correct_cosmology(3.75)) 

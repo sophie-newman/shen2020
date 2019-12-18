@@ -6,7 +6,7 @@ from data import *
 import numpy as np
 
 def load_siana_lf_data(z): # L_BB, PHI_BB, DPHI_BB, z
-	if ((z <= 2.9) or (z >= 3.4)): return False
+	if ((z <= 2.9) or (z > 3.4)): return False
 	else:
 		M_1450 = np.array([-23.75, -24.25, -24.75, -25.25, -25.75, -26.25])
 		PHI    = np.array([1.0e-6, 8.0e-7, 5.5e-7, 3.0e-7, 1.2e-7, 1.8e-7]) * 2.5

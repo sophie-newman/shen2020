@@ -80,7 +80,7 @@ dset_ids={
 	"BONGIORNO07":-5,
 	"CROOM09":    -5,
 	"FONTANOT07": -5,
-	"GIALLONGO15":-5,
+	#"GIALLONGO15":-5,
 	"GILKMAN11":  -5,
 	"IKEDA12":    -5,
 	#"JIANG09":    -5,
@@ -177,7 +177,7 @@ zmins={
 	"LAFRANCA":np.array([0.0, 0.5, 1.0, 1.5, 2.5]),
 	"SILVERMAN_SX":np.array([0.5, 1.0, 2.0, 4.0]),
 	"SILVERMAN_HX":np.array([0.2, 1.5, 3.0]),
-	"BARGER":np.array([0.1, 0.4, 0.8, 1.5, 3.0]),
+	"BARGER":np.array([0.1, 0.4, 0.8, 1.5, 3.0, 5.0]),
 	"NANDRA":np.array([2.75]),
 	"SAZREV":np.array([0.0]),
 	#HX
@@ -256,7 +256,7 @@ zmaxs={
 	"LAFRANCA":np.array([0.5, 1.0, 1.5, 2.5, 3.5]),
 	"SILVERMAN_SX":np.array([1.0, 1.5, 3.0, 5.5]),
 	"SILVERMAN_HX":np.array([0.5, 2.0, 4.0]),
-	"BARGER":np.array([0.4, 0.8, 1.2, 3.0, 5.0]),
+	"BARGER":np.array([0.4, 0.8, 1.2, 3.0, 5.0, 6.5]),
 	"NANDRA":np.array([3.25]),
 	"SAZREV":np.array([0.1]),
 	#INFRARED

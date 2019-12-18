@@ -29,7 +29,7 @@ def weightfunc(z):
 # we explore the parameter choice a bit, so the initial guess is already close to the best-fit, 
 # but we still vary it for at least 50% to make sure that it is a global minimum
 parameters_init = np.array([0.858, -0.262, 0.021, 2.54, -1.05, 1.14, -3.54, -0.4, 13., -0.6, 0.45])
-parameters_vary = np.array([0.4  , 0.2   , 0.2  , 0.9 , 0.6  , 0.6 , 1.7  , 0.3 , 3. , 0.4 , 0.3])
+parameters_vary = np.array([0.4  , 0.2   , 0.1  , 0.9 , 0.6  , 0.6 , 1.7  , 0.3 , 3. , 0.4 , 0.3])
 parameters_info = np.array(["gamma1", "gamma2", "logphis"  , "logLs"])
 
 #load the shared object file
@@ -53,9 +53,21 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
         	else: L_tmp=bolometric_correction(L_bol_grid,dset_id)
         
 		if return_LF[dset_name]!=None:
-                	phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
-                	phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
-                	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+			if dset_id != -4:
+                        	phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
+                        	phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+                        	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+                	else:
+                        	phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
+                        	redshift_c = c_double(redshift)
+                        	input_c_1 = L_tmp.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+                        	input_c_2 = np.power(10.,phi_fit_tmp).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+                        	res = convolve_c_ao(input_c_1,input_c_2,redshift_c)
+                        	res = [i for i in res.contents]
+                        	phi_fit_tmp = np.log10(np.array(res ,dtype=np.float64))
+					
+                        	phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+                        	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
 
 		if (len(L_data) > 0):
 			L_model = bolometric_correction(L_bol_grid,dset_id)

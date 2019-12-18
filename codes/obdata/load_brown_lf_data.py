@@ -10,7 +10,7 @@ from data import *
 import numpy as np
 
 def load_brown_lf_data(z): # L_IR, PHI_IR, DPHI_IR, z
-	if (z < 1.5) or (z > 2.5): return False
+	if (z <= 1.5) or (z > 2.5): return False
 	else:
 		M_8  = np.array([-27.2, -27.6, -28.0, -28.4, -28.8, -29.2, -29.6, -30.0, -30.4, -31.2])
 		P_8  = np.array([4.3e-6,2.4e-6,3.0e-6,1.2e-6,6.1e-7,2.6e-7,2.4e-7,9.2e-8,4.7e-8,2.3e-8])

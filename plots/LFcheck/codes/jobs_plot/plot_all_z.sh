@@ -1,5 +1,5 @@
 dir=$(pwd)
-redshifts=$dir/redshift_list
+redshifts=$dir/redshift_list_all
 
 cd ..
 

@@ -7,7 +7,7 @@ import numpy as np
 def load_nandra_lf_data(z): # L_HX, PHI_HX, DPHI_HX, z
 	# determine which redshift interval its in
 	WHICH_BLOCK = 2
-	if ((z > 2.75) and (z < 3.25)): WHICH_BLOCK = 1
+	if ((z > 2.75) and (z <= 3.25)): WHICH_BLOCK = 1
 	
 	if (WHICH_BLOCK == 2): return False
 	else:

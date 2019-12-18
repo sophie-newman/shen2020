@@ -6,11 +6,11 @@ import numpy as np
 
 def load_lafranca_lf_data(z): # L_HX, PHI_HX, DPHI_HX, z
 	# determine which redshift interval its in
-	if ((z >= 0.0) and (z < 0.5)): WHICH_BLOCK = 1
-	if ((z >= 0.5) and (z < 1.0)): WHICH_BLOCK = 2
-	if ((z >= 1.0) and (z < 1.5)): WHICH_BLOCK = 3
-	if ((z >= 1.5) and (z < 2.5)): WHICH_BLOCK = 4
-	if ((z >= 2.5) and (z <=3.5)): WHICH_BLOCK = 5
+	if ((z > 0.0) and (z <= 0.5)): WHICH_BLOCK = 1
+	if ((z > 0.5) and (z <= 1.0)): WHICH_BLOCK = 2
+	if ((z > 1.0) and (z <= 1.5)): WHICH_BLOCK = 3
+	if ((z > 1.5) and (z <= 2.5)): WHICH_BLOCK = 4
+	if ((z > 2.5) and (z <= 3.5)): WHICH_BLOCK = 5
 	if (z > 3.5): WHICH_BLOCK = 6
 	
 	if (WHICH_BLOCK == 6): return False		

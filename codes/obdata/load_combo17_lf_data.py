@@ -5,14 +5,14 @@ from data import *
 import numpy as np
 
 def load_combo17_lf_data(z): # L_BB, PHI_BB, DPHI_BB, z
-	if ((z < 1.2) or (z > 4.8)): return False
+	if ((z <= 1.2) or (z > 4.8)): return False
 	else:
-		if ((z >= 1.2) and (z < 1.8)): WHICH_BLOCK = 0
-		if ((z >= 1.8) and (z < 2.4)): WHICH_BLOCK = 1
-		if ((z >= 2.4) and (z < 3.0)): WHICH_BLOCK = 2
-		if ((z >= 3.0) and (z < 3.6)): WHICH_BLOCK = 3
-		if ((z >= 3.6) and (z < 4.2)): WHICH_BLOCK = 4
-		if ((z >= 4.2) and (z <=4.8)): WHICH_BLOCK = 5
+		if ((z > 1.2) and (z <= 1.8)): WHICH_BLOCK = 0
+		if ((z > 1.8) and (z <= 2.4)): WHICH_BLOCK = 1
+		if ((z > 2.4) and (z <= 3.0)): WHICH_BLOCK = 2
+		if ((z > 3.0) and (z <= 3.6)): WHICH_BLOCK = 3
+		if ((z > 3.6) and (z <= 4.2)): WHICH_BLOCK = 4
+		if ((z > 4.2) and (z <= 4.8)): WHICH_BLOCK = 5
 		
 		N_Z_BINS = 6
 		N_LUM_BINS = 6

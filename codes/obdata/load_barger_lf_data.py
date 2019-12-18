@@ -6,14 +6,14 @@ import numpy as np
 
 def load_barger_lf_data(z):  # L_HX, PHI_HX, DPHI_HX, z
 	# determine which redshift interval its in
-	if (z < 0.1): WHICH_BLOCK = 0
-	if (z >= 0.1) and (z < 0.4): WHICH_BLOCK = 1
-	if (z >= 0.4) and (z < 0.8): WHICH_BLOCK = 2
-	if (z >= 0.8) and (z < 1.2): WHICH_BLOCK = 3
-	if (z >= 1.2) and (z < 1.5): WHICH_BLOCK = 6
-	if (z >= 1.5) and (z < 3.0): WHICH_BLOCK = 4
-	if (z >= 3.0) and (z < 5.0): WHICH_BLOCK = 5
-	if (z >= 5.0) and (z <=6.5): WHICH_BLOCK = 6
+	if (z <= 0.1): WHICH_BLOCK = 0
+	if (z > 0.1) and (z <= 0.4): WHICH_BLOCK = 1
+	if (z > 0.4) and (z <= 0.8): WHICH_BLOCK = 2
+	if (z > 0.8) and (z <= 1.2): WHICH_BLOCK = 3
+	if (z > 1.2) and (z <= 1.5): WHICH_BLOCK = 6
+	if (z > 1.5) and (z <= 3.0): WHICH_BLOCK = 4
+	if (z > 3.0) and (z <= 5.0): WHICH_BLOCK = 5
+	if (z > 5.0) and (z <= 6.5): WHICH_BLOCK = 6
 	if (z >  6.5): WHICH_BLOCK = 7
 	
 	if (WHICH_BLOCK == 0) or (WHICH_BLOCK == 7): return False

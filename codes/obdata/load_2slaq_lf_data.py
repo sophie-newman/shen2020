@@ -5,13 +5,13 @@ import numpy as np
 
 def load_2slaq_lf_data(z): 
 	#determine which redshift interval its in (bins follow Croom 2004)
-	if (z < 0.4): WHICH_BLOCK = 0
-	if (z >= 0.40) and (z < 0.68): WHICH_BLOCK = 1
-	if (z >= 0.68) and (z < 0.97): WHICH_BLOCK = 2
-	if (z >= 0.97) and (z < 1.25): WHICH_BLOCK = 3
-	if (z >= 1.25) and (z < 1.53): WHICH_BLOCK = 4
-	if (z >= 1.53) and (z < 1.81): WHICH_BLOCK = 5
-	if (z >= 1.81) and (z <=2.10): WHICH_BLOCK = 6
+	if (z <= 0.4): WHICH_BLOCK = 0
+	if (z > 0.40) and (z <= 0.68): WHICH_BLOCK = 1
+	if (z > 0.68) and (z <= 0.97): WHICH_BLOCK = 2
+	if (z > 0.97) and (z <= 1.25): WHICH_BLOCK = 3
+	if (z > 1.25) and (z <= 1.53): WHICH_BLOCK = 4
+	if (z > 1.53) and (z <= 1.81): WHICH_BLOCK = 5
+	if (z > 1.81) and (z <= 2.10): WHICH_BLOCK = 6
 	if (z > 2.1): WHICH_BLOCK = 7
 
 	if (WHICH_BLOCK == 0) or (WHICH_BLOCK == 7):

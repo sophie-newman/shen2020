@@ -5,14 +5,14 @@ from data import *
 import numpy as np
 
 def load_jiang_lf_data(z): # L_BB, PHI_BB, DPHI_BB, z
-	if (z < 0.5) or (z > 3.6): return False
+	if (z <= 0.5) or (z > 3.6): return False
 	else:
-		if ((z >= 0.5) and (z < 1.0)): WHICH_BLOCK = 0
-		if ((z >= 1.0) and (z < 1.5)): WHICH_BLOCK = 1
-		if ((z >= 1.5) and (z < 2.0)): WHICH_BLOCK = 2
-		if ((z >= 2.0) and (z < 2.5)): WHICH_BLOCK = 3
-		if ((z >= 2.5) and (z < 3.0)): WHICH_BLOCK = 4
-		if ((z >= 3.0) and (z <=3.6)): WHICH_BLOCK = 5
+		if ((z > 0.5) and (z <= 1.0)): WHICH_BLOCK = 0
+		if ((z > 1.0) and (z <= 1.5)): WHICH_BLOCK = 1
+		if ((z > 1.5) and (z <= 2.0)): WHICH_BLOCK = 2
+		if ((z > 2.0) and (z <= 2.5)): WHICH_BLOCK = 3
+		if ((z > 2.5) and (z <= 3.0)): WHICH_BLOCK = 4
+		if ((z > 3.0) and (z <= 3.6)): WHICH_BLOCK = 5
 		
 		if (WHICH_BLOCK == 0):
 			M_g = np.array([-21.25, -21.75, -22.50, -23.25, -24.25])

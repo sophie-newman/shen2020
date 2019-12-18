@@ -5,29 +5,29 @@ from data import *
 import numpy as np 
 
 def load_sdss_fan_lf_data(z): # L_BB, PHI_BB, DPHI_BB, z
-	if (((z < 3.6) or (z > 6.2)) or (((z > 5.0) and (z < 5.75)))): 
+	if (((z <= 3.6) or (z > 6.2)) or (((z > 5.0) and (z <= 5.75)))): 
 		return False
 	else:
 		Mcorr = +5.*np.log10(7./6.5)
 		Pcorr = (7./6.5)**3				# cancelled to ~1% by the change in Omega_Lambda (*small*)
 		Mcorr = 0.
 		Pcorr = 1.
-		if ((z >= 3.6) and (z <= 3.9)):
+		if ((z > 3.6) and (z <= 3.9)):
 				M_1450_o = np.array([-25.83,-26.30,-26.80]) + Mcorr	# z = 3.6-3.9
 				phi_o    = np.array([6.0e-8,2.5e-8,7.7e-9]) * Pcorr
 				phi_p    = np.array([9.2e-8,3.5e-8,1.1e-8]) * Pcorr
 				phi_m    = np.array([2.4e-8,1.5e-8,4.4e-9]) * Pcorr
-		if ((z > 3.9) and (z < 4.4)): 
+		if ((z > 3.9) and (z <= 4.4)): 
 				M_1450_o = np.array([-26.00,-26.45,-27.18]) + Mcorr	# z = 3.9-4.4
 				phi_o    = np.array([2.5e-8,1.1e-8,6.0e-9]) * Pcorr
 				phi_p    = np.array([4.0e-8,1.7e-8,9.0e-9]) * Pcorr
 				phi_m    = np.array([1.0e-8,8.0e-9,3.2e-9]) * Pcorr
-		if ((z >= 4.4) and (z <= 5.0)): 
+		if ((z > 4.4) and (z <= 5.0)): 
 				M_1450_o = np.array([-26.45,-27.08]) + Mcorr		# z = 4.4-5.0
 				phi_o    = np.array([5.2e-9,2.2e-9]) * Pcorr
 				phi_p    = np.array([8.0e-9,3.5e-9]) * Pcorr
 				phi_m    = np.array([2.6e-9,9.0e-10]) * Pcorr
-		if ((z >= 5.75) and (z <= 6.2)):
+		if ((z > 5.75) and (z <= 6.2)):
 				M_1450_o = np.array([-26.7,-27.7])	# z = 5.several - 6.highest
 				phistar  = 3.3e-9
 				dphistar = 3.8e-9
