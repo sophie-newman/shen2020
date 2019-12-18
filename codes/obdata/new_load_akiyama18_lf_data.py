@@ -4,7 +4,7 @@ from data import *
 import numpy as np
 
 def load_akiyama18_lf_data(z): 
-	if (z < 3.6) or (z > 4.3): return False
+	if (z <= 3.6) or (z > 4.3): return False
 	else:	
 		z_mean=3.9
 
