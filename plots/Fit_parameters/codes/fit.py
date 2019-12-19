@@ -29,9 +29,8 @@ id= (data["z"]!=100)
 fit1, cov1=cfit(func2,data["z"][id],data["gamma1"][id],sigma=data["err1"][id],p0=np.array([0.5,-0.1,0.,0.]))
 id= (data["z"]!=100)
 fit2, cov2=cfit(doublepower,data["z"][id],data["gamma2"][id],sigma=data["err2"][id],p0=np.array([2.5,1.1,-1.5,0.8]))
-id= (data["z"]>=0.4) & (data['z']<=2.8)
+id= (data["z"]>=0.4) & (data['z']<=3.0)
 fit3, cov3=cfit(func1,data["z"][id],data["phi_s"][id],sigma=data["err3"][id],p0=np.array([-3.5,-0.45,0.,0.]))
-fit3 = [-3.94340264, -0.2176625,  0.,          0.        ]
 
 id= (data["z"]!=100)
 fit4, cov4=cfit(doublepower,data["z"][id],data["L_s"][id],sigma=data["err4"][id],p0=np.array([9.59,-0.0516,-1.30,0.19]))

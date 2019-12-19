@@ -64,6 +64,10 @@ from newx_load_ueda14_lf_data import *
 from newir_load_assef11_lf_data import *
 from newir_load_lacy15_lf_data import *
 
+dset_ids_special={
+	"GIALLONGO15":-5
+}
+
 dset_ids={
 	#Bband
 	"DR3": -1,

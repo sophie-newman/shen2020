@@ -147,20 +147,20 @@ if FIX==False:
                         ('logphis', parameters_init[2], True, None, None, None, None),
                         ('Lbreak' , parameters_init[3], True, None, None, None, None))
 else:
-	if (redshift>=0.4) and (redshift<=2.8):
+	if (redshift>=0.4) and (redshift<=3.0):
                 params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                                 ('gamma2' , parameters_init[1], True, None, None, None, None),
                                 ('logphis', parameters_init[2], True, None, None, None, None),
                                 ('Lbreak' , parameters_init[3], True, None, None, None, None))
 	elif (redshift<5.8):
-		logphis_fixed=-4.07671721-0.19887770*(1+redshift)
+		logphis_fixed=-4.07827011-0.20000886*(1+redshift)
 		#logphis_fixed=-3.94378832-0.21749887*(1+redshift)
 		params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                 	        ('gamma2' , parameters_init[1], True, None, None, None, None),
                 	        ('logphis', logphis_fixed     ,False, None, None, None, None),
                 	        ('Lbreak' , parameters_init[3], True, None, None, None, None))
 	else: # at z>5.8, use single power law to do te fit
-		logphis_fixed=-4.07671721-0.19887770*(1+redshift)
+		logphis_fixed=-4.07827011 -0.20000886*(1+redshift)
 		#logphis_fixed=-3.94378832-0.21749887*(1+redshift)
 		params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                 	        ('gamma2' , parameters_init[1], True, None, None, "gamma1", None),

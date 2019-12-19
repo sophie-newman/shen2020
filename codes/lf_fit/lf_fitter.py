@@ -180,7 +180,7 @@ with MPIPool() as pool:
         	sys.exit(0)
 
 	sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, pool=pool)
-	nsteps = 1800
+	nsteps = 1300
 	#sampler.run_mcmc(pos, nsteps)
 	print "begin sampling"
 	mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss

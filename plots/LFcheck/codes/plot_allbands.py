@@ -69,9 +69,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
         alldata_tem={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([])}
         if load_LF_data[dset_name](redshift)!=False:
                 L_data, PHI_data, DPHI_data = load_LF_data[dset_name](redshift)
-		print dset_name
-		print zmin
-		zbin = (zmin[ zmin < redshift ][-1] + zmax[ redshift <= zmax ][0]) /2.
+		#zbin = (zmin[ zmin < redshift ][-1] + zmax[ redshift <= zmax ][0]) /2.
         else:
                 return False
 
@@ -85,10 +83,12 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 		if dset_id != -4:
                 	phi_fit_tmp1 = return_LF[dset_name](L_tmp, redshift)
                 	phi_fit_pts1 = np.interp(L_data ,L_tmp, phi_fit_tmp1)
-                	#PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+                	PHI_data = PHI_data + (np.mean((phi_fit_pts1))-np.mean((PHI_data)))
+			'''
 			phi_fit_tmp2 = return_LF[dset_name](L_tmp, zbin)
                         phi_fit_pts2 = np.interp(L_data ,L_tmp, phi_fit_tmp2)
 			PHI_data = PHI_data + (phi_fit_pts1 - phi_fit_pts2)
+			'''
 		else:	
 			phi_fit_tmp1 = return_LF[dset_name](L_tmp, redshift)
                 	redshift_c = c_double(redshift)
@@ -98,7 +98,8 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
                 	res = [i for i in res.contents]
                 	phi_fit_tmp1 = np.log10(np.array(res ,dtype=np.float64))
 			phi_fit_pts1 = np.interp(L_data ,L_tmp, phi_fit_tmp1)
-                	#PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+                	PHI_data = PHI_data + (np.mean((phi_fit_pts1))-np.mean((PHI_data)))
+			'''
 			phi_fit_tmp2 = return_LF[dset_name](L_tmp, zbin)
                         redshift_c = c_double(zbin)
                         input_c_2 = np.power(10.,phi_fit_tmp2).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
@@ -108,6 +109,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
                         phi_fit_pts2 = np.interp(L_data ,L_tmp, phi_fit_tmp2)
 			
 			PHI_data = PHI_data + (phi_fit_pts1 - phi_fit_pts2)
+			'''
 
 	#if len(PHI_data)==0:
 	#	print dset_name
@@ -250,6 +252,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
-#plt.show()
+#plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
+plt.show()
 

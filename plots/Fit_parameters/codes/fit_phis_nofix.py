@@ -12,7 +12,7 @@ def func1(z,*p):
 	xsi=1.+z
 	return p[0]*T0(xsi)+p[1]*T1(xsi)#+p[2]*T2(xsi)+p[3]*T3(xsi)
 
-id= (data["z"]>=0.4) & (data['z']<=2.8)
+id= (data["z"]>=0.4) & (data['z']<=3.0)
 fit3, cov3=cfit(func1,data["z"][id],data["phi_s"][id],sigma=data["err3"][id],p0=np.array([-3.5,-0.35,0.,0.]))
 
 print fit3
