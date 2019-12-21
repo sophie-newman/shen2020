@@ -66,7 +66,7 @@ zpoints_spe=np.array(pz_spe)
 
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
-zlist=np.linspace(0.1,7,20)
+zlist=np.linspace(0.1,7,30)
 
 zpoints_free = zpoints_free[zpoints_free>2.]
 zpoints_fix  = zpoints_fix[zpoints_fix>2.]

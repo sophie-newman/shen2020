@@ -60,9 +60,9 @@ c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 #################
-c_extenstion_ao = CDLL(homepath+'codes/c_lib/specialuse/convolve_ao.so')
-convolve_c_ao= c_extenstion_ao.convolve
-convolve_c_ao.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+#c_extenstion_ao = CDLL(homepath+'codes/c_lib/specialuse/convolve_ao.so')
+#convolve_c_ao= c_extenstion_ao.convolve
+#convolve_c_ao.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 #################
 
 def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
@@ -253,6 +253,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
+#plt.show()
 

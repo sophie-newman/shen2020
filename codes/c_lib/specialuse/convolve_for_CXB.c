@@ -549,7 +549,7 @@ else if (gamma==1.8) {
 }
 else if (gamma==1.7) {
         L_HX = -2.187744;
-        log_nuLnu = log_nuLnu_1;
+        log_nuLnu = log_nuLnu_4;
 }
 else if (gamma==-1) {
         L_HX = 2.9497451;

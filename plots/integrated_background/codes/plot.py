@@ -107,7 +107,7 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
-E_list = np.logspace(-1,3,15) #100
+E_list = np.logspace(-1,3,100) #100
 nu_list = E_list*1000.*con.e.value/con.h.value
 
 zbins = np.linspace(0,7,50) 
