@@ -101,10 +101,10 @@ def cumulative_emissivity(L_band,Phi_band,L_limit_low,L_limit_up):
 		fnu = np.power(10.,-0.4*x)*3631*1e-23*4*np.pi*(10*con.pc.value*100)**2
 		fnu912 = fnu * (912./1450.)**(0.61)
 		return np.power(10.,logphi(x))*fnu912
-	return romberg(emis,Mlow,Mup,divmax=20)
-	#return quad(emis,Mlow,Mup)[0]
+	#return romberg(emis,Mlow,Mup,divmax=20)
+	return quad(emis,Mlow,Mup)[0]
 
-''' for test
+''' #for test
 def cumulative_emissivity2(L_band,Phi_band,L_limit_low,L_limit_up):
         Mband, Mlow, Mup = L_band, L_limit_low, L_limit_up
         logphi=inter.interp1d(Mband,Phi_band)
@@ -222,6 +222,15 @@ ax.plot(zpoints_fix,np.log10(result[:,0]),linestyle='none',marker='x',c='royalbl
 #        result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zlist[i])
 #        #result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist[i])
 #ax.plot(zlist,np.log10(result[:,0]),'-',c='green',alpha=0.7,label=r'$\rm repo$')
+
+# our emissivity model
+
+def emis_model(x,eps0,a,b,c,d):
+        return eps0 + np.log10( (1+x)**a * np.exp(-b*x)/(np.exp(c*x)+d))
+
+epsilon = emis_model(zlist,24.065, 5.941, -0.763, 3.085, 14.571)
+ax.plot(zlist, epsilon, c='pink')
+
 
 data=np.genfromtxt("emis/kk18.dat",names=['z','eps'])
 ax.plot(data['z'],data['eps'],'--',dashes=(25,15),c='seagreen',label=r'$\rm Kulkarni+$ $\rm 2018$')

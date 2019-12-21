@@ -20,53 +20,52 @@ def tophat(sed, freq, fmin, fmax):
 		y_target = interp1d(np.log10(freq), sed)(x_target)
 		return np.mean(y_target)
 
-def returnIR_to_UV(sed2500):
-	data1=np.genfromtxt(datapath+"K13_SED.dat",names=["lognu","logall"],)
-	freq1=10**data1['lognu']
-	lamb1=con.c.value/(10**data1['lognu'])*1e10
-	sed1 =data1['logall']
-	
-	#IR construction
-	IR_end=lamb1[0]
-	data2=np.genfromtxt(datapath+"R06_SED.dat",names=["lognu","logall","sigall","blue"],)
-	lamb2=con.c.value/(10**data2['lognu'])*1e10
-	sed2 =data2['blue']
-	
-	lamb2_ir= lamb2[lamb2>IR_end]
-	sed2_ir = sed2[lamb2>IR_end]
-	
-	scale = ( (sed1[1]-sed1[0])/(np.log10(lamb1[1])-np.log10(lamb1[0])) * (np.log10(lamb2_ir[-1])-np.log10(lamb1[0])) + sed1[0] ) - sed2_ir[-1]
-	
-	lamb1= np.append( lamb2_ir, lamb1)
-	sed1 = np.append( sed2_ir + scale, sed1)
-	
-	#UV construction
-	UV_end  =912.
-	UVslope =1.70
-	
-	lamb1,sed1 = lamb1[lamb1>UV_end],sed1[lamb1>UV_end]
-	
-	lambUV= np.linspace(UV_end, 600.,100)
-	sedUV = sed1[-1] + (UVslope-1) * (np.log10(lambUV) - np.log10(lamb1[-1]))
-	
-	lamb1= np.append( lamb1, lambUV)
-	sed1 = np.append( sed1 , sedUV)
-	freq1= con.c.value/(lamb1*1e-10)
+photon_index_list = np.genfromtxt('./xspec_lib/pindex_list.dat')
 
-	totscale = sed2500-interp1d(np.log10(freq1),sed1)(np.log10(con.c.value/2500e-10))
+def returnXray_sub(f2kev, gamma):
+        #interpolate between precalculated X-ray SEDs/ extrapolate if outside
+        if (gamma<photon_index_list.max()) and (gamma>=photon_index_list.min()):
+                pup = photon_index_list[photon_index_list>gamma][0]
+                plo = photon_index_list[photon_index_list<=gamma][-1]
+        if gamma>=photon_index_list.max():
+                pup = photon_index_list[-1]
+                plo = photon_index_list[-2]
+        if gamma<photon_index_list.min():
+                pup = photon_index_list[1]
+                plo = photon_index_list[0]
 
-	return freq1, sed1+totscale
+        dataup = np.genfromtxt("xspec_lib/Xspec_"+str(pup).replace('.','_')+".dat",names=["E","f"])
+        datalo = np.genfromtxt("xspec_lib/Xspec_"+str(plo).replace('.','_')+".dat",names=["E","f"])
+        data3 = {
+                'E': datalo['E'] + (gamma - plo)*(dataup['E']-datalo['E'])/(pup-plo),
+                'f': datalo['f']
+        }
+
+	sed3 =np.log10(data3['E']*data3['f'])
+        freq3 = data3['E']*1000.*con.e.value/con.h.value
+        lamb3 = con.c.value/freq3*1e10
+
+        lamb2kev = con.c.value/ (2.*1000.*con.e.value/con.h.value) *1e10
+        freq2kev = 2.*1000.*con.e.value/con.h.value
+
+        scale = np.log10( f2kev*(2.*1000.*con.e.value/con.h.value) ) - interp1d(np.log10(freq3),sed3)(np.log10(freq2kev))
+        sed3 = sed3 + scale
+
+	return freq3, 10**sed3
+        #return lamb3[lamb3<50], sed3[lamb3<50]
 
 def returnXray():
-	data3=np.genfromtxt("xspec_lib/Xspec_1_7.dat",names=["E","f"],)	
-	freq3=data3['E']*1000.*con.e.value/con.h.value
-	lamb3=con.c.value/freq3 * 1e10
-	sed3 =np.log10(data3['f']*data3['E'])
+	np.random.seed(4367)
+	Nsamples = 1000
+	pindexes = np.random.normal(1.9 , 0.2, size=Nsamples) #photon index
+	for i in range(Nsamples):
+		freq, sed = returnXray_sub( 1e-3 ,  pindexes[i])
+		if i==0:
+			sed_stacked = sed.copy()
+		else:
+			sed_stacked = sed_stacked + sed
 
-	lamb2kev = con.c.value/ (2.*1000.*con.e.value/con.h.value) *1e10
-	freq2kev = 2.*1000.*con.e.value/con.h.value
-
-	return freq3, sed3
+	return freq, np.log10(sed_stacked) - 15.
 
 freq_xray=np.array([ 16.00, 16.02, 16.04, 16.06, 16.08, 16.10, 16.12, 16.14, 16.16, 16.18, 16.20, 16.22, 16.24, 16.26, 16.28, 16.30, 16.32, 16.34, 16.36, 16.38, 16.40, 16.42, 16.44, 16.46, 16.48, 16.50,
 16.52, 16.54, 16.56, 16.58, 16.60, 16.62, 16.64, 16.66, 16.68, 16.70, 16.72, 16.74, 16.76, 16.78, 16.80, 16.82, 16.84, 16.86, 16.88, 16.90, 16.92, 16.94, 16.96, 16.98, 17.00, 17.02,
@@ -82,16 +81,3 @@ freq_temp, sed_temp = returnXray()
 print np.log10(integrate( sed_temp, freq_temp, 2.*1000.*con.e.value/con.h.value, 10.*1000.*con.e.value/con.h.value))
 print len(freq_xray)
 print interp1d(np.log10(freq_temp), sed_temp)(freq_xray)
-'''
-freq_bband=np.array([12.50, 12.52, 12.54, 12.56, 12.58, 12.60, 12.62, 12.64, 12.66, 12.68, 12.70, 12.72, 12.74, 12.76, 12.78, 12.80, 12.82, 12.84, 12.86, 12.88, 12.90, 12.92, 12.94, 12.96, 12.98, 13.00,
-13.02, 13.04, 13.06, 13.08, 13.10, 13.12, 13.14, 13.16, 13.18, 13.20, 13.22, 13.24, 13.26, 13.28, 13.30, 13.32, 13.34, 13.36, 13.38, 13.40, 13.42, 13.44, 13.46, 13.48, 13.50, 13.52,
-13.54, 13.56, 13.58, 13.60, 13.62, 13.64, 13.66, 13.68, 13.70, 13.72, 13.74, 13.76, 13.78, 13.80, 13.82, 13.84, 13.86, 13.88, 13.90, 13.92, 13.94, 13.96, 13.98, 14.00, 14.02, 14.04,
-14.06, 14.08, 14.10, 14.12, 14.14, 14.16, 14.18, 14.20, 14.22, 14.24, 14.26, 14.28, 14.30, 14.32, 14.34, 14.36, 14.38, 14.40, 14.42, 14.44, 14.46, 14.48, 14.50, 14.52, 14.54, 14.56,
-14.58, 14.60, 14.62, 14.64, 14.66, 14.68, 14.70, 14.72, 14.74, 14.76, 14.78, 14.80, 14.82, 14.84, 14.86, 14.88, 14.90, 14.92, 14.94, 14.96, 14.98, 15.00, 15.02, 15.04, 15.06, 15.08,
-15.10, 15.12, 15.14, 15.16, 15.18, 15.20, 15.22, 15.24, 15.26, 15.28, 15.30, 15.32, 15.34, 15.36, 15.38, 15.40, 15.42, 15.44, 15.46, 15.48, 15.50, 15.52, 15.54, 15.56, 15.58, 15.60,
-15.62, 15.64, 15.66, 15.68])
-freq_temp, sed_temp = returnIR_to_UV(45.)
-print tophat( sed_temp, freq_temp, con.c.value/((4450+470)*1e-10), con.c.value/((4450-470)*1e-10))
-print len(freq_bband)
-print interp1d(np.log10(freq_temp), sed_temp)(freq_bband)
-'''

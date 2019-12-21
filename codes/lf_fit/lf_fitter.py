@@ -53,11 +53,12 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
         	else: L_tmp=bolometric_correction(L_bol_grid,dset_id)
         
 		if return_LF[dset_name]!=None:
-			if dset_id != -4:
-                        	phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
-                        	phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
-                        	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
-                	else:
+			#if dset_id != -4:
+                        phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
+                        phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+                        PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+                	'''
+			else:
                         	phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
                         	redshift_c = c_double(redshift)
                         	input_c_1 = L_tmp.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
@@ -68,6 +69,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 					
                         	phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
                         	PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+			'''
 
 		if (len(L_data) > 0):
 			L_model = bolometric_correction(L_bol_grid,dset_id)

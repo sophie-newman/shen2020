@@ -22,31 +22,31 @@ fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
 
 #load the shared object file
-c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
+c_extenstion = CDLL(homepath+'codes/c_lib/specialuse/convolve_for_CXB.so')
 convolve_c = c_extenstion.convolve
-convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid_for_CXB)
 ##############
 c_extenstion1 = CDLL(homepath+'codes/c_lib/specialuse/CTK_convolve.so')   #only convolve CTK objects
 convolve_c1 = c_extenstion1.convolve
-convolve_c1.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+convolve_c1.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid_for_CXB)
 
 c_extenstion2 = CDLL(homepath+'codes/c_lib/specialuse/CTNabs_convolve.so') #only convolve absorbed CTN objects
 convolve_c2 = c_extenstion2.convolve
-convolve_c2.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+convolve_c2.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid_for_CXB)
 
 c_extenstion3 = CDLL(homepath+'codes/c_lib/specialuse/CTNunabs_convolve.so') #only convolve unabsorbed CTN objects
 convolve_c3 = c_extenstion3.convolve
-convolve_c3.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+convolve_c3.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid_for_CXB)
 ##############
 
 convolver_list = (convolve_c, convolve_c1, convolve_c2, convolve_c3)
 
 def get_model_lf(parameters,nu,redshift,dtg,convolver):
-        L_band = bolometric_correction(L_bol_grid,nu)
+        L_band = bolometric_correction(L_bol_grid_for_CXB,nu)
         nu_c = c_double(nu)
 	redshift_c = c_double(redshift)
 	dtg_c = c_double(dtg)
-        input_c= np.power(10.,LF(L_bol_grid,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        input_c= np.power(10.,LF(L_bol_grid_for_CXB,parameters)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         res = convolver(input_c,nu_c,redshift_c, dtg_c)
         res = [i for i in res.contents]
         PHI_band = np.array(res,dtype=np.float64)
@@ -107,10 +107,10 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
-E_list = np.logspace(-1,3,100)
+E_list = np.logspace(-1,3,15) #100
 nu_list = E_list*1000.*con.e.value/con.h.value
 
-zbins = np.linspace(0,7,50)
+zbins = np.linspace(0,7,50) 
 zcenters = (zbins[1:]+zbins[:-1])/2.
 deltaz= zbins[5]-zbins[4]
 

@@ -47,6 +47,9 @@ L_bol_grid = np.linspace(8.,18.,101)[:-1]#+0.008935
 N_bol_grid = len(L_bol_grid)
 d_log_l_bol = L_bol_grid[1]-L_bol_grid[0]
 
+L_bol_grid_for_CXB = np.linspace(6.,18.,121)[:-1]
+N_bol_grid_for_CXB = len(L_bol_grid_for_CXB)
+
 #functions
 def mkdir_p(path):
     try:

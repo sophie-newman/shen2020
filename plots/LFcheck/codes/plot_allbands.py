@@ -80,15 +80,16 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
         else: L_tmp=bolometric_correction(L_bol_grid,dset_id)
 
         if return_LF[dset_name]!=None:
-		if dset_id != -4:
-                	phi_fit_tmp1 = return_LF[dset_name](L_tmp, redshift)
-                	phi_fit_pts1 = np.interp(L_data ,L_tmp, phi_fit_tmp1)
-                	PHI_data = PHI_data + (np.mean((phi_fit_pts1))-np.mean((PHI_data)))
-			'''
-			phi_fit_tmp2 = return_LF[dset_name](L_tmp, zbin)
-                        phi_fit_pts2 = np.interp(L_data ,L_tmp, phi_fit_tmp2)
-			PHI_data = PHI_data + (phi_fit_pts1 - phi_fit_pts2)
-			'''
+		#if dset_id != -4:
+                phi_fit_tmp1 = return_LF[dset_name](L_tmp, redshift)
+                phi_fit_pts1 = np.interp(L_data ,L_tmp, phi_fit_tmp1)
+                PHI_data = PHI_data + (np.mean((phi_fit_pts1))-np.mean((PHI_data)))
+		'''
+		phi_fit_tmp2 = return_LF[dset_name](L_tmp, zbin)
+                phi_fit_pts2 = np.interp(L_data ,L_tmp, phi_fit_tmp2)
+		PHI_data = PHI_data + (phi_fit_pts1 - phi_fit_pts2)
+		'''
+		'''
 		else:	
 			phi_fit_tmp1 = return_LF[dset_name](L_tmp, redshift)
                 	redshift_c = c_double(redshift)
@@ -99,7 +100,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
                 	phi_fit_tmp1 = np.log10(np.array(res ,dtype=np.float64))
 			phi_fit_pts1 = np.interp(L_data ,L_tmp, phi_fit_tmp1)
                 	PHI_data = PHI_data + (np.mean((phi_fit_pts1))-np.mean((PHI_data)))
-			'''
+			
 			phi_fit_tmp2 = return_LF[dset_name](L_tmp, zbin)
                         redshift_c = c_double(zbin)
                         input_c_2 = np.power(10.,phi_fit_tmp2).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
@@ -109,7 +110,7 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
                         phi_fit_pts2 = np.interp(L_data ,L_tmp, phi_fit_tmp2)
 			
 			PHI_data = PHI_data + (phi_fit_pts1 - phi_fit_pts2)
-			'''
+		'''
 
 	#if len(PHI_data)==0:
 	#	print dset_name

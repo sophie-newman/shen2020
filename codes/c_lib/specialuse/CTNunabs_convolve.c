@@ -15,7 +15,7 @@ double l_band_dispersion(double log_l_bol, double nu);
 double return_tau(double log_NH, double nu, double dtg);
 
 double* convolve(double* phi_bol_grid, double nu, double redshift, double dtg) {
-	double log_l_bol_min =  8.0;
+	double log_l_bol_min =  6.0;
 	double log_l_bol_max = 18.0;
 	double d_log_l_bol = 0.1;
 	int n_l_bol_pts = (int )((log_l_bol_max-log_l_bol_min)/d_log_l_bol);

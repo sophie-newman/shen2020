@@ -72,6 +72,14 @@ def get_data(rescale=False):
 
         return alldata["L_OBS"],alldata["P_OBS"],alldata["D_OBS"],alldata["P_PRED"]
 
+def get_data_g15(rescale=False):
+        alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
+
+        for key in dset_ids_special.keys():
+                get_fit_data(alldata,zmins[key],zmaxs[key],key,dset_ids_special[key],rescale=rescale)
+
+        return alldata["L_OBS"],alldata["P_OBS"],alldata["D_OBS"],alldata["P_PRED"]
+
 #####
 def get_fit_data_Xray(alldata,parameters,zmin,zmax,dset_name,dset_id):
         alldata_tem={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([])}
@@ -180,12 +188,17 @@ ax.plot(xm,ym,'-',lw=4,c='darkorchid',label=r'$\rm Global$ $\rm fit$')
 y = return_kk18_lf_fitted(x,redshift) 
 ax.plot(x,y,'--',dashes=(25,15),c='seagreen',label=r'$\rm Kulkarni+$ $\rm 2018$')
 
+'''
 x,y,dy,yfit=get_data()
 #ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='gray',mec='gray',marker='x', ms=10, capthick=2 ,label=r'$\rm UV$ ($\rm not$ $\rm rescaled$)')
 ax.plot(x,y,linestyle='',lw=3,mew=2,c='gray',mec='gray',marker='x',ms=15,label=r'$\rm UV$ ($\rm original$)')
+'''
+
+x,y,dy,yfit=get_data_g15()
+ax.plot(x,y,linestyle='',lw=3,mew=2,c='chocolate',mec='chocolate',marker='x',ms=15)
 
 x,y,dy,yfit=get_data(rescale=True)
-ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='black',mec='black',alpha=0.8,marker='o', ms=10, capthick=2 ,label=r'$\rm UV$ ($\phi$ $\rm corrected$)')
+ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='black',mec='black',alpha=0.8,marker='o', ms=10, capthick=2 ,label=r'$\rm UV$')
 
 x,y,dy=get_data_Xray(parameters_global,xm,ym)
 ax.errorbar(x,y,yerr=dy,capsize=9,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='*', alpha=0.8, ms=15, capthick=3 ,label=r'$\rm Hard$ $\rm X-ray$')

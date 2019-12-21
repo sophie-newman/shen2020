@@ -51,10 +51,11 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 
 	#do the number density correction for potential redshift misalignment
 	if return_LF[dset_name]!=None:
-		if dset_id != -4:
-			phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
-			phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
-			PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
+		#if dset_id != -4:
+		phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
+		phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+		PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))	
+		'''
 		else:
 			phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
 			redshift_c = c_double(redshift)
@@ -66,6 +67,10 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
 
 			phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
 			PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+		''' 
+		# corrections on Miyaji2015 QLF model for extinction in the CTN regime
+		# we have experimented turning it on. it has limited impact on the QLF predictions
+		# but will lead to under-prediction of the CXB
 
 	if (len(L_data) > 0):
 			L_model = bolometric_correction(L_bol_grid,dset_id)
@@ -153,14 +158,14 @@ else:
                                 ('logphis', parameters_init[2], True, None, None, None, None),
                                 ('Lbreak' , parameters_init[3], True, None, None, None, None))
 	elif (redshift<5.8):
-		logphis_fixed=-4.07827011-0.20000886*(1+redshift)
+		logphis_fixed=-3.98947877 -0.20890465*(1+redshift)
 		#logphis_fixed=-3.94378832-0.21749887*(1+redshift)
 		params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                 	        ('gamma2' , parameters_init[1], True, None, None, None, None),
                 	        ('logphis', logphis_fixed     ,False, None, None, None, None),
                 	        ('Lbreak' , parameters_init[3], True, None, None, None, None))
 	else: # at z>5.8, use single power law to do te fit
-		logphis_fixed=-4.07827011 -0.20000886*(1+redshift)
+		logphis_fixed=-3.98947877 -0.20890465*(1+redshift)
 		#logphis_fixed=-3.94378832-0.21749887*(1+redshift)
 		params.add_many(('gamma1' , parameters_init[0], True, None, None, None, None),
                 	        ('gamma2' , parameters_init[1], True, None, None, "gamma1", None),
