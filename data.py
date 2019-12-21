@@ -7,8 +7,10 @@ import astropy.constants as con
 
 if os.path.isdir("/Users/xuejianshen/Desktop/QuasarLF/git/"):
     homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
+    withclib=False
 else:
     homepath="/home/xuejian/works/quasarLF/git/"
+    withclib=True
 
 sys.path.append(homepath+"codes/bolometric_correction/")
 sys.path.append(homepath+"codes/convolution/")
@@ -118,17 +120,17 @@ def return_dtg(z):
 
 	return MZR_Ma2016(z)/MZR_Ma2016(0) * dtg_mw
 
+if withclib==True:
+    #Xray absorption correction
+    from convolve import *
+    from ctypes import *
+    import ctypes
+    #from newx_load_miyaji15_lf_data import *
 
-#Xray absorption correction
-from convolve import *
-from ctypes import *
-import ctypes
-#from newx_load_miyaji15_lf_data import *
-
-c_extenstion_ao = CDLL(homepath+'codes/c_lib/specialuse/convolve_ao.so')
-convolve_c_ao= c_extenstion_ao.convolve
-convolve_c_ao.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
-
+    c_extenstion_ao = CDLL(homepath+'codes/c_lib/specialuse/convolve_ao.so')
+    convolve_c_ao= c_extenstion_ao.convolve
+    convolve_c_ao.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
+    
 def absorption_correction_xray(logLx , redshift):
         # correct for the absorption in the CTN regime
         L_tmp = bolometric_correction(L_bol_grid, -4)

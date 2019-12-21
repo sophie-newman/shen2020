@@ -86,7 +86,7 @@ def BHMF2(logM, logphi_s, logM_s, alpha, beta):
 	a = 10.**(logM-logM_s)
 	return 10.**logphi_s / (a**alpha + a**beta)
 xfit = np.linspace(5,12,100)
-pfit = np.log10(BHMF2(xfit, -4.008, 8.045, 1.72, 0.578))
+pfit = np.log10(BHMF2(xfit, -3.997, 8.033, 1.707, 0.569))
 #pfit = np.log10(BHMF2(xfit, -4.391, 8.645, 1.805, 0.5545))
 ax.plot(xfit , pfit-np.log10(fduty),'-', color='crimson', label=r'$\rm Deconvolved$ ($\rm total$)')
 ax.plot(xfit , pfit+np.log10(0.38),'--', dashes=(25,15), color='crimson', label=r'$\rm Deconvolved$ ($\rm type-1$)')
