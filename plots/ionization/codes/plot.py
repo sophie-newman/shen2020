@@ -18,7 +18,7 @@ import sys
 
 # local source approximation used in H07
 def Gamma_old(epsilon,z):
-	alphaEUV=-1.70
+	alphaEUV=-1.76
 	return ( 2.*(1+z)**(-1.5)*epsilon/1e24/(3.+np.abs(alphaEUV)) )
 
 # our emissivity model
@@ -27,7 +27,7 @@ def emis_model(x,eps0,a,b,c,d):
 
 # our local source approximation
 def Gamma(epsilon,z):
-        alphaEUV=-1.70
+        alphaEUV = -1.70 + 1.5 #hardening due to IGM filtering
         eta = 2.5+1.94
         Dl = 50.
         return 0.46 * (Dl/50.) * np.power((1.+z)/4.5,3.-eta) * epsilon/1e24 / (3.+np.abs(alphaEUV))
@@ -262,7 +262,7 @@ ax.set_ylabel(r'$\log{(\Gamma_{\rm -12}\,[\rm s^{-1}\,atom^{-1}])}$',fontsize=40
 #ax.text(0.25, 0.87, r'$\rm <-18$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
 ax.set_xlim(0.1,7)
-ax.set_ylim(-2.5,0.3)
+ax.set_ylim(-2.5,0.4)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
