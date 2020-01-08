@@ -21,11 +21,14 @@ The structure of the directory is as follows:
 
 ## data:
 all sorts of data dumped there, most of them are binned estimations of the QLF (check the fitting code or the plot codes to know how to load them)
+
 you can find the template SED ploted in the paper (MySED.dat), note that this SED is only for a typical luminosity (see the paper)
 
 ## plots:
 codes to generate all the plots in the paper
+
 some important plots are:
+
 * LFcheck: 
 	* various analysis on the bolometric QLF;
 	* you can find ways to load the QLF constrained by our global best-fit model there;
