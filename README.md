@@ -7,11 +7,17 @@ For those who want to use the observational data used in this work, please check
 The structure of the directory is as follows:
 
 ## codes:
-* bolometric_correction: codes to calculate the bolometric correction based our SED model; the ensemble of SEDs to measure the dispersion of the bolometric corrections are also saved there
+* bolometric_correction: 
+	* codes to calculate the bolometric correction based our SED model; 
+	* the ensemble of SEDs to measure the dispersion of the bolometric corrections are also saved there
 * c_lib: the c code for the bolometric and extinction correction adapted from the HRH07 work
 * convolution: python version of the bolometric corrections
-* lf_fit: fitting codes, including the local and global fits; the output directory contains our MCMC chains
-* obdata: the codes to load the observational data in individual paper; you might want to check the fitting code to know how to load the data from all the papers
+* lf_fit: 
+	* fitting codes, including the local and global fits; 
+	* the output directory contains our MCMC chains
+* obdata: 
+	* the codes to load the observational data in individual paper; 
+	* you might want to check the fitting code to know how to load the data from all the papers
 
 ## data:
 all sorts of data dumped there, most of them are binned estimations of the QLF (check the fitting code or the plot codes to know how to load them)
@@ -20,9 +26,10 @@ you can find the template SED ploted in the paper (MySED.dat), note that this SE
 ## plots:
 codes to generate all the plots in the paper
 some important plots are:
-* LFcheck: various analysis on the bolometric QLF;
-	you can find ways to load the QLF constrained by our global best-fit model there;
-	you can also find ways to only load and plot data points there
+* LFcheck: 
+	* various analysis on the bolometric QLF;
+	* you can find ways to load the QLF constrained by our global best-fit model there;
+	* you can also find ways to only load and plot data points there
 * ionization: predictions on the ionization budget contributed by quasars and predictions on the Lyman-continuum emissivity of quasars
 * integrated background: CXB predictions
 * Fit_parameters: analysis on the evolution of the DPL LF parameters
