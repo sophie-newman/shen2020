@@ -31,6 +31,7 @@ parameters_fix_local=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit.dat",names=['gamma1','gamma2','phis','Lbreak'])
 parameters_global_1 = pars_at_z(fit_evolve,redshift)
 
+# the global best-fit model
 source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 zref = 2.
 p=source['value'][ source['paraid']==0 ]

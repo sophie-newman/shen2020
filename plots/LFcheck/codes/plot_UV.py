@@ -17,10 +17,12 @@ from new_load_giallongo15_lf_shape import *
 redshift=float(sys.argv[1])
 dtg = return_dtg(redshift)
 
+#load a special fit done for the Giallongo15 data
 fit_res=np.genfromtxt("../../../codes/lf_fit/output/special_fit.dat",names=True)
 id=fit_res["z"]==redshift
 parameters_special=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
 
+#load our global best fit at this redshift
 source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 zref = 2.
 p=source['value'][ source['paraid']==0 ]
@@ -38,6 +40,7 @@ c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
+#functions to get binned estimations compiled
 def get_fit_data(alldata,zmin,zmax,dset_name,dset_id,rescale=False):
 	alldata_tem={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([])}
 	
@@ -172,6 +175,7 @@ y = np.log10(PHI_1450) - np.log10(2.5)
 ax.plot(x,y,'-',lw=4,c='gold',label=r'$\rm Special$ $\rm fit$')
 '''
 
+#plot the predicted QLF in the UV
 L_1450 = bolometric_correction(L_bol_grid,-5)
 nu_c = c_double(-5)
 redshift_c = c_double(redshift)
@@ -179,10 +183,10 @@ dtg_c = c_double(dtg)
 input_c= np.power(10.,LF(L_bol_grid,parameters_global)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
 res = convolve_c(input_c,nu_c,redshift_c,dtg_c)
 res = [i for i in res.contents]
-PHI_1450 = np.array(res,dtype=np.float64)
-x = -2.5*( L_1450 + L_solar - np.log10(Fab*(con.c.value/1450e-10)) )
+PHI_1450 = np.array(res,dtype=np.float64)  
+x = -2.5*( L_1450 + L_solar - np.log10(Fab*(con.c.value/1450e-10)) )  # convert lum to mag
 xm = x.copy()
-ym = np.log10(PHI_1450) - np.log10(2.5)
+ym = np.log10(PHI_1450) - np.log10(2.5) # convert to number density per mag
 ax.plot(xm,ym,'-',lw=4,c='darkorchid',label=r'$\rm Global$ $\rm fit$')
 
 y = return_kk18_lf_fitted(x,redshift) 
