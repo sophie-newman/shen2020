@@ -35,9 +35,9 @@ def load_barger_lf_data(z):  # L_HX, PHI_HX, DPHI_HX, z
 			P_HX = np.array([-4.70, -4.75, -5.00, -5.10, -5.22, -5.58, -6.30])
 			D_HX = np.array([ 0.80,  0.70,  0.80,  0.25,  0.20,  0.35,  0.45])
 		if (WHICH_BLOCK == 5):
-			L_HX = np.array([42.75, 43.25, 43.75, 44.25, 44.75, 45.25])
-			P_HX = np.array([-5.30, -5.52, -5.30, -6.05, -6.52, -6.75])
-			D_HX = np.array([ 0.70,  0.45,  0.40,  0.30,  0.45,  0.60])
+			L_HX = np.array([42.75, 43.25, 43.75, 44.25, 44.75])#, 45.25]) # the last data point is an outlier
+			P_HX = np.array([-5.30, -5.52, -5.30, -6.05, -6.52])#, -6.75])
+			D_HX = np.array([ 0.70,  0.45,  0.40,  0.30,  0.45])#,  0.60])
 		
 		# Barger et al. 2003 (highest-redshift) data
 		if (WHICH_BLOCK == 6):

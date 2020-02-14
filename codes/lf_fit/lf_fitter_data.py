@@ -172,7 +172,7 @@ zmins={
 	"WANG18":     np.array([6.45]),
 	"WILLOTT10":  np.array([5.75]),
 	"YANG16":     np.array([4.7]),
-	"YANG18":     np.array([0.5,1.0,1.5,2.0,2.5,3.0]),
+	"YANG18":     np.array([0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0]),
 	#soft xray
 	"HASINGER":np.array([0.0, 0.2, 0.4, 0.8, 1.6, 3.2]),
 	"MIYAJI":np.array([0.0, 0.2, 0.4, 0.8, 1.6, 2.3]),
@@ -240,7 +240,7 @@ zmaxs={
 	"WANG18":     np.array([7.05]),
 	"WILLOTT10":  np.array([6.45]),
 	"YANG16":     np.array([5.4]),
-	"YANG18":     np.array([1.0,1.5,2.0,2.5,3.0,3.5]),
+	"YANG18":     np.array([1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5]),
 	#HX
 	"AIRD08":      np.array([3.5]),
 	"AIRD10":      np.array([0.2,0.5,0.8,1.0,1.2,1.5,2.0,2.5,3.5]),

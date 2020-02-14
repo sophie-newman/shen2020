@@ -3,8 +3,9 @@
 from data import *
 import numpy as np
 
-def load_yang18_lf_data(z): 
-	if (z <= 0.5) or (z > 3.5): return False
+def load_yang18_lf_data(z):
+	errcorr = False 
+	if (z <= 0.5) or (z > 4.5): return False
 	elif (z>0.5) and (z<=1.0):
 		z_c = 0.75
 		M_1450=np.array([-23.5, -22.5, -21.5, -20.5])
@@ -41,23 +42,57 @@ def load_yang18_lf_data(z):
 		M_mean=np.array([-26.483, -24.457, -23.607])
 		PHI_1450=np.array([-6.478, -6.156, -5.98])
 		sigma=np.array([0.235, 0.349, 0.667])*1e-6
-	#elif (z>3.5) and (z<=4.0):	
-	#	z_c = 3.75
-	#	M_1450=np.array([-26.998, -24.835])
-	#	M_mean=np.array([-26.998, -24.835])
-	#	PHI_1450=np.array([-6.771, -6.739])
-	#	sigma=np.array([0.170, 0.183])*1e-6	
-	#elif (z>4.0) and (z<=4.5):	
-	#	z_c = 4.25
-	#	M_1450=np.array([-26.342, -25.050])
-	#	M_mean=np.array([-26.342, -25.050])
-	#	PHI_1450=np.array([-6.738, -6.532])
-	#	sigma=np.array([0.183, 0.294])*1e-6	
-	#bins with only one object are removed
+	#error corrected
+	elif (z>3.5) and (z<=4.0):	
+		errcorr=True
+		z_c = 3.75
+		M_1450=np.array([-26.998, -24.835])
+		M_mean=np.array([-26.998, -24.835])
+		PHI_1450=np.array([-6.771, -6.739])
+		#sigma=np.array([0.170, 0.183])*1e-6	
+		sigmaup  = 10**PHI_1450 * (3.3-1)
+		sigmadown= 10**PHI_1450 * (1-0.173)
+	elif (z>4.0) and (z<=4.5):
+		errcorr=True	
+		z_c = 4.25
+		M_1450=np.array([-26.342, -25.050])
+		M_mean=np.array([-26.342, -25.050])
+		PHI_1450=np.array([-6.738, -6.532])
+		#sigma=np.array([0.183, 0.294])*1e-6	
+		sigmaup  = 10**PHI_1450 * (3.3-1)
+		sigmadown= 10**PHI_1450 * (1-0.173)
 
 	M_1450 = M_1450 - 2.5*np.log10(lum_correct_cosmo_flexible(z_c, 0.7, 0.272))
 	PHI_1450 = PHI_1450 + np.log10(phi_correct_cosmo_flexible(z_c, 0.7, 0.272))
-	sigma = sigma * phi_correct_cosmo_flexible(z_c, 0.7, 0.272)
-
-	DPHI_1450= ( (np.log10(10**PHI_1450+sigma)-PHI_1450)+(PHI_1450-np.log10(10**PHI_1450-sigma)) )/2.
+	if errcorr:
+		sigmaup   = sigmaup   * phi_correct_cosmo_flexible(z_c, 0.7, 0.272)
+		sigmadown = sigmadown * phi_correct_cosmo_flexible(z_c, 0.7, 0.272)
+		DPHI_1450= ( (np.log10(10**PHI_1450+sigmaup)-PHI_1450)+(PHI_1450-np.log10(10**PHI_1450-sigmadown)) )/2.
+	else: 
+		sigma = sigma * phi_correct_cosmo_flexible(z_c, 0.7, 0.272)
+		DPHI_1450= ( (np.log10(10**PHI_1450+sigma)-PHI_1450)+(PHI_1450-np.log10(10**PHI_1450-sigma)) )/2.
 	return M_1450, PHI_1450, DPHI_1450
+
+#upper limits
+def load_yang18_upper_limit(z):
+        if (z <= 3.5) or (z > 4.5): return False
+	if (z>3.5) and (z<=4.0):
+               z_c = 3.75
+               M_1450=np.array([-26.998, -24.835])
+               M_mean=np.array([-26.998, -24.835])
+               PHI_1450=np.array([-6.771, -6.739])
+               sigma=np.array([0.170, 0.183])*1e-6
+        elif (z>4.0) and (z<=4.5):
+               z_c = 4.25
+               M_1450=np.array([-26.342, -25.050])
+               M_mean=np.array([-26.342, -25.050])
+               PHI_1450=np.array([-6.738, -6.532])
+               sigma=np.array([0.183, 0.294])*1e-6
+
+        M_1450 = M_1450 - 2.5*np.log10(lum_correct_cosmo_flexible(z_c, 0.7, 0.272))
+        PHI_1450 = PHI_1450 + np.log10(phi_correct_cosmo_flexible(z_c, 0.7, 0.272))
+        sigma = sigma * phi_correct_cosmo_flexible(z_c, 0.7, 0.272)
+
+        DPHI_1450= np.log10(10**PHI_1450+sigma)-PHI_1450
+        return M_1450, PHI_1450, DPHI_1450
+

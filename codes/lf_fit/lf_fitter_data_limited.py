@@ -48,7 +48,6 @@ from new_load_wang18_lf_data import *
 from new_load_willott10_lf_data import *
 from new_load_yang16_lf_data import *
 from new_load_yang18_lf_data import *
-from new_load_giallongo19_lf_data import *
 
 from new_load_kk18_lf_shape import *
 
@@ -60,12 +59,13 @@ from newx_load_embero09_lf_data import *
 from newx_load_fiore12_lf_data import *
 from newx_load_khorunzhev18_lf_data import *
 from newx_load_miyaji15_lf_data import *
+from newx_load_ueda14_lf_data import *
 
 from newir_load_assef11_lf_data import *
 from newir_load_lacy15_lf_data import *
 
 dset_ids_special={
-        "GIALLONGO15":-5
+	"GIALLONGO15":-5
 }
 
 dset_ids={
@@ -87,7 +87,7 @@ dset_ids={
 	#"GIALLONGO15":-5,
 	"GILKMAN11":  -5,
 	"IKEDA12":    -5,
-	"JIANG09":    -5,
+	#"JIANG09":    -5,
 	"JIANG16":    -5,
 	"KASHIKAWA15":-5,
 	"MASTER12":   -5,
@@ -104,7 +104,6 @@ dset_ids={
 	"WILLOTT10":  -5,
 	"YANG16":     -5,
 	"YANG18":     -5,
-	#"GIALLONGO19":-5,
 	#soft xray
 	#"HASINGER": -3,
 	#"MIYAJI": -3,
@@ -114,7 +113,7 @@ dset_ids={
 	"LAFRANCA": -4,
 	"SILVERMAN_HX": -4,
 	"BARGER": -4,
-	"NANDRA": -4,
+	#"NANDRA": -4,
 	"SAZREV": -4,
 	#Hard Xray New
 	"AIRD08":      -4,
@@ -126,6 +125,7 @@ dset_ids={
 	"FIORE12":     -4,
 	"KHORUNZHEV18":-4,
 	"MIYAJI15":    -4,
+	"UEDA14":      -4,
 	#soft Xray new
 	#"EBRERO09_SX": -3,
 	#INFRARED
@@ -172,8 +172,7 @@ zmins={
 	"WANG18":     np.array([6.45]),
 	"WILLOTT10":  np.array([5.75]),
 	"YANG16":     np.array([4.7]),
-	"YANG18":     np.array([0.5,1.0,1.5,2.0,2.5,3.0]),
-	"GIALLONGO19":np.array([4.0,5.0]),
+	"YANG18":     np.array([0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0]),
 	#soft xray
 	"HASINGER":np.array([0.0, 0.2, 0.4, 0.8, 1.6, 3.2]),
 	"MIYAJI":np.array([0.0, 0.2, 0.4, 0.8, 1.6, 2.3]),
@@ -182,7 +181,7 @@ zmins={
 	"LAFRANCA":np.array([0.0, 0.5, 1.0, 1.5, 2.5]),
 	"SILVERMAN_SX":np.array([0.5, 1.0, 2.0, 4.0]),
 	"SILVERMAN_HX":np.array([0.2, 1.5, 3.0]),
-	"BARGER":np.array([0.1, 0.4, 0.8, 1.5, 3.0]),
+	"BARGER":np.array([0.1, 0.4, 0.8, 1.5, 3.0, 5.0]),
 	"NANDRA":np.array([2.75]),
 	"SAZREV":np.array([0.0]),
 	#HX
@@ -196,6 +195,7 @@ zmins={
 	"FIORE12":     np.array([3.,4.,5.8]),
 	"KHORUNZHEV18":np.array([3.,3.19,3.47,3.90,4.30]),
 	"MIYAJI15":    np.array([0.015,0.20,0.40,0.80,1.60,2.30]),
+	"UEDA14":      np.array([0.002, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0, 2.4, 3.0, 4.0]),
 	#INFRARED
 	"BROWN":np.array([1.5]),
 	"MATUTE":np.array([0.0, 0.5]),
@@ -240,11 +240,10 @@ zmaxs={
 	"WANG18":     np.array([7.05]),
 	"WILLOTT10":  np.array([6.45]),
 	"YANG16":     np.array([5.4]),
-	"YANG18":     np.array([1.0,1.5,2.0,2.5,3.0,3.5]),
-	"GIALLONGO19":np.array([5.0,6.1]),
+	"YANG18":     np.array([1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5]),
 	#HX
 	"AIRD08":      np.array([3.5]),
-	"AIRD10":      np.array([0.2,0.5,0.8,1.0,1.2,1.5,2.0,2.5,3.0]),
+	"AIRD10":      np.array([0.2,0.5,0.8,1.0,1.2,1.5,2.0,2.5,3.5]),
 	"AIRD15_SX":   np.array([0.20,0.40,0.60,0.80,1.00,1.20,1.50,2.00,2.50,3.50,5.00,7.00]),
 	"AIRD15_HX":   np.array([0.20,0.40,0.60,0.80,1.00,1.20,1.50,2.00,2.50,3.50,5.00,7.00]),
 	"AIRD15_b":    np.array([0.5,1.0,3.0]),
@@ -253,6 +252,7 @@ zmaxs={
 	"FIORE12":     np.array([4.,5.,7.5]),
 	"KHORUNZHEV18":np.array([3.19,3.47,3.90,4.30,5.10]),
 	"MIYAJI15":    np.array([0.20,0.40,0.80,1.60,2.30,4.60]),
+	"UEDA14":      np.array([0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0, 2.4, 3.0, 4.0, 5.0]),
 	#Xray_or_IR
 	"HASINGER":np.array([0.2, 0.4, 0.8, 1.6, 3.2, 4.8]),
 	"MIYAJI":np.array([0.2, 0.4, 0.8, 1.6, 2.3, 4.6]),
@@ -260,7 +260,7 @@ zmaxs={
 	"LAFRANCA":np.array([0.5, 1.0, 1.5, 2.5, 3.5]),
 	"SILVERMAN_SX":np.array([1.0, 1.5, 3.0, 5.5]),
 	"SILVERMAN_HX":np.array([0.5, 2.0, 4.0]),
-	"BARGER":np.array([0.4, 0.8, 1.2, 3.0, 5.0]),
+	"BARGER":np.array([0.4, 0.8, 1.2, 3.0, 5.0, 6.5]),
 	"NANDRA":np.array([3.25]),
 	"SAZREV":np.array([0.1]),
 	#INFRARED
@@ -319,7 +319,6 @@ load_LF_data={
 	"WILLOTT10":  load_willott10_lf_data,
 	"YANG16":     load_yang16_lf_data,
 	"YANG18":     load_yang18_lf_data,
-	"GIALLONGO19":load_giallongo19_lf_data,
 	#Xray H
 	"AIRD08":      load_aird08_lf_data,
 	"AIRD10":      load_aird10_lf_data,
@@ -331,6 +330,7 @@ load_LF_data={
 	"FIORE12":     load_fiore12_lf_data,
 	"KHORUNZHEV18":load_khorunzhev18_lf_data_vitobins,
 	"MIYAJI15":    load_miyaji15_lf_data,
+	"UEDA14":      load_ueda14_lf_data,
 	#INF new
 	"ASSEF11":	   load_assef11_lf_data,
 	"LACY15":	   load_lacy15_lf_data
@@ -382,7 +382,6 @@ return_LF={
 	"WILLOTT10":  return_kk18_lf_fitted, 
 	"YANG16":     return_kk18_lf_fitted, 
 	"YANG18":     return_kk18_lf_fitted,
-	"GIALLONGO19":return_kk18_lf_fitted,
 	#Xray H
 	"AIRD08":      return_miyaji15_lf_fitted,
 	"AIRD10":      return_miyaji15_lf_fitted,
@@ -393,6 +392,7 @@ return_LF={
 	"FIORE12":     return_miyaji15_lf_fitted,
 	"KHORUNZHEV18":return_miyaji15_lf_fitted,
 	"MIYAJI15":    return_miyaji15_lf_fitted,
+	"UEDA14":      return_miyaji15_lf_fitted,
 	#Xray S
 	"EBRERO09_SX": return_hasinger_lf_fitted,
 	#INF new

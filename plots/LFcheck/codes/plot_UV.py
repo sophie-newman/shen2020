@@ -35,12 +35,25 @@ p=source['value'][ source['paraid']==3 ]
 Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
 parameters_global = np.array([gamma1,gamma2,logphi,Lbreak])
 
+#load the global fit with shallow faint end slope
+source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global_shallowfaint.dat",names=True)
+zref = 2.
+p=source['value'][ source['paraid']==0 ]
+gamma1 = powerlaw_gamma1(redshift,(p[0],zref,p[1]))
+p=source['value'][ source['paraid']==1 ]
+gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
+p=source['value'][ source['paraid']==2 ]
+logphi = polynomial(redshift,p,1)
+p=source['value'][ source['paraid']==3 ]
+Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
+parameters_global_shallowfaint = np.array([gamma1,gamma2,logphi,Lbreak])
+
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
 convolve_c = c_extenstion.convolve
 convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
-#functions to get binned estimations compiled
+#functions to get binned estimations compiled in UV
 def get_fit_data(alldata,zmin,zmax,dset_name,dset_id,rescale=False):
 	alldata_tem={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([])}
 	
@@ -59,6 +72,9 @@ def get_fit_data(alldata,zmin,zmax,dset_name,dset_id,rescale=False):
         	if return_LF[dset_name]!=None:
 			phi_fit_tmp = return_LF[dset_name](L_tmp, redshift)
 			phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+			if dset_name=="MATSUOKA18": 
+				global factor
+				factor = np.mean(phi_fit_pts)-np.mean(PHI_data)
 			PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
 	
 	if len(L_data)>0:
@@ -83,7 +99,25 @@ def get_data_g15(rescale=False):
 
         return alldata["L_OBS"],alldata["P_OBS"],alldata["D_OBS"],alldata["P_PRED"]
 
-#####
+def get_upper_limits(rescale=False):
+	if load_matsuoka18_upper_limit(redshift)!=False:
+                L_data, PHI_data, DPHI_data = load_matsuoka18_upper_limit(redshift)
+        else: return False
+
+	L_1450 = bolometric_correction(L_bol_grid,-5) + L_solar
+	M_1450 = -2.5*( L_1450 - np.log10(Fab*con.c.value/1450e-10) )
+	L_tmp  = np.sort(M_1450)
+
+	if rescale==True:
+		phi_fit_tmp = return_kk18_lf_fitted(L_tmp, redshift)
+		phi_fit_pts = np.interp(L_data ,L_tmp, phi_fit_tmp)
+		PHI_data = PHI_data + factor
+		#print factor
+		#PHI_data = PHI_data + (np.mean((phi_fit_pts))-np.mean((PHI_data)))
+
+	return L_data, PHI_data, DPHI_data
+
+##### functions to load the Xray data, and scale them to the UV QLF plane
 def get_fit_data_Xray(alldata,parameters,zmin,zmax,dset_name,dset_id):
         alldata_tem={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([])}
         if load_LF_data[dset_name](redshift)!=False:
@@ -161,7 +195,7 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
-'''
+''' #a special fit for the G15 data, deprecated in final paper
 L_1450 = bolometric_correction(L_bol_grid,-5)
 nu_c = c_double(-5)
 redshift_c = c_double(redshift)
@@ -187,12 +221,27 @@ PHI_1450 = np.array(res,dtype=np.float64)
 x = -2.5*( L_1450 + L_solar - np.log10(Fab*(con.c.value/1450e-10)) )  # convert lum to mag
 xm = x.copy()
 ym = np.log10(PHI_1450) - np.log10(2.5) # convert to number density per mag
-ax.plot(xm,ym,'-',lw=4,c='darkorchid',label=r'$\rm Global$ $\rm fit$')
+ax.plot(xm,ym,'-',lw=4,c='darkorchid',label=r'$\rm Global$ $\rm fit$ $\rm A$')
 
+#plot the predicted QLF in the UV of the shallow faint model
+L_1450 = bolometric_correction(L_bol_grid,-5)
+nu_c = c_double(-5)
+redshift_c = c_double(redshift)
+dtg_c = c_double(dtg)
+input_c= np.power(10.,LF(L_bol_grid,parameters_global_shallowfaint)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+res = convolve_c(input_c,nu_c,redshift_c,dtg_c)
+res = [i for i in res.contents]
+PHI_1450 = np.array(res,dtype=np.float64)
+x = -2.5*( L_1450 + L_solar - np.log10(Fab*(con.c.value/1450e-10)) )  # convert lum to mag
+xm = x.copy()
+ym = np.log10(PHI_1450) - np.log10(2.5) # convert to number density per mag
+ax.plot(xm,ym,'--',lw=4,c='darkorchid',label=r'$\rm Global$ $\rm fit$ $\rm B$')
+
+########## the kk18 model
 y = return_kk18_lf_fitted(x,redshift) 
 ax.plot(x,y,'--',dashes=(25,15),c='seagreen',label=r'$\rm Kulkarni+$ $\rm 2018$')
 
-'''
+''' # original data points, where no number density normalization correction is performed
 x,y,dy,yfit=get_data()
 #ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='gray',mec='gray',marker='x', ms=10, capthick=2 ,label=r'$\rm UV$ ($\rm not$ $\rm rescaled$)')
 ax.plot(x,y,linestyle='',lw=3,mew=2,c='gray',mec='gray',marker='x',ms=15,label=r'$\rm UV$ ($\rm original$)')
@@ -212,6 +261,13 @@ if (redshift<6.5) and (redshift>=4):
 	y = return_giallongo15_lf_fitted(x,redshift)
 	ax.plot(x,y,'--',dashes=(25,15),c='chocolate',label=r'$\rm Giallongo+$ $\rm 2015$')
 
+'''#plot upper limits from Matsuoka18
+if get_upper_limits(rescale=True):
+	x,y,dy=get_upper_limits(rescale=True)
+	ax.errorbar(x,y,yerr=(0.0*dy,dy),capsize=6,linestyle='',lw=2,c='crimson',mec='crimson',marker='o', ms=10, capthick=3)
+	ax.errorbar(x,y,yerr=2.*dy,uplims=True,capsize=6,linestyle='',lw=2,c='crimson',mec='crimson',marker='o', ms=10, capthick=3, label=r'$\rm Matsuoka+$ $\rm 2018$')
+'''
+
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 if redshift == 4.2:
 	ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -226,6 +282,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-plt.savefig("../figs/tension_"+str(redshift)+".pdf",fmt='pdf')
-#plt.show()
+#plt.savefig("../figs/tension_"+str(redshift)+".pdf",fmt='pdf')
+plt.show()
 

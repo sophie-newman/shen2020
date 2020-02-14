@@ -53,6 +53,11 @@ def doublepower(z,p): #double power law, definition slightly different from the 
         zref=p[1]
         return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
 
+def powerlaw_gamma1(z,p): #powerlaw, defined here for the evolution of the faint end slope
+	xsi=1.+z
+	zref=p[1]
+	return p[0] * np.power(xsi/(1+zref),p[2])
+
 def LF_at_z(L_bol,P,z,model):
 	zref = 2.
         if model=='Fiducial':
@@ -67,6 +72,18 @@ def LF_at_z(L_bol,P,z,model):
 			return np.ones(len(L_bol))*(-40.)
 		else: 
 			return P_temp
+	elif model=='ShallowFaint': #models that has shallow faint end at high z
+		xsi = 1.+z
+		gamma1=powerlaw_gamma1(z,(P[0],zref,P[1]))
+                gamma2=doublepower(z,[P[2],zref,P[3],P[4]])
+                Phis  =P[5]*T0(xsi)+P[6]*T1(xsi)
+                Lbreak=doublepower(z,[P[7],zref,P[8],P[9]])
+
+                P_temp = LF( L_bol, [gamma1,gamma2,Phis,Lbreak])
+                if len(P_temp[np.invert(np.isfinite(P_temp))])!=0:
+                        return np.ones(len(L_bol))*(-40.)
+                else:
+                        return P_temp
 
 def pars_at_z(fit_evolve,redshift):
 	zref = 2.
@@ -80,3 +97,4 @@ def pars_at_z(fit_evolve,redshift):
 	Lbreak=doublepower(redshift,(p[0],zref, p[1], p[2]))
 	parameters=np.array([gamma1,gamma2,logphis,Lbreak])
 	return parameters
+

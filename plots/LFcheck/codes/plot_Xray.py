@@ -60,6 +60,7 @@ def get_fit_data(alldata,zmin,zmax,dset_name,dset_id):
 			alldata["P_OBS"]  = np.append(alldata["P_OBS"]  , PHI_data)
 			alldata["D_OBS"]  = np.append(alldata["D_OBS"]  , DPHI_data)# + 0.01)
 	print "NAME:",dset_name
+	print L_data + L_solar
 
 def get_data():
         alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
