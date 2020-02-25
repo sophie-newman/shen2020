@@ -1,6 +1,0 @@
-cmdModule.c(567):ERROR:50: Cannot open file '/usr/local/Modules/modulefiles/libraries/hdf5/1.8.17' for 'reading'
-cmdModule.c(567):ERROR:50: Cannot open file '/usr/local/Modules/modulefiles/mpi/openmpi/2.0.1' for 'reading'
-cmdModule.c(567):ERROR:50: Cannot open file '/usr/local/Modules/modulefiles/compilers/gcc/7.3.0' for 'reading'
-cmdModule.c(567):ERROR:50: Cannot open file '/usr/local/Modules/modulefiles/languages/python/anaconda2-4.1.1' for 'reading'
-ModuleCmd_Load.c(213):ERROR:105: Unable to locate a modulefile for 'python/anaconda2-4.1.1'
-/var/spool/slurmd/job219677/slurm_script: line 12: source: activate: file not found

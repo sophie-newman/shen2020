@@ -44,8 +44,23 @@ p=source['value'][ source['paraid']==3 ]
 Lbreak = doublepower(redshift,(p[0],zref, p[1], p[2]))
 parameters_global_2 = np.array([gamma1,gamma2,logphi,Lbreak])
 
+#load the global fit with shallow faint end slope
+source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global_shallowfaint.dat",names=True)
+zref = 2.
+p=source['value'][ source['paraid']==0 ]
+gamma1 = powerlaw_gamma1(redshift,(p[0],zref,p[1]))
+p=source['value'][ source['paraid']==1 ]
+gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
+p=source['value'][ source['paraid']==2 ]
+logphi = polynomial(redshift,p,1)
+p=source['value'][ source['paraid']==3 ]
+Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
+parameters_global_shallowfaint = np.array([gamma1,gamma2,logphi,Lbreak])
+
 ############################
 # parameters of the local QLF
+source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
+zref = 2.
 p=source['value'][ source['paraid']==0 ]
 gamma1 = polynomial(0.1,p,2)
 p=source['value'][ source['paraid']==1 ]
@@ -198,14 +213,17 @@ x = L_bol_grid + L_solar
 #y = LF(L_bol_grid,parameters_free_local)
 #ax.plot(x,y,'--',dashes=(25,15),c='navy',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\rm free$)')
 y = LF(L_bol_grid,parameters_fix_local)
-ax.plot(x,y,'--',dashes=(25,15),c='chocolate',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\phi_{\ast}(z)$ $\rm fixed$)')
+ax.plot(x,y,'--',dashes=(25,15),lw=2,c='chocolate',alpha=0.7,label=r'$\rm Local$ $\rm fit$ ($\phi_{\ast}(z)$ $\rm fixed$)')
 #y = LF(L_bol_grid,parameters_global_1)
 #ax.plot(x,y,':',c='tan',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
 y = LF(L_bol_grid,parameters_global_2)
-ax.plot(x,y,'--',dashes=(25,15),c='darkorchid',label=r'$\rm Global$ $\rm fit$')
+ax.plot(x,y,'--',dashes=(25,15),c='darkorchid',label=r'$\rm Global$ $\rm fit$ $\rm A$')
 
-y = LF(L_bol_grid,parameters_global_z0)
-ax.plot(x,y,'--',dashes=(25,15),lw=2,c='cyan',label=r'$\rm Global$ $\rm fit$ ($\rm z\sim0$)')
+y = LF(L_bol_grid,parameters_global_shallowfaint)
+ax.plot(x,y,'--',dashes=(25,15),c='magenta',alpha=0.5,label=r'$\rm Global$ $\rm fit$ $\rm B$')
+
+#y = LF(L_bol_grid,parameters_global_z0)
+#ax.plot(x,y,'--',dashes=(25,15),lw=2,c='cyan',label=r'$\rm Global$ $\rm fit$ ($\rm z\sim0$)')
 
 x = L_bol_grid + L_solar 
 y = LF_at_z_H07(L_bol_grid,parameters_init,redshift,"Fiducial")
@@ -236,8 +254,8 @@ xcollect = np.append(xcollect,x)
 xcollect = np.sort(xcollect-L_solar)
 print redshift, xcollect[2], xcollect[4], len(xcollect)
 
-ax.axvline(parameters_fix_local[3]+L_solar,color='gold',lw=3,alpha=1)
-ax.axhline(parameters_fix_local[2]-np.log10(2.),color='gold',lw=3,alpha=1)
+ax.axvline(parameters_global_2[3]+L_solar,color='gold',lw=3,alpha=1)
+ax.axhline(parameters_global_2[2]-np.log10(2.),color='gold',lw=3,alpha=1)
 
 prop = matplotlib.font_manager.FontProperties(size=22.0)
 if not (redshift in [2,3,4,5,6]):
@@ -247,7 +265,6 @@ ax.set_ylabel(r'$\log{(\phi[{\rm dex}^{-1}{\rm cMpc}^{-3}])}$',fontsize=40,label
 
 ax.text(0.88, 0.92, r'${\rm z\sim'+str(redshift)+'}$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
 
-#ax.set_xlim(42.5,51.3)
 ax.set_xlim(42.5,50.3)
 ax.set_ylim(-11.2,-2.3)
 ax.tick_params(labelsize=30)

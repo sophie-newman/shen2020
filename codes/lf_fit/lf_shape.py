@@ -85,10 +85,11 @@ def LF_at_z(L_bol,P,z,model):
                 else:
                         return P_temp
 
-def pars_at_z(fit_evolve,redshift):
+def pars_at_z(fit_evolve,redshift,model="Fiducial"):
 	zref = 2.
 	p=fit_evolve['gamma1']
-	gamma1=polynomial(redshift,p)
+	if model=="Fiducial": gamma1=polynomial(redshift,p)
+	elif model=="ShallowFaint": gamma1=powerlaw_gamma1(redshift,(p[0],zref,p[1]))
 	p=fit_evolve['gamma2']
 	gamma2=doublepower(redshift,(p[0],zref, p[1], p[2]))
 	p=fit_evolve['phis']

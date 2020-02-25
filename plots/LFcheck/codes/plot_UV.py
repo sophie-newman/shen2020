@@ -223,6 +223,11 @@ xm = x.copy()
 ym = np.log10(PHI_1450) - np.log10(2.5) # convert to number density per mag
 ax.plot(xm,ym,'-',lw=4,c='darkorchid',label=r'$\rm Global$ $\rm fit$ $\rm A$')
 
+#L_x = bolometric_correction(L_bol_grid,-4)
+#print L_bol_grid[x<-20.3][0] + L_solar
+#print L_x[x<-20.3][0] + L_solar
+#exit()
+
 #plot the predicted QLF in the UV of the shallow faint model
 L_1450 = bolometric_correction(L_bol_grid,-5)
 nu_c = c_double(-5)
@@ -235,7 +240,7 @@ PHI_1450 = np.array(res,dtype=np.float64)
 x = -2.5*( L_1450 + L_solar - np.log10(Fab*(con.c.value/1450e-10)) )  # convert lum to mag
 xm = x.copy()
 ym = np.log10(PHI_1450) - np.log10(2.5) # convert to number density per mag
-ax.plot(xm,ym,'--',lw=4,c='darkorchid',label=r'$\rm Global$ $\rm fit$ $\rm B$')
+ax.plot(xm,ym,'-',lw=4,c='magenta',alpha=0.5,label=r'$\rm Global$ $\rm fit$ $\rm B$')
 
 ########## the kk18 model
 y = return_kk18_lf_fitted(x,redshift) 
