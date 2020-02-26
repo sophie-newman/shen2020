@@ -28,6 +28,13 @@ def doublepower(z,p):
 	zref=p[1]
 	return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
 
+def powerlaw_gamma1(z,p): #powerlaw, defined here for the evolution of the faint end slope
+        xsi=1.+z
+        zref=p[1]
+        return p[0] * np.power(xsi/(1+zref),p[2])
+
+##########################
+
 def bestfit(z,field):
 	source=np.genfromtxt("zevolution_fit.dat",names=['gamma1','gamma2','phi_s','Lbreak'])
 	p=source[field]
@@ -47,6 +54,17 @@ def bestfit_global(z,paraid):
 	elif (paraid==2):
 		return polynomial(z,p,1)
 	else: return doublepower(z,(p[0],zref,p[1],p[2]))
+
+def bestfit_global_shallowfaint(z,paraid):
+        source=np.genfromtxt("zevolution_fit_global_shallowfaint.dat",names=True)
+        zref = 2.0
+        p=source['value'][ source['paraid']==paraid ]
+        print p
+        if (paraid==0):
+                return powerlaw_gamma1(z,(p[0],zref,p[1]))
+        elif (paraid==2):
+                return polynomial(z,p,1)
+        else: return doublepower(z,(p[0],zref,p[1],p[2]))
 
 def Hopkins07(z):
 	parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
@@ -109,7 +127,8 @@ data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 ax.plot(data["z"],data["gamma1"],linestyle='',marker='^',
 	c='gray',mec='gray',ms=18,label=r'$\rm Quasar:$ $\rm local$ $\rm fits$ ($\phi_{\ast}(z)$ $\rm fixed$)')
 
-ax.plot(z_a,bestfit_global(z_a,0),'-',c='black',lw=6,label=r'$\rm Quasar:$ $\rm global$ $\rm fit$')
+ax.plot(z_a,bestfit_global(z_a,0),'-',c='black',lw=6,label=r'$\rm Quasar:$ $\rm global$ $\rm fit$ $\rm A$')
+ax.plot(z_a,bestfit_global_shallowfaint(z_a,0),'--',dashes=(25,15),c='black',lw=6,label=r'$\rm Quasar:$ $\rm global$ $\rm fit$ $\rm B$')
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)

@@ -11,6 +11,7 @@ matplotlib.rc('ytick.minor', size=7.5, width=3)
 matplotlib.rc('lines',linewidth=4)
 matplotlib.rc('axes', linewidth=4)
 
+######utilities
 T0 = np.polynomial.chebyshev.Chebyshev((1,0,0,0))
 T1 = np.polynomial.chebyshev.Chebyshev((0,1,0,0))
 T2 = np.polynomial.chebyshev.Chebyshev((0,0,1,0))
@@ -28,6 +29,13 @@ def doublepower(z,p):
 	zref=p[1]
 	return 2*p[0]/(np.power(xsi/(1+zref),p[2]) + np.power(xsi/(1+zref),p[3]))
 
+def powerlaw_gamma1(z,p): #powerlaw, defined here for the evolution of the faint end slope
+        xsi=1.+z
+        zref=p[1]
+        return p[0] * np.power(xsi/(1+zref),p[2])
+##############
+
+###load bestfits
 def bestfit(z,field):
 	source=np.genfromtxt("zevolution_fit.dat",names=['gamma1','gamma2','phi_s','Lbreak'])
 	p=source[field]
@@ -48,6 +56,17 @@ def bestfit_global(z,paraid):
 		return polynomial(z,p,1)
 	else: return doublepower(z,(p[0],zref,p[1],p[2]))
 
+def bestfit_global_shallowfaint(z,paraid):
+	source=np.genfromtxt("zevolution_fit_global_shallowfaint.dat",names=True)
+        zref = 2.0
+        p=source['value'][ source['paraid']==paraid ]
+        print p
+        if (paraid==0):
+                return powerlaw_gamma1(z,(p[0],zref,p[1]))
+        elif (paraid==2):
+                return polynomial(z,p,1)
+        else: return doublepower(z,(p[0],zref,p[1],p[2]))
+
 def Hopkins07(z):
 	parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.63150872, -11.76356000, -14.24983300, -0.62298947, 1.45993930, -0.79280099])
 	xsi_log	= np.log10((1.+z)/(1.+2.))
@@ -63,6 +82,8 @@ def Hopkins07(z):
 	gamma2   = 2.*gamma2_0 / (np.power(10., xsi_log*k_gamma2_1) + np.power(10., xsi_log*k_gamma2_2))
 	Lbreak  = L0 + k1*xsi_log + k2*xsi_log**2 + k3*xsi_log**3
 	return gamma1,gamma2,P0*np.ones(len(z)),Lbreak
+
+#################################
 
 z_a=np.linspace(0.01,8,1000)
 gamma1_a, gamma2_a, phi_s_a, Lbreak_a = Hopkins07(z_a)
@@ -80,8 +101,10 @@ ax.plot(data["z"],data["gamma1"],linestyle='',marker='o',
 
 ax.plot(z_a,gamma1_a,'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 ax.plot(z_a,bestfit(z_a,'gamma1'),'-',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
-ax.plot(z_a,bestfit_global(z_a,0),'-',c='darkorchid',label=r'$\rm Global$ $\rm fit$')
+ax.plot(z_a,bestfit_global(z_a,0),'-',c='darkorchid',label=r'$\rm Global$ $\rm fit$ $\rm A$')
+ax.plot(z_a,bestfit_global_shallowfaint(z_a,0),'-',c='magenta',alpha=0.5,label=r'$\rm Global$ $\rm fit$ $\rm B$')
 
+ax.axhspan(1,2,color='gold',alpha=0.7,label=r'$\rm Divergence$')
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
@@ -108,8 +131,9 @@ ax.plot(data["z"],data["gamma2"],linestyle='',marker='o',c='royalblue',mec='roya
 ax.plot(z_a,gamma2_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a,bestfit(z_a,'gamma2'),'-',c='seagreen')
 ax.plot(z_a,bestfit_global(z_a,1),'-',c='darkorchid')
+ax.plot(z_a,bestfit_global_shallowfaint(z_a,1),'-',c='magenta',alpha=0.5)
 
-ax.axhspan(0,1,color='gold',alpha=1,label=r'$\rm Divergence$')
+ax.axhspan(0,1,color='gold',alpha=0.7,label=r'$\rm Divergence$')
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
@@ -138,6 +162,7 @@ ax.plot(data["z"][unfix],data["phi_s"][unfix],linestyle='',marker='o',c='royalbl
 ax.plot(z_a,phi_s_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a,bestfit(z_a,'phi_s'),'-',c='seagreen') 
 ax.plot(z_a,bestfit_global(z_a,2),'-',c='darkorchid')
+ax.plot(z_a,bestfit_global_shallowfaint(z_a,2),'-',c='magenta',alpha=0.5)
 
 #prop = matplotlib.font_manager.FontProperties(size=25.0)
 #ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -232,6 +257,7 @@ ax.plot(data["z"],data["L_s"],linestyle='',marker='o',c='royalblue',mec='royalbl
 ax.plot(z_a,Lbreak_a,'--',dashes=(25,15),c='crimson')
 ax.plot(z_a,bestfit(z_a,'Lbreak'),'-',c='seagreen')
 ax.plot(z_a,bestfit_global(z_a,3),'-',c='darkorchid')
+ax.plot(z_a,bestfit_global_shallowfaint(z_a,3),'-',c='magenta',alpha=0.5)
 
 #limit = np.genfromtxt("../../fitresult/stat_limit.dat",names=True)
 #ax.step(limit['z'],limit['Lmin3'],where='mid',linestyle=':',color='chocolate',label=r'$\rm 3$ $\rm data$ $\rm points$ $\rm limit$')
