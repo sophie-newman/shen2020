@@ -10,13 +10,13 @@ x,y = data[:,0],data[:,1]
 args,cov = curve_fit(function, x, y, p0=np.array([24., 6,  1., 1., 25.]))#,
 	#bounds=([20,0,0,0,20],[30,np.inf,np.inf,np.inf,30]))
 print args
-
-print cov
+#print cov
 
 import matplotlib.pyplot as plt
 plt.plot(x,y)
 
 xf = np.linspace(0,7,100)
 plt.plot(xf, function(xf,*args))
+plt.plot(xf, function(xf, 24.108, 5.865, -0.731, 3.055,15.6))
 plt.show()
 

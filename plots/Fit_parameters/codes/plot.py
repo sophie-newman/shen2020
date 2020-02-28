@@ -157,7 +157,7 @@ ax.errorbar(data["z"],data["phi_s"],yerr=data['err3'],linestyle='',marker='o',c=
 data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 fixid = data['err3']==0
 unfix = data['err3']!=0
-ax.plot(data["z"][fixid],data["phi_s"][fixid],linestyle='',marker='o',fillstyle='none', mew=3,c='black',mec='black',ms=18)
+ax.plot(data["z"][fixid],data["phi_s"][fixid],linestyle='',marker='o',fillstyle='none', mew=3,c='royalblue',mec='royalblue',ms=18)
 ax.plot(data["z"][unfix],data["phi_s"][unfix],linestyle='',marker='o',c='royalblue',mec='royalblue',ms=18)
 
 ax.plot(z_a,phi_s_a,'--',dashes=(25,15),c='crimson')
