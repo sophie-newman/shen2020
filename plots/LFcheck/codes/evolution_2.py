@@ -33,34 +33,38 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
-def plot_for_z(redshift,color):
-	'''
-        fit_res=np.genfromtxt("../../fitresult/fit_at_z_nofix.dat",names=True)
-        id=fit_res["z"]==redshift
-        parameters_free_local=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
+def plot_for_z(redshift,color,model="Fiducial"):
+	if model=="Fiducial":
+                source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
+                zref = 2.
+                p=source['value'][ source['paraid']==0 ]
+                gamma1 = polynomial(redshift,p,2)
+                p=source['value'][ source['paraid']==1 ]
+                gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
+                p=source['value'][ source['paraid']==2 ]
+                logphi = polynomial(redshift,p,1)
+                p=source['value'][ source['paraid']==3 ]
+                Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
+                if (gamma1>gamma2) and (redshift>7):
+                        gamma1 = gamma2
+                parameters_global = np.array([gamma1,gamma2,logphi,Lbreak])
+        elif model=="Shallowfaint":
+                source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global_shallowfaint.dat",names=True)
+                zref = 2.
+                p=source['value'][ source['paraid']==0 ]
+                gamma1 = powerlaw_gamma1(redshift,(p[0],zref,p[1]))
+                p=source['value'][ source['paraid']==1 ]
+                gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
+                p=source['value'][ source['paraid']==2 ]
+                logphi = polynomial(redshift,p,1)
+                p=source['value'][ source['paraid']==3 ]
+                Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
+                parameters_global = np.array([gamma1,gamma2,logphi,Lbreak])
 
-        fit_res=np.genfromtxt("../../fitresult/fit_at_z.dat",names=True)
-        id=fit_res["z"]==redshift
-        parameters_fix_local=np.array([ fit_res["gamma1"][id],fit_res["gamma2"][id],fit_res["phi_s"][id],fit_res["L_s"][id]])
-
-        fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit.dat",names=['gamma1','gamma2','phis','Lbreak'])
-        parameters_global_1 = pars_at_z(fit_evolve,redshift)
-	'''
-        source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
-	zref = 2.
-        p=source['value'][ source['paraid']==0 ]
-        gamma1 = polynomial(redshift,p,2)
-        p=source['value'][ source['paraid']==1 ]
-        gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
-        p=source['value'][ source['paraid']==2 ]
-        logphi = polynomial(redshift,p,1)
-        p=source['value'][ source['paraid']==3 ]
-        Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
-        parameters_global_2 = np.array([gamma1,gamma2,logphi,Lbreak])
-
-	x = L_bol_grid + L_solar 
-	y = LF(L_bol_grid,parameters_global_2)
-	ax.plot(x,y,'-',c=color,label=r'$\rm z=$'+str(redshift))
+	x = L_bol_grid + L_solar
+        y = LF(L_bol_grid,parameters_global)
+        if model=="Fiducial": ax.plot(x,y,'-',c=color,label=r'$\rm z=$'+str(redshift))
+        elif model=="Shallowfaint": ax.plot(x,y,'--',dashes=(25,15),c=color)
 
 #color_control = np.linspace(0,1,6)
 colors = ["#fee5d9","#fcbba1","#fc9272","#fb6a4a","#de2d26","#a50f15"]
@@ -68,6 +72,7 @@ i=0
 for redshift in [0.2,0.4,0.8,1.2,1.8,2.4]:
 	#plot_for_z(redshift,(color_control[i],0,1-color_control[i]))
 	plot_for_z(redshift,colors[5-i])
+	plot_for_z(redshift,colors[5-i],model="Shallowfaint")
 	i+=1
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)

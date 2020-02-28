@@ -26,6 +26,10 @@ zpoints=np.array(pz)
 
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
+
+fit_evolve_shallowfaint=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global_shallowfaint.dat",names=True)
+paraid_shallowfaint, pglobal_shallowfaint, pglobal_err_shallowfaint = fit_evolve_shallowfaint['paraid'], fit_evolve_shallowfaint['value'], (fit_evolve_shallowfaint['uperr']+fit_evolve_shallowfaint['loerr'])/2.
+
 zlist=np.linspace(0.1,7,100)
 
 #load the shared object file
@@ -79,17 +83,30 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
-def get_model_lf_global(parameters,nu,redshift,magnitude=False):
-	zref = 2.
-        p=parameters[paraid==0]
-        gamma1 = polynomial(redshift,p,2)
-        p=parameters[paraid==1]
-        gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
-        p=parameters[paraid==2]
-        logphi = polynomial(redshift,p,1)
-        p=parameters[paraid==3]
-        Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
-        parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
+def get_model_lf_global(parameters,nu,redshift,magnitude=False,model="Fiducial"):
+	if model=="Fiducial":
+		zref = 2.
+        	p=parameters[paraid==0]
+        	gamma1 = polynomial(redshift,p,2)
+        	p=parameters[paraid==1]
+        	gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
+        	p=parameters[paraid==2]
+        	logphi = polynomial(redshift,p,1)
+        	p=parameters[paraid==3]
+        	Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
+        	parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
+        elif model=="Shallowfaint":
+                zref = 2.
+                p=parameters[paraid_shallowfaint==0]
+                gamma1 = powerlaw_gamma1(redshift,(p[0],zref,p[1]))
+                p=parameters[paraid_shallowfaint==1]
+                gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
+                p=parameters[paraid_shallowfaint==2]
+                logphi = polynomial(redshift,p,1)
+                p=parameters[paraid_shallowfaint==3]
+                Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
+                parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
+
         return get_model_lf(parameters_at_z,nu,redshift,magnitude=magnitude)
 
 def get_model_lf(parameters,nu,redshift,magnitude=False):
@@ -133,6 +150,16 @@ for i in range(len(zlist)):
 ax.plot(zlist,result[:,0],'-',c='darkorchid')
 ax.plot(zlist,result[:,1],'-',c='darkorchid')
 ax.plot(zlist,result[:,2],'-',c='darkorchid')
+
+result=np.zeros((len(zlist),3))
+for i in range(len(zlist)):
+        L_HX, PHI_HX = get_model_lf_global(pglobal_shallowfaint, -4, zlist[i],model="Shallowfaint")
+        result[i,0]=np.log10(cumulative_count(L_HX+L_solar,np.log10(PHI_HX),43.,44.))
+        result[i,1]=np.log10(cumulative_count(L_HX+L_solar,np.log10(PHI_HX),44.,45.))
+        result[i,2]=np.log10(cumulative_count(L_HX+L_solar,np.log10(PHI_HX),45.,46.))
+ax.plot(zlist,result[:,0],'-',c='magenta',alpha=0.5)
+ax.plot(zlist,result[:,1],'-',c='magenta',alpha=0.5)
+ax.plot(zlist,result[:,2],'-',c='magenta',alpha=0.5)
 
 '''
 result=np.zeros((len(zpoints),3))

@@ -7,7 +7,7 @@ T1 = np.polynomial.chebyshev.Chebyshev((0,1,0,0))
 T2 = np.polynomial.chebyshev.Chebyshev((0,0,1,0))
 T3 = np.polynomial.chebyshev.Chebyshev((0,0,0,1))
 
-# Function to return the analytical Kulkarni et al. (2006) luminosity function 
+# Function to return the analytical Kulkarni et al. (2018) luminosity function 
 #   for a list of M1450 at redshift z
 #   (for an Omega_M = 0.3, Omega_Lambd = 0.7 cosmology)
 #

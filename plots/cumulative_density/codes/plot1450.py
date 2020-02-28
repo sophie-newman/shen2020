@@ -27,6 +27,10 @@ zpoints=np.array(pz)
 
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
+
+fit_evolve_shallowfaint=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global_shallowfaint.dat",names=True)
+paraid_shallowfaint, pglobal_shallowfaint, pglobal_err_shallowfaint = fit_evolve_shallowfaint['paraid'], fit_evolve_shallowfaint['value'], (fit_evolve_shallowfaint['uperr']+fit_evolve_shallowfaint['loerr'])/2.
+
 zlist=np.linspace(0.1,7,100)
 
 #load the shared object file
@@ -80,17 +84,30 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
-def get_model_lf_global(parameters,nu,redshift,magnitude=False):
-	zref = 2.
-        p=parameters[paraid==0]
-        gamma1 = polynomial(redshift,p,2)
-        p=parameters[paraid==1]
-        gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
-        p=parameters[paraid==2]
-        logphi = polynomial(redshift,p,1)
-        p=parameters[paraid==3]
-        Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
-        parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
+def get_model_lf_global(parameters,nu,redshift,magnitude=False, model="Fiducial"):
+	if model=="Fiducial":
+		zref = 2.
+        	p=parameters[paraid==0]
+        	gamma1 = polynomial(redshift,p,2)
+        	p=parameters[paraid==1]
+        	gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
+        	p=parameters[paraid==2]
+        	logphi = polynomial(redshift,p,1)
+        	p=parameters[paraid==3]
+        	Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
+        	parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
+	elif model=="Shallowfaint":
+		zref = 2.
+		p=parameters[paraid_shallowfaint==0]
+		gamma1 = powerlaw_gamma1(redshift,(p[0],zref,p[1]))
+		p=parameters[paraid_shallowfaint==1]
+		gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
+		p=parameters[paraid_shallowfaint==2]
+		logphi = polynomial(redshift,p,1)
+		p=parameters[paraid_shallowfaint==3]
+		Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
+		parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])		
+
         return get_model_lf(parameters_at_z,nu,redshift,magnitude=magnitude)
 
 def get_model_lf(parameters,nu,redshift,magnitude=False):
@@ -150,6 +167,18 @@ for i in range(len(zlist)):
 ax.plot(zlist,result[:,0],'-',c='darkorchid')#,label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
 ax.plot(zlist,result[:,1],'-',c='darkorchid')
 ax.plot(zlist,result[:,2],'-',c='darkorchid')
+
+result=np.zeros((len(zlist),3))
+for i in range(len(zlist)):
+        M_1450, PHI_1450 = get_model_lf_global(pglobal_shallowfaint, -5, zlist[i], magnitude=True, model="Shallowfaint")
+        result[i,0]=np.log10( cumulative_count(M_1450, PHI_1450, lowlimit, -18, ABmag=True))
+        result[i,1]=np.log10( cumulative_count(M_1450, PHI_1450, lowlimit, -21, ABmag=True))
+        result[i,2]=np.log10( cumulative_count(M_1450, PHI_1450, lowlimit, -24, ABmag=True))
+ax.plot(zlist,result[:,0],'-',c='magenta',alpha=0.5)#,label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
+ax.plot(zlist,result[:,1],'-',c='magenta',alpha=0.5)
+ax.plot(zlist,result[:,2],'-',c='magenta',alpha=0.5)
+
+
 '''
 result=np.zeros((len(zpoints),3))
 for i in range(len(zpoints)):
@@ -168,8 +197,8 @@ ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\Phi[{\rm cMpc}^{-3}])}$',fontsize=40,labelpad=5)
 
 ax.text(0.25, 0.45, r'$\rm <-24$'  ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
-ax.text(0.25, 0.64, r'$\rm <-21$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
-ax.text(0.25, 0.87, r'$\rm <-18$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
+ax.text(0.25, 0.63, r'$\rm <-21$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
+ax.text(0.25, 0.83, r'$\rm <-18$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30,color='gray')
 
 ax.text(0.2, 0.1, r'$\rm UV$ $\rm 1450\AA$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40,color='navy')
 

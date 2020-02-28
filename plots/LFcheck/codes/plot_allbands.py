@@ -164,13 +164,21 @@ def get_fit_data(alldata,parameters,zmin,zmax,dset_name,dset_id):
                         alldata["Z_TOT"]  = np.append(alldata["Z_TOT"]  , np.ones(len(L_data)) * redshift)
                         alldata["ID"]     = np.append(alldata["ID"]     , np.ones(len(L_data)) * dset_id)
 
+			#determine the length of the luminosity bins
+			#very rough estimate here, based on the distance to the next luminosity
+			#only work for the bright end
+			if dset_id==-5: d_Ldata = (L_data[1:] - L_data[:-1]) * 0.4 
+			else: d_Ldata = L_data[1:] - L_data[:-1]
+			d_Ldata = np.append(np.array([0]), d_Ldata)/2.
+			alldata["D_LOBS"] = np.append(alldata["D_LOBS"], d_Ldata)
+
                         alldata_tem["P_PRED"] = np.append(alldata_tem["P_PRED"] , phi_i)
                         alldata_tem["L_OBS"]  = np.append(alldata_tem["L_OBS"]  , L_data)
                         alldata_tem["P_OBS"]  = np.append(alldata_tem["P_OBS"]  , PHI_data)
                         alldata_tem["D_OBS"]  = np.append(alldata_tem["D_OBS"]  , DPHI_data + 0.01)
 
 def get_data(parameters,dataid):
-        alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([])}
+        alldata={"P_PRED":np.array([]),"L_OBS":np.array([]),"P_OBS":np.array([]),"D_OBS":np.array([]),"Z_TOT":np.array([]),"B":np.array([]),"ID":np.array([]),"D_LOBS":np.array([])}
         for key in dset_ids.keys():
                 get_fit_data(alldata,parameters,zmins[key],zmaxs[key],key,dset_ids[key])
 
@@ -192,7 +200,7 @@ def get_data(parameters,dataid):
 	x = L_bol_grid
 	y = LF(L_bol_grid,parameters)
 	phi_fit_pts = np.interp(logLbol, x, y)
-        return logLbol+L_solar, phi_fit_pts+(alldata["P_OBS"][select]-alldata["P_PRED"][select]),alldata["D_OBS"][select]
+        return logLbol+L_solar, phi_fit_pts+(alldata["P_OBS"][select]-alldata["P_PRED"][select]),alldata["D_OBS"][select], alldata["D_LOBS"][select]
 
 
 import matplotlib.pyplot as plt 
@@ -222,8 +230,8 @@ ax.plot(x,y,'--',dashes=(25,15),c='darkorchid',label=r'$\rm Global$ $\rm fit$ $\
 y = LF(L_bol_grid,parameters_global_shallowfaint)
 ax.plot(x,y,'--',dashes=(25,15),c='magenta',alpha=0.5,label=r'$\rm Global$ $\rm fit$ $\rm B$')
 
-#y = LF(L_bol_grid,parameters_global_z0)
-#ax.plot(x,y,'--',dashes=(25,15),lw=2,c='cyan',label=r'$\rm Global$ $\rm fit$ ($\rm z\sim0$)')
+y = LF(L_bol_grid,parameters_global_z0)
+ax.plot(x,y,':',lw=4,c='cyan',label=r'$\rm Global$ $\rm fit$ ($\rm z\sim0$)')
 
 x = L_bol_grid + L_solar 
 y = LF_at_z_H07(L_bol_grid,parameters_init,redshift,"Fiducial")
@@ -231,31 +239,41 @@ ax.plot(x,y,'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
 
 xcollect = np.array([])
 
-x,y,dy=get_data(parameters_fix_local,dataid=-5)
-ax.errorbar(x,y,yerr=dy,linestyle='none',c='seagreen',mec='seagreen',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm UV$ $\rm 1450\AA$')
+x,y,dy,dx=get_data(parameters_fix_local,dataid=-5)
+id1 = (x>48.5) #& (dx>0.5)
+ax.errorbar(x,y,yerr=dy,fillstyle='none',linestyle='none',c='seagreen',mec='seagreen',marker='o',ms=10,capsize=6,capthick=2,lw=2,mew=2,label=r'$\rm UV$ $\rm 1450\AA$')
+ax.errorbar(x[id1],y[id1],yerr=dy[id1],xerr=dx[id1],fillstyle='none',linestyle='none',c='seagreen',mec='seagreen',marker='o',ms=10,capsize=6,capthick=2,lw=2,mew=2)
 xcollect = np.append(xcollect,x)
 
-x,y,dy=get_data(parameters_fix_local,dataid=-1)
-ax.errorbar(x,y,yerr=dy,linestyle='none',c='pink',mec='pink',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm B$ $\rm Band$')
+x,y,dy,dx=get_data(parameters_fix_local,dataid=-1)
+id1 = (x>48.5) #& (dx>0.5)
+ax.errorbar(x,y,yerr=dy,fillstyle='none',linestyle='none',c='pink',mec='pink',marker='o',ms=10,capsize=6,capthick=2,lw=2,mew=2,label=r'$\rm B$ $\rm Band$')
+ax.errorbar(x[id1],y[id1],yerr=dy[id1],xerr=dx[id1],fillstyle='none',linestyle='none',c='pink',mec='pink',marker='o',ms=10,capsize=6,capthick=2,lw=2,mew=2)
 xcollect = np.append(xcollect,x)
 
-x,y,dy=get_data(parameters_fix_local,dataid=-4)
-ax.errorbar(x,y,yerr=dy,linestyle='none',c='royalblue',mec='royalblue',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm Hard$ $\rm X-ray$')
+x,y,dy,dx=get_data(parameters_fix_local,dataid=-4)
+id1 = (x>48.5) #& (dx>0.5)
+ax.errorbar(x,y,yerr=dy,fillstyle='none',linestyle='none',c='royalblue',mec='royalblue',marker='o',ms=10,capsize=6,capthick=2,lw=2,mew=2,label=r'$\rm Hard$ $\rm X-ray$')
+ax.errorbar(x[id1],y[id1],yerr=dy[id1],xerr=dx[id1],fillstyle='none',linestyle='none',c='royalblue',mec='royalblue',marker='o',ms=10,capsize=6,capthick=2,lw=2,mew=2)
 xcollect = np.append(xcollect,x)
 
-x,y,dy=get_data(parameters_fix_local,dataid=-3)
-ax.errorbar(x,y,yerr=dy,linestyle='none',c='gray',mec='gray',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm Soft$ $\rm X-ray$')
+x,y,dy,dx=get_data(parameters_fix_local,dataid=-3)
+id1 = (x>48.5) #& (dx>0.5)
+ax.errorbar(x,y,yerr=dy,fillstyle='none',linestyle='none',c='gray',mec='gray',marker='o',ms=10,capsize=6,capthick=2,lw=2,mew=2,label=r'$\rm Soft$ $\rm X-ray$')
+ax.errorbar(x[id1],y[id1],yerr=dy[id1],xerr=dx[id1],fillstyle='none',linestyle='none',c='gray',mec='gray',marker='o',ms=10,capsize=6,capthick=2,lw=2,mew=2)
 xcollect = np.append(xcollect,x)
 
-x,y,dy=get_data(parameters_fix_local,dataid=-2)
-ax.errorbar(x,y,yerr=dy,linestyle='none',c='olive',mec='olive',marker='o',ms=10,capsize=6,capthick=2,lw=2,label=r'$\rm Mid$ $\rm IR$')
+x,y,dy,dx=get_data(parameters_fix_local,dataid=-2)
+id1 = (x>48.5) #& (dx>0.5)
+ax.errorbar(x,y,yerr=dy,fillstyle='none',linestyle='none',c='olive',mec='olive',marker='o',ms=10,capsize=6,capthick=2,lw=2,mew=2,label=r'$\rm Mid$ $\rm IR$')
+ax.errorbar(x[id1],y[id1],yerr=dy[id1],xerr=dx[id1],fillstyle='none',linestyle='none',c='olive',mec='olive',marker='o',ms=10,capsize=6,capthick=2,lw=2,mew=2)
 xcollect = np.append(xcollect,x)
 
 xcollect = np.sort(xcollect-L_solar)
 print redshift, xcollect[2], xcollect[4], len(xcollect)
 
-ax.axvline(parameters_global_2[3]+L_solar,color='gold',lw=3,alpha=1)
-ax.axhline(parameters_global_2[2]-np.log10(2.),color='gold',lw=3,alpha=1)
+ax.axvline(parameters_global_2[3]+L_solar,color='gold',lw=3,alpha=0.8)
+ax.axhline(parameters_global_2[2]-np.log10(2.),color='gold',lw=3,alpha=0.8)
 
 prop = matplotlib.font_manager.FontProperties(size=22.0)
 if not (redshift in [2,3,4,5,6]):
@@ -271,6 +289,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
+#plt.show()
 

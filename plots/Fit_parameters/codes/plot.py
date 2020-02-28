@@ -100,11 +100,12 @@ ax.plot(data["z"],data["gamma1"],linestyle='',marker='o',
 	c='royalblue',mec='royalblue',ms=18,label=r'$\rm Local$ $\rm fits$ ($\phi_{\ast}(z)$ $\rm fixed$)')
 
 ax.plot(z_a,gamma1_a,'--',dashes=(25,15),c='crimson',label=r'$\rm Hopkins+$ $\rm 2007$')
-ax.plot(z_a,bestfit(z_a,'gamma1'),'-',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
+#ax.plot(z_a,bestfit(z_a,'gamma1'),'-',c='seagreen',label=r'$\rm Fit$ $\rm on$ $\rm local$ $\rm fits$')
 ax.plot(z_a,bestfit_global(z_a,0),'-',c='darkorchid',label=r'$\rm Global$ $\rm fit$ $\rm A$')
 ax.plot(z_a,bestfit_global_shallowfaint(z_a,0),'-',c='magenta',alpha=0.5,label=r'$\rm Global$ $\rm fit$ $\rm B$')
 
-ax.axhspan(1,2,color='gold',alpha=0.7,label=r'$\rm Divergence$')
+ax.plot((4,7),(1,1),'--',dashes=(25,15),color='gold',alpha=0.8,label=r'$\rm Divergence$')
+
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
@@ -129,11 +130,11 @@ ax.plot(data["z"],data["gamma2"],linestyle='',marker='o',c='royalblue',mec='roya
 
 
 ax.plot(z_a,gamma2_a,'--',dashes=(25,15),c='crimson')
-ax.plot(z_a,bestfit(z_a,'gamma2'),'-',c='seagreen')
+#ax.plot(z_a,bestfit(z_a,'gamma2'),'-',c='seagreen')
 ax.plot(z_a,bestfit_global(z_a,1),'-',c='darkorchid')
 ax.plot(z_a,bestfit_global_shallowfaint(z_a,1),'-',c='magenta',alpha=0.5)
 
-ax.axhspan(0,1,color='gold',alpha=0.7,label=r'$\rm Divergence$')
+ax.axhspan(0,1,color='gold',alpha=0.8,label=r'$\rm Divergence$')
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)
 ax.set_xlabel(r'$\rm z$',fontsize=40,labelpad=2.5)
@@ -160,7 +161,7 @@ ax.plot(data["z"][fixid],data["phi_s"][fixid],linestyle='',marker='o',fillstyle=
 ax.plot(data["z"][unfix],data["phi_s"][unfix],linestyle='',marker='o',c='royalblue',mec='royalblue',ms=18)
 
 ax.plot(z_a,phi_s_a,'--',dashes=(25,15),c='crimson')
-ax.plot(z_a,bestfit(z_a,'phi_s'),'-',c='seagreen') 
+#ax.plot(z_a,bestfit(z_a,'phi_s'),'-',c='seagreen') 
 ax.plot(z_a,bestfit_global(z_a,2),'-',c='darkorchid')
 ax.plot(z_a,bestfit_global_shallowfaint(z_a,2),'-',c='magenta',alpha=0.5)
 
@@ -255,7 +256,7 @@ data=np.genfromtxt("../../../codes/lf_fit/output/fit_at_z_fix.dat",names=True)
 ax.plot(data["z"],data["L_s"],linestyle='',marker='o',c='royalblue',mec='royalblue',ms=18)
 
 ax.plot(z_a,Lbreak_a,'--',dashes=(25,15),c='crimson')
-ax.plot(z_a,bestfit(z_a,'Lbreak'),'-',c='seagreen')
+#ax.plot(z_a,bestfit(z_a,'Lbreak'),'-',c='seagreen')
 ax.plot(z_a,bestfit_global(z_a,3),'-',c='darkorchid')
 ax.plot(z_a,bestfit_global_shallowfaint(z_a,3),'-',c='magenta',alpha=0.5)
 

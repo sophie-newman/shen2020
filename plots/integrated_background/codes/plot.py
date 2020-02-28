@@ -21,6 +21,9 @@ parameters_init = np.array([0.41698725, 2.17443860, -4.82506430, 13.03575300, 0.
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
 
+fit_evolve_shallowfaint=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global_shallowfaint.dat",names=True)
+paraid_shallowfaint, pglobal_shallowfaint, pglobal_err_shallowfaint = fit_evolve_shallowfaint['paraid'], fit_evolve_shallowfaint['value'], (fit_evolve_shallowfaint['uperr']+fit_evolve_shallowfaint['loerr'])/2.
+
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/specialuse/convolve_for_CXB.so')
 convolve_c = c_extenstion.convolve
@@ -52,18 +55,32 @@ def get_model_lf(parameters,nu,redshift,dtg,convolver):
         PHI_band = np.array(res,dtype=np.float64)
 	return L_band, np.log10(PHI_band)
 
-def get_model_lf_global(nu,redshift,dtg,convolver):
-	parameters=pglobal
-	zref = 2.
-	p=parameters[paraid==0]
-	gamma1 = polynomial(redshift,p,2)
-	p=parameters[paraid==1]
-	gamma2 = doublepower(redshift,(p[0],zref, p[1], p[2]))
-	p=parameters[paraid==2]
-	logphi = polynomial(redshift,p,1)
-	p=parameters[paraid==3]	
-	Lbreak = doublepower(redshift,(p[0],zref, p[1], p[2]))
-	parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
+def get_model_lf_global(nu,redshift,dtg,convolver,model="Fiducial"):
+	if model=="Fiducial":
+		parameters=pglobal
+		zref = 2.
+		p=parameters[paraid==0]
+		gamma1 = polynomial(redshift,p,2)
+		p=parameters[paraid==1]
+		gamma2 = doublepower(redshift,(p[0],zref, p[1], p[2]))
+		p=parameters[paraid==2]
+		logphi = polynomial(redshift,p,1)
+		p=parameters[paraid==3]	
+		Lbreak = doublepower(redshift,(p[0],zref, p[1], p[2]))
+		parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
+	elif model=="Shallowfaint":
+		parameters=pglobal_shallowfaint
+                zref = 2.
+                p=parameters[paraid_shallowfaint==0]
+                gamma1 = powerlaw_gamma1(redshift,(p[0],zref,p[1]))
+                p=parameters[paraid_shallowfaint==1]
+                gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
+                p=parameters[paraid_shallowfaint==2]
+                logphi = polynomial(redshift,p,1)
+                p=parameters[paraid_shallowfaint==3]
+                Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
+		parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
+
 	return get_model_lf(parameters_at_z,nu,redshift,dtg,convolver)
 
 def cumulative_emissivity(L_nu,Phi_nu,L_limit_low,L_limit_up,nu):
@@ -86,10 +103,10 @@ def cumulative_emissivity(L_nu,Phi_nu,L_limit_low,L_limit_up,nu):
 
 	return result
 
-def to_be_integrate(z, nuobs, convolver):
+def to_be_integrate(z, nuobs, convolver, model="Fiducial"):
 	dtg = return_dtg(z)
 	nuem = nuobs*(1+z)
-        L_nu, PHI_nu = get_model_lf_global(nuem, z, dtg, convolver)
+        L_nu, PHI_nu = get_model_lf_global(nuem, z, dtg, convolver, model=model)
         emissivity = cumulative_emissivity(L_nu, PHI_nu, L_nu[0], L_nu[-1], nuem) 
 	return emissivity/4./np.pi/(cosmo.luminosity_distance(z).value*1e6*con.pc.value*1e2)**2  * cosmo.differential_comoving_volume(z).value 
 
@@ -115,8 +132,14 @@ zcenters = (zbins[1:]+zbins[:-1])/2.
 deltaz= zbins[5]-zbins[4]
 
 Intensity = np.zeros((len(E_list),4))
+#Intensity_shallowfaint = np.zeros(len(E_list))
 unit_convertion = 1e-7/(1000.*con.e.value) #erg to keV
-
+'''
+for i in range(len(E_list)):
+	for k in range(len(zcenters)):
+		Intensity_shallowfaint[i] += to_be_integrate(zcenters[k],nu_list[i],convolver_list[0],model="Shallowfaint")*deltaz
+	print i
+'''
 for i in range(len(E_list)):
 	for j in range(len(convolver_list)):
 		Intensity[i,j]=0
@@ -125,8 +148,10 @@ for i in range(len(E_list)):
 		#Intensity[i]=quad( to_be_integrate, 0, 7, args=(nu_list[i]) )[0]
 	print i
 
+
 ax.plot(E_list, nu_list * Intensity[:,0] * unit_convertion, c='royalblue', label=r'$\rm This$ $\rm work:$ $\rm AGN$')
 #print nu_list * Intensity * unit_convertion
+#ax.plot(E_list, nu_list * Intensity_shallowfaint[:] * unit_convertion, c='yellow')
 
 ax.plot(E_list, nu_list * Intensity[:,0] * unit_convertion + 2., c='black', label=r'$\rm AGN$ + $\rm galaxies$')
 

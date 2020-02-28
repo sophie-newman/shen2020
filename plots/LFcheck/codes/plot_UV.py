@@ -256,10 +256,10 @@ x,y,dy,yfit=get_data_g15()
 ax.plot(x,y,linestyle='',lw=3,mew=2,c='chocolate',mec='chocolate',marker='x',ms=15)
 
 x,y,dy,yfit=get_data(rescale=True)
-ax.errorbar(x,y,yerr=dy,capsize=6,linestyle='',lw=2,c='black',mec='black',alpha=0.8,marker='o', ms=10, capthick=2 ,label=r'$\rm UV$')
+ax.errorbar(x,y,yerr=dy,capsize=6,fillstyle="none",linestyle='',lw=2,c='black',mec='black',alpha=0.8,marker='o', ms=10, capthick=2, mew=2 ,label=r'$\rm UV$')
 
 x,y,dy=get_data_Xray(parameters_global,xm,ym)
-ax.errorbar(x,y,yerr=dy,capsize=9,linestyle='',lw=2,c='royalblue',mec='royalblue',marker='*', alpha=0.8, ms=15, capthick=3 ,label=r'$\rm Hard$ $\rm X-ray$')
+ax.errorbar(x,y,yerr=dy,capsize=9,fillstyle="none",linestyle='',lw=2,c='royalblue',mec='royalblue',marker='*', alpha=0.8, ms=15, capthick=3, mew=2,label=r'$\rm Hard$ $\rm X-ray$')
 
 if (redshift<6.5) and (redshift>=4):
 	x = np.linspace(-14,-32,100) 
@@ -287,6 +287,6 @@ ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-#plt.savefig("../figs/tension_"+str(redshift)+".pdf",fmt='pdf')
-plt.show()
+plt.savefig("../figs/tension_"+str(redshift)+".pdf",fmt='pdf')
+#plt.show()
 

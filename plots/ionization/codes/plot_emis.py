@@ -53,7 +53,11 @@ zpoints_spe=np.array(pz_spe)
 
 fit_evolve=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
 paraid, pglobal, pglobal_err = fit_evolve['paraid'], fit_evolve['value'], (fit_evolve['uperr']+fit_evolve['loerr'])/2.
-zlist=np.linspace(0.1,7,30)
+
+fit_evolve_shallowfaint=np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global_shallowfaint.dat",names=True)
+paraid_shallowfaint, pglobal_shallowfaint, pglobal_err_shallowfaint = fit_evolve_shallowfaint['paraid'], fit_evolve_shallowfaint['value'], (fit_evolve_shallowfaint['uperr']+fit_evolve_shallowfaint['loerr'])/2.
+
+zlist=np.linspace(0.1,7,30) #30
 
 #load the shared object file
 c_extenstion = CDLL(homepath+'codes/c_lib/convolve.so')
@@ -65,17 +69,30 @@ c_extenstion_old = CDLL(homepath+'codes/c_lib/convolve_old.so')
 convolve_c_old = c_extenstion_old.convolve
 convolve_c_old.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
-def get_model_lf_global(parameters,nu,redshift,magnitude=False):
-	zref = 2.
-	p=parameters[paraid==0]
-	gamma1 = polynomial(redshift,p,2)
-	p=parameters[paraid==1]
-	gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
-	p=parameters[paraid==2]
-	logphi = polynomial(redshift,p,1) 
-	p=parameters[paraid==3]	
-	Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
-	parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
+def get_model_lf_global(parameters,nu,redshift,magnitude=False,model="Fiducial"):
+	if model=="Fiducial":
+		zref = 2.
+		p=parameters[paraid==0]
+		gamma1 = polynomial(redshift,p,2)
+		p=parameters[paraid==1]
+		gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
+		p=parameters[paraid==2]
+		logphi = polynomial(redshift,p,1) 
+		p=parameters[paraid==3]	
+		Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
+		parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
+        elif model=="Shallowfaint":
+                zref = 2.
+                p=parameters[paraid_shallowfaint==0]
+                gamma1 = powerlaw_gamma1(redshift,(p[0],zref,p[1])) 
+                p=parameters[paraid_shallowfaint==1]
+                gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
+                p=parameters[paraid_shallowfaint==2]
+                logphi = polynomial(redshift,p,1)
+                p=parameters[paraid_shallowfaint==3]
+                Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))	
+		parameters_at_z = np.array([gamma1,gamma2,logphi,Lbreak])
+
 	return get_model_lf(parameters_at_z,nu,redshift,magnitude=magnitude)
 
 def get_model_lf(parameters,nu,redshift,magnitude=False):
@@ -118,7 +135,7 @@ def cumulative_emissivity2(L_band,Phi_band,L_limit_low,L_limit_up):
 '''
 
 # uncertainties calculated in a straight forward way
-def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift,global_fit=False):
+def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift,global_fit=False, model="Fiducial"):
 	partials = 0.0 * parameters #partial derivatives
 	delta = 1e-6
 	if global_fit==False:
@@ -132,7 +149,7 @@ def Gamma_err(parameters,errs,L_limit_low,L_limit_up,redshift,global_fit=False):
 			partials[i] = np.abs(partials[i])
 	else:
 		def fobjective(parameters):
-                        M_1450, PHI_1450 = get_model_lf_global(parameters, -5, redshift, magnitude=True)
+                        M_1450, PHI_1450 = get_model_lf_global(parameters, -5, redshift, magnitude=True, model=model)
                         return Gamma(cumulative_emissivity(M_1450, PHI_1450, L_limit_low, L_limit_up),redshift)
                 for i in range(len(parameters)):
                         parameters_add = parameters.copy()
@@ -188,6 +205,23 @@ ax.plot(zlist,np.log10(result[:,0]),'-',c='darkorchid',alpha=0.7,label=r'$\rm Gl
 ax.fill_between(zlist, y1=np.log10(result[:,0])+uperr[:,0] ,y2=np.log10(result[:,0])-loerr[:,0], color='darkorchid', alpha=0.4)
 
 np.savetxt("emissivity.dat",np.c_[zlist,np.log10(result[:,0])])
+
+'''
+result=np.zeros((len(zlist),2))
+uncertainty=np.zeros((len(zlist),2))
+for i in range(len(zlist)):
+        M_1450, PHI_1450 = get_model_lf_global(pglobal_shallowfaint, -5, zlist[i], magnitude=True, model="Shallowfaint")
+        result[i,0]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -18),zlist[i])
+        #result[i,1]= Gamma(cumulative_emissivity(M_1450, PHI_1450, lowlimit, -21),zlist[i])
+        uncertainty[i,0]= Gamma_err(pglobal_shallowfaint, pglobal_err_shallowfaint, lowlimit, -18, zlist[i], global_fit=True, model="Shallowfaint")
+uperr = np.log10(result + uncertainty)-np.log10(result)
+loerr = np.log10(result)-np.log10(result - uncertainty)
+loerr[np.invert(np.isfinite(loerr))] = 100
+ax.plot(zlist,np.log10(result[:,0]),'-',c='magenta',alpha=0.4,label=r'$\rm Global$ $\rm fit$ $\rm B$')
+#ax.fill_between(zlist, y1=np.log10(result[:,0])+uperr[:,0] ,y2=np.log10(result[:,0])-loerr[:,0], color='magenta', alpha=0.2)
+
+np.savetxt("emissivity_shallowfaint.dat",np.c_[zlist,np.log10(result[:,0])])
+'''
 
 ###### fit at a given redshift
 result=np.zeros((len(zpoints_free),2))

@@ -33,28 +33,44 @@ matplotlib.rc('axes', linewidth=4)
 fig=plt.figure(figsize = (15,10))
 ax = fig.add_axes([0.13,0.12,0.79,0.83])
 
-def plot_for_z(redshift,color):
-        source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
-	zref = 2.
-        p=source['value'][ source['paraid']==0 ]
-        gamma1 = polynomial(redshift,p,2)
-        p=source['value'][ source['paraid']==1 ]
-        gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
-        p=source['value'][ source['paraid']==2 ]
-        logphi = polynomial(redshift,p,1)
-        p=source['value'][ source['paraid']==3 ]
-        Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
-	if (gamma1>gamma2) and (redshift>7):
-		gamma1 = gamma2
-        parameters_global_2 = np.array([gamma1,gamma2,logphi,Lbreak])
+def plot_for_z(redshift,color, model="Fiducial"):
+	if model=="Fiducial":
+        	source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global.dat",names=True)
+		zref = 2.
+        	p=source['value'][ source['paraid']==0 ]
+        	gamma1 = polynomial(redshift,p,2)
+        	p=source['value'][ source['paraid']==1 ]
+        	gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
+        	p=source['value'][ source['paraid']==2 ]
+        	logphi = polynomial(redshift,p,1)
+        	p=source['value'][ source['paraid']==3 ]
+        	Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
+		if (gamma1>gamma2) and (redshift>7):
+			gamma1 = gamma2
+        	parameters_global = np.array([gamma1,gamma2,logphi,Lbreak])
+	elif model=="Shallowfaint":
+		source = np.genfromtxt("../../Fit_parameters/codes/zevolution_fit_global_shallowfaint.dat",names=True)
+		zref = 2.
+		p=source['value'][ source['paraid']==0 ]
+		gamma1 = powerlaw_gamma1(redshift,(p[0],zref,p[1]))
+		p=source['value'][ source['paraid']==1 ]
+		gamma2 = doublepower(redshift,(p[0],zref,p[1],p[2]))
+		p=source['value'][ source['paraid']==2 ]
+		logphi = polynomial(redshift,p,1)
+		p=source['value'][ source['paraid']==3 ]
+		Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
+		parameters_global = np.array([gamma1,gamma2,logphi,Lbreak])	
 
 	x = L_bol_grid + L_solar 
-	y = LF(L_bol_grid,parameters_global_2)
-	if redshift<=7:
-		ax.plot(x,y,'-',c=color,label=r'$\rm z=$'+str(redshift))
-	elif redshift<=9: 
-		ax.plot(x,y,'--',dashes=(25,15),alpha=0.7,c=color,label=r'$\rm z=$'+str(redshift)+r'$(\rm extrapolated)$')
-	else: ax.plot(x,y,'--',dashes=(25,15),c=color,label=r'$\rm z=$'+str(redshift)+r'$(\rm extrapolated)$')
+	y = LF(L_bol_grid,parameters_global)
+	if model=="Fiducial":
+		if redshift<=7:    ax.plot(x,y,'-',c=color,label=r'$\rm z=$'+str(redshift))
+		elif redshift<=9:  ax.plot(x,y,'-',alpha=0.7,c=color,label=r'$\rm z=$'+str(redshift)+r'$\,(\rm extrapolated)$')
+		else: ax.plot(x,y,'-',c=color,label=r'$\rm z=$'+str(redshift)+r'$\,(\rm extrapolated)$')
+	elif model=="Shallowfaint":
+		if redshift<=7: ax.plot(x,y,'--',dashes=(25,15),c=color)
+		elif redshift<=9:  ax.plot(x,y,'--',dashes=(25,15),alpha=0.7,c=color)
+                else: ax.plot(x,y,'--',dashes=(25,15),c=color)
 
 #color_control = np.linspace(0,1,7)
 #colors = ["#eff3ff","#c6dbef","#9ecae1","#6baed6","#4292c6","#2171b5","#084594"]
@@ -63,7 +79,11 @@ i=0
 for redshift in [2.4,3,4,5,6,8,10]:
 	#plot_for_z(redshift,(color_control[i],0,1-color_control[i]))
 	plot_for_z(redshift,colors[6-i])
+	plot_for_z(redshift,colors[6-i], model="Shallowfaint")
 	i+=1
+
+#ax.plot([],[],'-',c="k",label=r"$\rm Global$ $\rm fit$ $\rm A$")
+#ax.plot([],[],'--',dashes=(25,15),c="k", label=r"$\rm Global$ $\rm fit$ $\rm B$")
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
@@ -72,11 +92,11 @@ ax.set_ylabel(r'$\log{(\phi[{\rm dex}^{-1}{\rm cMpc}^{-3}])}$',fontsize=40,label
 ax.text(0.8, 0.9, r'$\rm Early$ $\rm phase$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=40)
 
 ax.set_xlim(42.5,48.5)
-ax.set_ylim(-10.5,-1.7)
+ax.set_ylim(-11.0,-2.2)
 ax.tick_params(labelsize=30)
 ax.tick_params(axis='x', pad=7.5)
 ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
-plt.savefig("../figs/evolve_early.pdf",fmt='pdf')
-#plt.show()
+#plt.savefig("../figs/evolve_early.pdf",fmt='pdf')
+plt.show()
 
