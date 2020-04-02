@@ -256,7 +256,7 @@ x,y,dy,yfit=get_data_g15()
 ax.plot(x,y,linestyle='',lw=3,mew=2,c='chocolate',mec='chocolate',marker='x',ms=15)
 
 x,y,dy,yfit=get_data(rescale=True)
-ax.errorbar(x,y,yerr=dy,capsize=6,fillstyle="none",linestyle='',lw=2,c='black',mec='black',alpha=0.8,marker='o', ms=10, capthick=2, mew=2 ,label=r'$\rm UV$')
+ax.errorbar(x,y,yerr=dy,capsize=6,fillstyle="none",linestyle='',lw=2,c='black',mec='black',alpha=0.8,marker='o', ms=12, capthick=2, mew=2 ,label=r'$\rm UV$')
 
 x,y,dy=get_data_Xray(parameters_global,xm,ym)
 ax.errorbar(x,y,yerr=dy,capsize=9,fillstyle="none",linestyle='',lw=2,c='royalblue',mec='royalblue',marker='*', alpha=0.8, ms=15, capthick=3, mew=2,label=r'$\rm Hard$ $\rm X-ray$')

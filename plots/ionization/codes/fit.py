@@ -13,10 +13,12 @@ print args
 #print cov
 
 import matplotlib.pyplot as plt
-plt.plot(x,y)
 
 xf = np.linspace(0,7,100)
-plt.plot(xf, function(xf,*args))
-plt.plot(xf, function(xf, 24.108, 5.865, -0.731, 3.055,15.6))
+#plt.plot(xf, function(xf,*args))
+
+plt.plot(x, y - function(x,*args), '.', marker='o')
+
+plt.plot(xf, function(xf, 24.108, 5.865, -0.731, 3.055,15.6) - function(xf,*args))
 plt.show()
 

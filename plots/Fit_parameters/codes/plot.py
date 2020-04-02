@@ -105,6 +105,7 @@ ax.plot(z_a,bestfit_global(z_a,0),'-',c='darkorchid',label=r'$\rm Global$ $\rm f
 ax.plot(z_a,bestfit_global_shallowfaint(z_a,0),'-',c='magenta',alpha=0.5,label=r'$\rm Global$ $\rm fit$ $\rm B$')
 
 ax.plot((4,7),(1,1),'--',dashes=(25,15),color='gold',alpha=0.8,label=r'$\rm Divergence$')
+ax.arrow(4.5, 0.995, dx=0, dy=0.05, width=0.3, head_width=0.5, head_length=0.04 ,color='gold',alpha=0.6)
 
 prop = matplotlib.font_manager.FontProperties(size=25.0)
 ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=2,ncol=1,frameon=False)

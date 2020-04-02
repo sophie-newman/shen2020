@@ -117,10 +117,10 @@ ax  = fig.add_axes([0.11,0.12,0.79,0.83])
 
 xgrid = np.linspace(20,26,1000)
 
-ax.plot(xgrid, f_nh_U03(xgrid, logLx), '-', alpha=0.5, c='crimson'  , label=r'$\rm Ueda+$ $\rm 2003$ ($\rm H07$)')
+ax.plot(xgrid, f_nh_U03(xgrid, logLx), '-', alpha=0.5, c='seagreen'  , label=r'$\rm Ueda+$ $\rm 2003$ ($\rm H07$)')
 
 ai15 = np.genfromtxt("Aird2015_hist.dat", names=True)
-ax.plot( ai15["logNH"],ai15["f"], '-', alpha=0.5, color="seagreen", label=r'$\rm Aird+$ $\rm 2015$')
+ax.plot( ai15["logNH"],ai15["f"], '-', alpha=0.5, color="royalblue", label=r'$\rm Aird+$ $\rm 2015$')
 
 tr09 = np.genfromtxt("Treister09_hist.dat", names=True)
 ax.plot( tr09["logNH"],tr09["f"], '-', alpha=0.5, color="chocolate", label=r'$\rm Treister+$ $\rm 2009$')
@@ -130,11 +130,11 @@ ax.plot( gi07["logNH"],gi07["f"], '-', alpha=0.5, color="darkorchid", label=r'$\
 
 ud14 = np.genfromtxt("Ueda2014_hist.dat", names=True)
 ax.errorbar( ud14["logNH"], ud14["f"], yerr=np.array([ud14["f"]-ud14["lo"],ud14["up"]-ud14["f"]]), 
-			xerr=(ud14["logNH"]-ud14["left"],ud14["right"]-ud14["logNH"]), color='navy', mec='navy', 
+			xerr=(ud14["logNH"]-ud14["left"],ud14["right"]-ud14["logNH"]), color='crimson', mec='crimson', 
 			linestyle='', marker='o', capsize=8, capthick=3, lw=4,
 			label=r'$\rm Ueda+$ $\rm 2014$ ($\rm Swift/BAT$ $\rm sample$)' )
 
-ax.plot(xgrid, f_nh(xgrid, logLx, redshift),    lw=6,  c='royalblue', label=r'$\rm Ueda+$ $\rm 2014$ ($\bf fid.$)')
+ax.plot(xgrid, f_nh(xgrid, logLx, redshift),    lw=6,  c='crimson', label=r'$\rm Ueda+$ $\rm 2014$ ($\bf fid.$)')
 
 ax.text(0.10, 0.95, r'$\rm z=0.05$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30)
 ax.text(0.14, 0.88, r'$\log{L_{\rm X}}=43.5$' ,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes,fontsize=30)
