@@ -5,6 +5,7 @@ import sys
 from astropy.cosmology import FlatLambdaCDM
 import astropy.constants as con
 
+#modify the homepath if needed!! all other data.py appeared are softlinks to this file, modifications made there will be synced to all!!!
 if os.path.isdir("/Users/xuejianshen/Desktop/QuasarLF/git/"):
     homepath="/Users/xuejianshen/Desktop/QuasarLF/git/"
     withclib=False
