@@ -4,14 +4,14 @@
 
 This is a project on the bolometric quasar luminosity function. The codes are adapted from the HRH07 work by Xuejian Shen at Caltech.
 
-- For those who are interested in the bolometric corrections and the quasar luminosity functions constrained in this work, please check out /tools/utilities. There you should be able to find functions that can calculate bolometric corrections and their dispersions in Section 1 of the code. 
+- For those who are interested in the bolometric corrections and the quasar luminosity functions constrained in this work, please check out /tools/utilities.py . You should be able to find functions that can calculate bolometric corrections and their dispersions in Section 1 of the code. 
   And find functions to return best-fit bolometric QLFs or predicted QLFs in bands in Section 2. Remember to compile the c code in /tools/clib/ before use.
 
 - For those who want to use the observational data used in this work, please check the fitting code in /codes/lf_fit/ or the plot codes in /plots/LFcheck/. There, you should be able to find a function that loads all the observational data in /codes/obdata/.
 
----
+# For those who are interested in more details, the structure of the directory is as follows:
 
-- For those who are interested in the details, the structure of the directory is as follows:
+---
 
 ## codes:
 * bolometric_correction: 
