@@ -244,7 +244,7 @@ def return_qlf_in_band(redshift, nu, model='A'):  #nu here has the same definiti
 		exit()
 
 	# compile the c code before using it!!!
-	c_extenstion = CDLL("./convolve.so")
+	c_extenstion = CDLL("./clib/convolve.so")
 	convolve_c = c_extenstion.convolve
 	convolve_c.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)
 
@@ -252,7 +252,7 @@ def return_qlf_in_band(redshift, nu, model='A'):  #nu here has the same definiti
 		L_1450 = bolometric_correction(L_bol_grid,-5)
 		nu_c = c_double(-5)
 		redshift_c = c_double(redshift)
-		dtg_c = c_double(dtg)
+		dtg_c = c_double(return_dtg(redshift))
 		input_c= np.power(10.,LF(L_bol_grid,parameters_global)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
 		res = convolve_c(input_c,nu_c,redshift_c,dtg_c)
 		res = [i for i in res.contents]
@@ -273,3 +273,5 @@ def return_qlf_in_band(redshift, nu, model='A'):  #nu here has the same definiti
 		x = L_HX + L_solar
 		y = np.log10(PHI_HX)
 		return x,y
+
+print return_qlf_in_band(5, -5)
