@@ -9,10 +9,9 @@ This is a project on the bolometric quasar luminosity function. The codes are ad
 
 - For those who want to use the observational data used in this work, please check the fitting code */codes/lf_fit/lf_fitter.py* or the plot codes in */plots/LFcheck/plot_allbands.py*. There, you should be able to find a function that loads all the observational data in */codes/obdata/*.
 
-# For those who are interested in more details, the structure of the directory is as follows:
-
 ---
 
+For those who are interested in more details, the structure of the directory is as follows:
 ## codes:
 * bolometric_correction: 
 	* codes to calculate the bolometric correction based our SED model; 
