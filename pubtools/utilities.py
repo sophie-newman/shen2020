@@ -19,6 +19,7 @@ import ctypes
 ##Section 1: the bolometric correction
 #codes to load the bolometric corrections and their dispersions as a function of bolometric luminosity
 
+#return the bolometric corrected luminosity
 def bolometric_correction(L_bol,nu):  #L_bol is in log10 and is in unit of solar luminosity  
 	x = L_bol - 10.
 	if nu==0.: return L_bol
@@ -70,9 +71,9 @@ def band_dispersion(L_bol,nu): #L_bol is in log10 and is in unit of solar lumino
 	if nu < 0.:
 		if nu==(-1.): P0, P1, P2, P3=-0.3826995, 0.4052673, 42.3866639, 2.3775969
 		if nu==(-2.): P0, P1, P2, P3=-0.3380714, 0.4071626, 42.1588292, 2.1928345
-        if nu==(-3.): P0, P1, P2, P3=0.07969176, 0.1803728, 44.1641156, 1.4964823
-        if nu==(-4.): P0, P1, P2, P3=0.19262562, 0.0659231, 42.9876632, 1.8829639
-        if nu==(-5.): P0, P1, P2, P3=-0.3719955, 0.4048693, 42.3073116, 2.3097825
+        	if nu==(-3.): P0, P1, P2, P3=0.07969176, 0.1803728, 44.1641156, 1.4964823
+        	if nu==(-4.): P0, P1, P2, P3=0.19262562, 0.0659231, 42.9876632, 1.8829639
+        	if nu==(-5.): P0, P1, P2, P3=-0.3719955, 0.4048693, 42.3073116, 2.3097825
         return fit_func_disp(x, P0, P1, P2, P3)
 	# interpolate between the known ranges, and (conservatively) hold constant 
 	#   outside of them. roughly consistent with Richards et al. 2006 dispersions, 
@@ -437,20 +438,22 @@ def return_qlf_in_band(redshift, nu, model='A'):  #nu here has the same definiti
 		input_c= np.power(10.,LF(L_bol_grid,parameters_global)).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
 		res = convolve_c(input_c,nu_c,redshift_c,dtg_c)
 		res = [i for i in res.contents]
-		PHI_HX = np.array(res,dtype=np.float64)
-		x = L_HX + L_solar
-		y = np.log10(PHI_HX)
+		PHI_band = np.array(res,dtype=np.float64)
+		x = L_band + L_solar
+		y = np.log10(PHI_band)
 		return x,y
 
 #tests
-#bol corr in a given band
-print(bolometric_correction(12, -5))
+#bol corr in a given band, suppose L_bol = 10^43 
+print( (43-L_solar) - bolometric_correction( (43-L_solar), -1))
+print( (43-L_solar) - bolometric_correction( (43-L_solar), -3))
+print( (43-L_solar) - bolometric_correction( (43-L_solar), -5))
 
 #bol corr at a given frequency
-print(bolometric_correction(12, 100))
+print( (43-L_solar) - bolometric_correction( (43-L_solar), 3e8/(1500e-10)))
 
 #bol qlf at z=4
 print(return_bolometric_qlf(4, model='B'))
 
-#observed qlf at z=4 in a given band
-print(return_qlf_in_band(4, -4, model='B'))
+#observed qlf at z=4.2 in a given band
+print(return_qlf_in_band(4.2, -5, model='B'))
