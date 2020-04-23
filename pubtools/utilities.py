@@ -1,14 +1,14 @@
 ### a python file that includes all the useful functions/models of this project
 # pieces of cdoes from other places of the repository are copied here
 
-from data import *
+from data_copy import *
 from astropy.cosmology import FlatLambdaCDM
 import astropy.constants as con
 import numpy as np
 from scipy.optimize import fsolve
 
 import numpy as np 
-from lf_shape import *
+from lf_shape_copy import *
 import scipy.interpolate as inter
 from scipy.optimize import curve_fit
 from scipy.optimize import minimize
@@ -441,3 +441,16 @@ def return_qlf_in_band(redshift, nu, model='A'):  #nu here has the same definiti
 		x = L_HX + L_solar
 		y = np.log10(PHI_HX)
 		return x,y
+
+#tests
+#bol corr in a given band
+print(bolometric_correction(12, -5))
+
+#bol corr at a given frequency
+print(bolometric_correction(12, 100))
+
+#bol qlf at z=4
+print(return_bolometric_qlf(4, model='B'))
+
+#observed qlf at z=4 in a given band
+print(return_qlf_in_band(4, -4, model='B'))
