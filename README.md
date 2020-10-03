@@ -8,7 +8,8 @@ This is a project on the bolometric quasar luminosity function. The codes are ad
   And find functions to return best-fit bolometric QLFs or predicted QLFs in bands in Section 2. 
   These codes only depend on the codes in the */pubtools/* directory, where we have copied codes needed. Remember to compile the C code in */pubtools/clib/* before use.
 
-- For those who want to use the observational data used in this work, please check the fitting code */codes/lf_fit/lf_fitter.py*. There, you should be able to find a function that loads the binned estimations of  all the observations listed in the paper.  You can turn on/off an observation in */codes/lf_fit/lf_fitter_data.py*. The functions that loads an individual observation data are in  */codes/obdata/* directory.
+- For those who want to use the observational data used in this work, an example is provided at */pubtools/load_observations.py*. The code loads observational data around a certain redshift and moves them onto the bolometric plane. 
+  One can also check the fitting code */codes/lf_fit/lf_fitter.py*. There, you should be able to find a function that loads the binned estimations of  all the observations listed in the paper.  You can turn on/off an observation in */codes/lf_fit/lf_fitter_data.py*. The functions that loads an individual observation data are in  */codes/obdata/* directory.
 
 ---
 
