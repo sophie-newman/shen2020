@@ -30,7 +30,7 @@ def load_hasinger_lf_data(z): # L_SX, PHI_SX, DPHI_SX, z
 					DPHIp_SX[j] = float(elements[5]) 
 					DPHIm_SX[j] = float(elements[6])
 					j+=1
-		 		if (len(elements[0]) == 1) and ( int(elements[0])==WHICH_BLOCK ):
+				if (len(elements[0]) == 1) and ( int(elements[0])==WHICH_BLOCK ):
 					BEGIN = True
 					N_LUM_BINS = int(elements[1])
 					L_SX_min = np.zeros(N_LUM_BINS)

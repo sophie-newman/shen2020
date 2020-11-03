@@ -136,7 +136,7 @@ ax.errorbar(x,y,yerr=dy,fillstyle='none',linestyle='none',c='olive',mec='olive',
 ax.errorbar(x[id1],y[id1],yerr=dy[id1],xerr=dx[id1],fillstyle='none',linestyle='none',c='olive',mec='olive',marker='o',ms=10,capsize=6,capthick=2,lw=2,mew=2)
 
 prop = matplotlib.font_manager.FontProperties(size=22.0)
-ax.legend(prop=prop,numpoints=1, borderaxespad=0.5,loc=3,ncol=1,frameon=False)
+ax.legend(prop=prop, numpoints=1, borderaxespad=0.5, loc=3, ncol=1, frameon=False)
 ax.set_xlabel(r'$\log{(L_{\rm bol}[{\rm erg}\,{\rm s}^{-1}])}$',fontsize=40,labelpad=2.5)
 ax.set_ylabel(r'$\log{(\phi[{\rm dex}^{-1}{\rm cMpc}^{-3}])}$',fontsize=40,labelpad=5)
 
