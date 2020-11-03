@@ -71,10 +71,10 @@ def band_dispersion(L_bol,nu): #L_bol is in log10 and is in unit of solar lumino
 	if nu < 0.:
 		if nu==(-1.): P0, P1, P2, P3=-0.3826995, 0.4052673, 42.3866639, 2.3775969
 		if nu==(-2.): P0, P1, P2, P3=-0.3380714, 0.4071626, 42.1588292, 2.1928345
-        	if nu==(-3.): P0, P1, P2, P3=0.07969176, 0.1803728, 44.1641156, 1.4964823
-        	if nu==(-4.): P0, P1, P2, P3=0.19262562, 0.0659231, 42.9876632, 1.8829639
-        	if nu==(-5.): P0, P1, P2, P3=-0.3719955, 0.4048693, 42.3073116, 2.3097825
-        return fit_func_disp(x, P0, P1, P2, P3)
+		if nu==(-3.): P0, P1, P2, P3=0.07969176, 0.1803728, 44.1641156, 1.4964823
+		if nu==(-4.): P0, P1, P2, P3=0.19262562, 0.0659231, 42.9876632, 1.8829639
+		if nu==(-5.): P0, P1, P2, P3=-0.3719955, 0.4048693, 42.3073116, 2.3097825
+	return fit_func_disp(x, P0, P1, P2, P3)
 	# interpolate between the known ranges, and (conservatively) hold constant
 	#   outside of them. roughly consistent with Richards et al. 2006 dispersions,
 	#   but uncertainty in how large the dispersions should be yields ~10% uncertainties
@@ -374,7 +374,7 @@ def return_bolometric_qlf(redshift, model='A'):
 		Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
 		parameters_global = np.array([gamma1,gamma2,logphi,Lbreak])
 	else:
-		print "model not found"
+		print("model not found")
 		exit()
 
 	x = L_bol_grid + L_solar     #luminosities in log10
@@ -409,7 +409,7 @@ def return_qlf_in_band(redshift, nu, model='A', output_mag_for_UV=True):  #nu he
 		Lbreak = doublepower(redshift,(p[0],zref,p[1],p[2]))
 		parameters_global = np.array([gamma1,gamma2,logphi,Lbreak])
 	else:
-		print "model not found"
+		print("model not found")
 		exit()
 
 	# compile the c code before using it!!!
@@ -443,7 +443,7 @@ def return_qlf_in_band(redshift, nu, model='A', output_mag_for_UV=True):  #nu he
 		y = np.log10(PHI_band)
 		return x,y
 
-'''
+
 #tests
 #bol corr in a given band, suppose L_bol = 10^43
 print( (43-L_solar) - bolometric_correction( (43-L_solar), -1))
@@ -458,4 +458,4 @@ print(return_bolometric_qlf(4, model='B'))
 
 #observed qlf at z=4.2 in a given band
 print(return_qlf_in_band(4.2, -5, model='B'))
-'''
+

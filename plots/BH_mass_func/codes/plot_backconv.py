@@ -45,13 +45,15 @@ def kernel_func2(x,x0,sigma):
 	return P
 
 x=np.linspace(-4.,1.,51)
-kernel1 = kernel_func1(x, knee=np.log10(1.5), alpha=-0.6) 
+kernel1 = kernel_func1(x, knee=np.log10(1.5), alpha=-0.6-1.) 
 kernel1 = kernel1/np.sum(kernel1)
 
 kernel2 =kernel_func2(x, x0=-1.9+0.45*redshift, sigma=1.03-0.15*redshift)
 kernel2 = kernel2/np.sum(kernel2)
 
 kernel = 0.62*kernel1+0.38*kernel2
+plt.plot(x, np.log10(kernel))
+kernel = kernel1
 plt.plot(x, np.log10(kernel))
 plt.show()
 
@@ -100,9 +102,9 @@ def plot_bestfit(logphi_s, logM_s, alpha, beta):
 
 params = lmfit.Parameters()
 params.add_many(('logphi_s' , -3,  True, None, None, None, None),
-                ('logM_s' ,   9.,  True, None, None, None, None),
+                ('logM_s' ,   8.5, True, None, None, None, None),
                 ('alpha',     0.5, True, None, None, None, None),
-                ('beta',      1.5,  True, None, None, None, None))
+                ('beta',      1.5, True, None, None, None, None))
 
 fitter = lmfit.Minimizer(residual, params, scale_covar=True,nan_policy='raise',calc_covar=True)
 result=fitter.minimize(method='leastsq')

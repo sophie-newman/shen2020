@@ -23,10 +23,10 @@ def band_dispersion(L_bol,nu):
 	if nu < 0.:
 		if nu==(-1.): P0, P1, P2, P3=-0.3826995, 0.4052673, 42.3866639, 2.3775969
 		if nu==(-2.): P0, P1, P2, P3=-0.3380714, 0.4071626, 42.1588292, 2.1928345
-        	if nu==(-3.): P0, P1, P2, P3=0.07969176, 0.1803728, 44.1641156, 1.4964823
-        	if nu==(-4.): P0, P1, P2, P3=0.19262562, 0.0659231, 42.9876632, 1.8829639
-        	if nu==(-5.): P0, P1, P2, P3=-0.3719955, 0.4048693, 42.3073116, 2.3097825
-        	return fit_func_disp(x, P0, P1, P2, P3)
+		if nu==(-3.): P0, P1, P2, P3=0.07969176, 0.1803728, 44.1641156, 1.4964823
+		if nu==(-4.): P0, P1, P2, P3=0.19262562, 0.0659231, 42.9876632, 1.8829639
+		if nu==(-5.): P0, P1, P2, P3=-0.3719955, 0.4048693, 42.3073116, 2.3097825
+		return fit_func_disp(x, P0, P1, P2, P3)
 	# interpolate between the known ranges, and (conservatively) hold constant 
 	#   outside of them. roughly consistent with Richards et al. 2006 dispersions, 
 	#   but uncertainty in how large the dispersions should be yields ~10% uncertainties 

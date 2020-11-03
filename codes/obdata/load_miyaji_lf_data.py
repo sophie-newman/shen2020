@@ -28,7 +28,7 @@ def load_miyaji_lf_data(z): # L_SX, PHI_SX, DPHI_SX, z
 					DPHIm_SX[j] = float(elements[6])
 					N_QSO_SX[j] = int(elements[7])
 					j+=1
-		 		if (len(elements[0]) == 1) and ( int(elements[0])==WHICH_BLOCK ):
+				if (len(elements[0]) == 1) and ( int(elements[0])==WHICH_BLOCK ):
 					BEGIN = True
 					N_LUM_BINS = int(elements[1])
 					L_SX_min = np.zeros(N_LUM_BINS)
