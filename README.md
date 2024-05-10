@@ -1,10 +1,14 @@
-# The bolometric quasar luminosity function
+The bolometric quasar luminosity function
+-----------------------------------------
 
----
+This is a project on the bolometric quasar luminosity function. The codes are adapted from Hopkins et al. 2007 by Xuejian (Jacob) Shen at Caltech in 2019.
+Most of the functionalities are included in the `/pubtools/` directory. The codes included only depends on the codes and data in the `/pubtools/` directory. They should be excuted inside the `/pubtools/` directory. 
 
-This is a project on the bolometric quasar luminosity function. The codes are adapted from the HRH07 work by Xuejian Shen at Caltech.
+- Please first check `/pubtools/config.py` to set up the paths and turn on relevant flags.
 
-- For those who are interested in the bolometric corrections and the quasar luminosity functions constrained in this work, please check out */pubtools/utilities.py* . You should be able to find functions that can calculate bolometric corrections and their dispersions in Section 1 of the code. 
+- If `with_clib` is set to `True`, you should compile the C code in `/pubtools/clib/`.
+
+- For those who are interested in the bolometric corrections and the quasar luminosity functions constrained in this work, please check out `/pubtools/utilities.py` . You should be able to find functions that can calculate bolometric corrections and their dispersions in Section 1 of the code. 
   And find functions to return best-fit bolometric QLFs or predicted QLFs in bands in Section 2. 
   These codes only depend on the codes in the */pubtools/* directory, where we have copied codes needed. Remember to compile the C code in */pubtools/clib/* before use.
 

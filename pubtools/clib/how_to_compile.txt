@@ -1,0 +1,2 @@
+On Linux: gcc -shared -Wl,-soname,convolve -o convolve.so -fPIC convolve.c
+On Mac:   gcc -shared -fPIC -o convolve.so convolve.c

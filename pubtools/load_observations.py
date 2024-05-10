@@ -3,9 +3,9 @@ import numpy as np
 from lf_shape_copy import *
 import scipy.interpolate as inter
 from utilities import *
-from lf_fitter_data import *
 from ctypes import *
 import ctypes
+from lf_fitter_data import *
 import sys
 
 # load observational data at a certain redshift and move them to the bolometric plane

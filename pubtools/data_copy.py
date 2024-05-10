@@ -4,10 +4,7 @@ import __main__
 import sys
 from astropy.cosmology import FlatLambdaCDM
 import astropy.constants as con
-
-# path to the observational data, required only if you want to load observational data
-homepath="/home/xuejian/works/quasarLF/git/"
-sys.path.append(homepath+"codes/obdata/")
+from config import *
 
 #COSMOLOGY
 hubble      = 0.7
@@ -106,6 +103,28 @@ def return_dtg(z):
 		return 10**logZ
 
 	return MZR_Ma2016(z)/MZR_Ma2016(0) * dtg_mw
+
+if with_obs_data:
+    from utilities import *
+    from ctypes import *
+    import ctypes
+    c_extenstion_ao = CDLL(homepath+'/clib/specialuse/convolve_ao.so')
+    convolve_c_ao= c_extenstion_ao.convolve
+    convolve_c_ao.restype = ctypes.POINTER(ctypes.c_double * N_bol_grid)    
+    def absorption_correction_xray(logLx , redshift):
+        # correct for the absorption in the CTN regime
+        L_tmp = bolometric_correction(L_bol_grid, -4)
+        phi_fit_tmp = return_miyaji15_lf_fitted(L_tmp, redshift)
+
+        redshift_c = c_double(redshift)
+        input_c_2= np.power(10., phi_fit_tmp).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        input_c_1= L_tmp.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        res = convolve_c_ao(input_c_1,input_c_2,redshift_c)
+        res = [i for i in res.contents]
+        phi_corrected = np.log10( np.array(res,dtype=np.float64))
+
+        correction = phi_corrected - phi_fit_tmp
+        return np.interp(logLx, L_tmp, correction)
 
 def return_miyaji15_lf_fitted(Llist,z):
         Llist = Llist + L_solar

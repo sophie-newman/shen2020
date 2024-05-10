@@ -445,6 +445,7 @@ def return_qlf_in_band(redshift, nu, model='A', output_mag_for_UV=True):  #nu he
 
 
 #tests
+'''
 #bol corr in a given band, suppose L_bol = 10^43
 print( (43-L_solar) - bolometric_correction( (43-L_solar), -1))
 print( (43-L_solar) - bolometric_correction( (43-L_solar), -3))
@@ -452,10 +453,10 @@ print( (43-L_solar) - bolometric_correction( (43-L_solar), -5))
 
 #bol corr at a given frequency
 print( (43-L_solar) - bolometric_correction( (43-L_solar), 3e8/(1500e-10)))
-
+'''
 #bol qlf at z=4
-print(return_bolometric_qlf(4, model='B'))
-
+print(return_bolometric_qlf(7, model='A'))
+'''
 #observed qlf at z=4.2 in a given band
 print(return_qlf_in_band(4.2, -5, model='B'))
-
+'''
