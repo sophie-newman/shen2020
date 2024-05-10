@@ -1,0 +1,119 @@
+J/ApJ/764/45    Luminosity function of broad-line quasars. II.    (Kelly+, 2013)
+================================================================================
+The demographics of broad-line quasars in the mass-luminosity plane.
+II. Black hole mass and Eddington ratio functions.
+    Kelly B.C., Shen Y.
+   <Astrophys. J., 764, 45 (2013)>
+   =2013ApJ...764...45K
+================================================================================
+ADC_Keywords: Active gal. nuclei ; QSOs ; Models
+Keywords: black hole physics; galaxies: active; quasars: general; surveys
+
+Abstract:
+    We employ a flexible Bayesian technique to estimate the black hole
+    (BH) mass and Eddington ratio functions for Type 1 (i.e., broad line)
+    quasars from a uniformly selected data set of ~58000 quasars from the
+    Sloan Digital Sky Survey (SDSS) DR7. We find that the SDSS becomes
+    significantly incomplete at M_BH_<~3x10^8^M_{sun}_ or L/L_Edd_<~0.07,
+    and that the number densities of Type 1 quasars continue to increase
+    down to these limits. Both the mass and Eddington ratio functions show
+    evidence of downsizing, with the most massive and highest Eddington
+    ratio BHs experiencing Type 1 quasar phases first, although the
+    Eddington ratio number densities are flat at z<2. We estimate the
+    maximum Eddington ratio of Type 1 quasars in the observable universe
+    to be L/L_Edd_~3. Consistent with our results in Shen & Kelly (Paper I,
+    Cat. J/ApJ/746/169), we do not find statistical evidence for a
+    so-called sub-Eddington boundary in the mass-luminosity plane of
+    broad-line quasars, and demonstrate that such an apparent boundary in
+    the observed distribution can be caused by selection effect and errors
+    in virial BH mass estimates. Based on the typical Eddington ratio in a
+    given mass bin, we estimate growth times for the BHs in Type 1 quasars
+    and find that they are comparable to or longer than the age of the
+    universe, implying an earlier phase of accelerated (i.e., with higher
+    Eddington ratios) and possibly obscured growth. The large masses
+    probed by our sample imply that most of our BHs reside in what are
+    locally early-type galaxies, and we interpret our results within the
+    context of models of self-regulated BH growth.
+
+File Summary:
+--------------------------------------------------------------------------------
+ FileName    Lrecl  Records   Explanations
+--------------------------------------------------------------------------------
+ReadMe          80        .   This file
+table1.dat      33      434   Type 1 quasar black hole mass functions
+table2.dat      33      364   Type 1 quasar black hole Eddington ratio functions
+--------------------------------------------------------------------------------
+
+See also:
+ VII/260 : The SDSS-DR7 quasar catalog (Schneider+, 2010)
+ J/A+A/541/A118 : AGN-Host Galaxy Connection (Povic+, 2012)
+ J/ApJ/761/143  : Black hole masses of z~1.4 AGNs from SXDS (Nobuta+, 2012)
+ J/ApJ/753/125  : NIR spectroscopy follow-up of 60 SDSS-DR7 QSOs (Shen+, 2012)
+ J/ApJ/746/169  : Luminosity function of broad-line quasars. I. (Shen+, 2012)
+ J/MNRAS/416/1900 : CENSORS + other 1.4GHz sources (Rigby+, 2011)
+ J/ApJS/194/45  : QSO properties from SDSS-DR7 (Shen+, 2011)
+ J/ApJS/194/42  : SDSS-DR3 MgII-based black hole masses (Rafiee+, 2011)
+ J/ApJ/742/68   : HST observations of low-mass BH host galaxies (Jiang+, 2011)
+ J/ApJ/733/60   : Accretion rate of AGNs from COSMOS surveys (Trump+, 2011)
+ J/ApJ/720/368  : Color-magnitude relations of galaxies in CDFs (Xue+, 2010)
+ J/ApJ/708/137  : Broad-line AGNs in zCOSMOS survey (Merloni+, 2010)
+ J/ApJ/691/705  : AGN host galaxy morphologies in COSMOS (Gabor+, 2009)
+ J/ApJ/699/800  : Mass functions of active black holes (Vestergaard+, 2009)
+ J/ApJ/690/20   : Models of the AGN and black hole populations (Shankar+, 2009)
+ J/ApJ/680/169  : SDSS DR5 virial black hole masses (Shen+, 2008)
+ J/A+A/492/637  : Eddington ratios of faint AGN (Gavignaud+, 2008)
+ J/ApJS/176/355 : AGN X-Ray emission and black holes (Kelly+, 2008)
+ J/ApJS/172/383 : AGN candidates in the COSMOS field (Trump+, 2007)
+ J/ApJS/172/70  : zCOSMOS-bright catalog (Lilly+, 2007)
+ J/ApJS/168/1   : Black hole mass estimates (Kelly+, 2007)
+ J/ApJ/667/131  : Mass function of active black holes (Greene+, 2007)
+ J/ApJ/654/115  : DEEP2 Galaxy Redshift Survey: SDSS QSOs (Coil+, 2007)
+ J/AJ/133/2222  : Clustering of high-redshift QSOs from SDSS (Shen+, 2007)
+ J/AJ/131/2766  : Quasar luminosity function from SDSS-DR3 (Richards+, 2006)
+ J/ApJ/614/91   : Black hole mass and accretion rate of AGNs (Wu+, 2004)
+ J/ApJ/613/682  : AGN central masses & broad-line region sizes (Peterson+, 2004)
+ http://www.sdss.org/ : SDSS home page
+
+Byte-by-byte Description of file: table1.dat
+--------------------------------------------------------------------------------
+   Bytes Format Units     Label   Explanations
+--------------------------------------------------------------------------------
+   1-  5  F5.3  ---       zbar    [0.4/4.75] Mean redshift (1)
+   7- 12  F6.3  [Msun]    logMBH  [8/11] Log black hole mass
+  14- 19  F6.2  [Mpc-3] b_logPhi  Lower boundary on logPhi (2)
+  21- 26  F6.2  [Mpc-3]   logPhi  [-13/-3] Posterior log median for BH mass
+                                    function
+  28- 33  F6.2  [Mpc-3] B_logPhi  Upper boundary on logPhi (2)
+--------------------------------------------------------------------------------
+Note (1): Tabulated here are the results for the {beta} = 0 error model.
+          Results for the {beta}!=0 error model are similar to those
+          presented in Paper I (J/ApJ/746/169)
+Note (2): Lower|Upper boundary on the region containing 68% of the posterior
+          probability for the BHMF, i.e., the 16th|84th percentile of the
+          posterior distribution.
+--------------------------------------------------------------------------------
+
+Byte-by-byte Description of file: table2.dat
+--------------------------------------------------------------------------------
+   Bytes Format Units     Label   Explanations
+--------------------------------------------------------------------------------
+   1-  5  F5.3  ---       z       [0.4/4.75] Mean redshift
+   7- 12  F6.3  [-]       logL    [-1.5/1] Log luminosity relative to Eddington
+  14- 19  F6.2  [Mpc-3] b_logPhi  Lower boundary on logPhi (1)
+  21- 26  F6.2  [Mpc-3]   logPhi  [-13/-3] Posterior log median for BH
+                                   Eddington ratio function
+  28- 33  F6.2  [Mpc-3] B_logPhi  Upper boundary on logPhi (1)
+--------------------------------------------------------------------------------
+Note (1): Lower|Upper boundary on the region containing 68% of the posterior
+          probability for the BHERF, i.e., the 16th|84th percentile of the
+          posterior distribution.
+--------------------------------------------------------------------------------
+
+History:
+    From electronic version of the journal
+
+References:
+    Shen & Kelly.  Paper I.  2012ApJ...746..169S   Cat. J/ApJ/746/169
+
+================================================================================
+(End)                 Greg Schwarz [AAS], Emmanuelle Perret [CDS]    24-Oct-2014
