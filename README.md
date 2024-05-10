@@ -1,19 +1,16 @@
 The bolometric quasar luminosity function
------------------------------------------
+=========================================
 
 This is a project on the bolometric quasar luminosity function. The codes are adapted from Hopkins et al. 2007 by Xuejian (Jacob) Shen at Caltech in 2019.
-Most of the functionalities are included in the `/pubtools/` directory. The codes included only depends on the codes and data in the `/pubtools/` directory. They should be excuted inside the `/pubtools/` directory. 
+Most of the functionalities are included in the `/pubtools/` directory. They should be excuted inside the `/pubtools/` directory. 
 
-- Please first check `/pubtools/config.py` to set up the paths and turn on relevant flags.
++ Please first check `/pubtools/config.py` to set up the paths and turn on relevant flags. If `with_clib` is set to `True`, you should compile the C code in `/pubtools/clib/`. See `pubtools/clib/how_to_compile.txt` for compile instructions.
 
-- If `with_clib` is set to `True`, you should compile the C code in `/pubtools/clib/`.
-
-- For those who are interested in the bolometric corrections and the quasar luminosity functions constrained in this work, please check out `/pubtools/utilities.py` . You should be able to find functions that can calculate bolometric corrections and their dispersions in Section 1 of the code. 
++ For those who are interested in the bolometric corrections and the quasar luminosity functions constrained in this work, please check out `/pubtools/utilities.py`. You should be able to find functions that can calculate bolometric corrections and their dispersions in Section 1 of the code. 
   And find functions to return best-fit bolometric QLFs or predicted QLFs in bands in Section 2. 
-  These codes only depend on the codes in the */pubtools/* directory, where we have copied codes needed. Remember to compile the C code in */pubtools/clib/* before use.
 
-- For those who want to use the observational data used in this work, an example is provided at */pubtools/load_observations.py*. The code loads observational data around a certain redshift and moves them onto the bolometric plane. 
-  One can also check the fitting code */codes/lf_fit/lf_fitter.py*. There, you should be able to find a function that loads the binned estimations of  all the observations listed in the paper.  You can turn on/off an observation in */codes/lf_fit/lf_fitter_data.py*. The functions that loads an individual observation data are in  */codes/obdata/* directory.
++ For those who want to use the observational data used in this work, an example is provided at `/pubtools/load_observations.py`. The code loads observational data around a certain redshift and moves them onto the bolometric plane. 
+  You can turn on/off an observation in `/pubtools/lf_fitter_data.py`. The functions that loads an individual observation data are in  `/pubtools/obdata_copy/` directory.
 
 ---
 
@@ -36,7 +33,7 @@ For those who are interested in more details, the structure of the directory is 
 ## data:
 all sorts of data dumped there, most of them are binned estimations of the QLF (check the fitting code or the plot codes to know how to load them)
 
-you can find the template SED ploted in the paper (MySED.dat), note that this SED is only for a typical luminosity (see the paper)
+you can find the template SED ploted in the paper (`MySED.dat`), note that this SED is only for a typical luminosity (see the paper)
 
 ---
 
@@ -55,5 +52,5 @@ some important plots are:
 
 ---
 
-If you have any questions, please contact: xshen@caltech.edu
+If you have any questions, please contact: xuejian@mit.edu
 
