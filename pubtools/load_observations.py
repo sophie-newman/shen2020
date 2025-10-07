@@ -7,6 +7,7 @@ from ctypes import *
 import ctypes
 from lf_fitter_data import *
 import sys
+import h5py
 
 # load observational data at a certain redshift and move them to the bolometric plane
 
