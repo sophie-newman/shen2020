@@ -157,7 +157,7 @@ plt.show()
 
 
 # Define output filename based on redshift
-output_file = f"bolometric_data_z{redshift}.h5"
+output_file = f"/mnt/home/snewman/ceph/bolometric_data_z{redshift}.h5"
 
 # Create and save the datasets
 with h5py.File(output_file, "w") as hf:
