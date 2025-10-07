@@ -10,7 +10,8 @@ import sys
 
 # load observational data at a certain redshift and move them to the bolometric plane
 
-redshift=float(sys.argv[1])
+#redshift=float(sys.argv[1])
+redshift=0.2
 ############################
 def get_fit_data(alldata,dset_name,dset_id):
         # load the observational data of a specific dataset at the redshift
@@ -150,3 +151,28 @@ ax.tick_params(axis='y', pad=2.5)
 ax.minorticks_on()
 #plt.savefig("../figs/bol_"+str(redshift)+".pdf",fmt='pdf')
 plt.show()
+
+
+
+
+# Define output filename based on redshift
+output_file = f"bolometric_data_z{redshift}.h5"
+
+# Create and save the datasets
+with h5py.File(output_file, "w") as hf:
+    # Loop through each dataset ID you analyzed
+    for dataid, name in [(-5, "UV_1450A"),
+                         (-1, "B_Band"),
+                         (-4, "Hard_Xray"),
+                         (-3, "Soft_Xray"),
+                         (-2, "Mid_IR")]:
+        x, y, dy, dx = get_data(dataid)
+        group = hf.create_group(name)
+        group.create_dataset("logL_bol", data=x)
+        group.create_dataset("log_phi", data=y)
+        group.create_dataset("d_phi", data=dy)
+        group.create_dataset("d_L", data=dx)
+        group.attrs["data_id"] = dataid
+        group.attrs["redshift"] = redshift
+
+print(f"✅ Data successfully saved to '{output_file}'")
